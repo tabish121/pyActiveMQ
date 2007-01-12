@@ -34,3 +34,11 @@ print f5
 f = ActiveMQConnectionFactory('tcp://localhost:61613')
 conn = f.createConnection()
 print conn
+print conn.clientId
+session = conn.createSession()
+print session
+print session.transacted
+
+print session.createTopic
+print session.createQueue
+#textMessage = session.createTextMessage()

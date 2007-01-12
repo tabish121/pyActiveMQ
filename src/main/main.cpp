@@ -38,6 +38,7 @@ cms::Connection* (ActiveMQConnectionFactory::*createConnection3)(
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(ActiveMQConnectionFactory_overloads, createConnection, 0, 3)
 #endif
 
+cms::Session* (cms::Connection::*createSession0)() = &cms::Connection::createSession;
 
 BOOST_PYTHON_MODULE(pyactivemq)
 {
@@ -86,5 +87,26 @@ BOOST_PYTHON_MODULE(pyactivemq)
         ;
 
     class_<cms::Connection, boost::noncopyable>("Connection", no_init)
+        .add_property("clientId", &cms::Connection::getClientId)
+        .def("createSession", createSession0, return_value_policy<manage_new_object>())
+        ;
+
+    class_<cms::Session, boost::noncopyable>("Session", no_init)
+        .def("commit", &cms::Session::commit)
+        .def("rollback", &cms::Session::rollback)
+        .def("createTopic", &cms::Session::createTopic, return_value_policy<manage_new_object>())
+        .def("createQueue", &cms::Session::createQueue, return_value_policy<manage_new_object>())
+        .def("createTemporaryTopic", &cms::Session::createTemporaryTopic, return_value_policy<manage_new_object>())
+        .def("createTemporaryQueue", &cms::Session::createTemporaryQueue, return_value_policy<manage_new_object>())
+        .def("createMessage", &cms::Session::createMessage, return_value_policy<manage_new_object>())
+#if 0
+        .def("createBytesMessage", &cms::Session::createBytesMessage, return_value_policy<manage_new_object>())
+        .def("createTextMessage", &cms::Session::createTextMessage, return_value_policy<manage_new_object>())
+#endif
+        .def("createMapMessage", &cms::Session::createMapMessage, return_value_policy<manage_new_object>())
+#if 0
+        .add_property("acknowledgeMode", &cms::Session::getAcknowlegdeMode)
+#endif
+        .add_property("transacted", &cms::Session::isTransacted)
         ;
 }
