@@ -20,34 +20,71 @@
 using namespace boost::python;
 using activemq::core::ActiveMQConnectionFactory;
 
-struct World
-{
-    void set(std::string msg)
-    {
-        this->msg = msg;
-    }
+#if 1
+cms::Connection* (ActiveMQConnectionFactory::*createConnection0)() =
+    &ActiveMQConnectionFactory::createConnection;
+#if 0
+cms::Connection* (ActiveMQConnectionFactory::*createConnection1)(
+    const std::string&) =
+    &ActiveMQConnectionFactory::createConnection;
+cms::Connection* (ActiveMQConnectionFactory::*createConnection2)(
+    const std::string&, const std::string&) =
+    &ActiveMQConnectionFactory::createConnection;
+#endif
+cms::Connection* (ActiveMQConnectionFactory::*createConnection3)(
+    const std::string&, const std::string&, const std::string&) =
+&ActiveMQConnectionFactory::createConnection;
+#else
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(ActiveMQConnectionFactory_overloads, createConnection, 0, 3)
+#endif
 
-    std::string greet()
-    {
-        return msg;
-    }
-
-    std::string msg;
-};
 
 BOOST_PYTHON_MODULE(pyactivemq)
 {
-    class_<World>("World")
-        .def("greet", &World::greet)
-        .def("set", &World::set)
-        ;
     class_<ActiveMQConnectionFactory>("ActiveMQConnectionFactory")
+#if 0
         .def(init<const std::string&>())
         .def(init<const std::string&, const std::string&>())
         .def(init<const std::string&, const std::string&, const std::string&>())
         .def(init<const std::string&, const std::string&, const std::string&, const std::string&>())
-#if 0
-        .def("createConnection", &ActiveMQConnectionFactory::createConnection)
+#else
+        .def(init<const std::string&, optional<const std::string&, const std::string&, const std::string&> >())
 #endif
+
+#if 0
+        .def("createConnection", &ActiveMQConnectionFactory::createConnection,
+             ActiveMQConnectionFactory_overloads(),
+             return_value_policy<manage_new_object>())
+#else
+        .def("createConnection", createConnection0, return_value_policy<manage_new_object>())
+#if 0
+        .def("createConnection", createConnection1)
+        .def("createConnection", createConnection2)
+#endif
+        .def("createConnection", createConnection3, return_value_policy<manage_new_object>())
+#endif
+
+        .def("setUsername", &ActiveMQConnectionFactory::setUsername)
+        .def("getUsername", &ActiveMQConnectionFactory::getUsername,
+             return_value_policy<return_by_value>())
+#if 0
+        .def("setPassword", &ActiveMQConnectionFactory::setPassword)
+        .def("getPassword", &ActiveMQConnectionFactory::getPassword, return_internal_reference<>())
+        .def("setBrokerURL", &ActiveMQConnectionFactory::setBrokerURL)
+        .def("getBrokerURL", &ActiveMQConnectionFactory::getBrokerURL, return_internal_reference<>())
+        .def("setClientId", &ActiveMQConnectionFactory::setClientId)
+        .def("getClientId", &ActiveMQConnectionFactory::getClientId, return_internal_reference<>())
+#endif
+#if 0
+        .add_property("brokerURL",
+                      make_getter(&ActiveMQConnectionFactory::getBrokerURL,
+                                  return_value_policy<return_by_value>()),
+                      &ActiveMQConnectionFactory::setBrokerURL,
+            "Broker URL")
+
+#endif
+        ;
+
+    class_<cms::Connection, boost::noncopyable>("Connection", no_init)
         ;
 }
