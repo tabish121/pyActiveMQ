@@ -166,6 +166,20 @@ BOOST_PYTHON_MODULE(pyactivemq)
         .value("SESSION_TRANSACTED", Session::SESSION_TRANSACTED)
         ;
 
+    class_<Destination, boost::noncopyable>("Destination", no_init)
+        .add_property("destinationType", &Destination::getDestinationType)
+        .def("__str__", &Destination::toString)
+        .def("__repr__", &Destination::toString)
+        .add_property("providerString", &Destination::toProviderString)
+        ;
+
+    enum_<Destination::DestinationType>("DestinationType")
+        .value("TOPIC", Destination::TOPIC)
+        .value("QUEUE", Destination::QUEUE)
+        .value("TEMPORARY_TOPIC", Destination::TEMPORARY_TOPIC)
+        .value("TEMPORARY_QUEUE", Destination::TEMPORARY_QUEUE)
+        ;
+
     class_<Topic, bases<Destination>, boost::noncopyable>("Topic", no_init)
         .add_property("topicName", &Topic::getTopicName)
         ;
@@ -180,20 +194,6 @@ BOOST_PYTHON_MODULE(pyactivemq)
 
     class_<TemporaryQueue, bases<Destination>, boost::noncopyable>("TemporaryQueue", no_init)
         .add_property("queueName", &Queue::getQueueName)
-        ;
-
-    class_<Destination, boost::noncopyable>("Destination", no_init)
-        .add_property("destinationType", &Destination::getDestinationType)
-        .def("__str__", &Destination::toString)
-        .def("__repr__", &Destination::toString)
-        .add_property("providerString", &Destination::toProviderString)
-        ;
-
-    enum_<Destination::DestinationType>("DestinationType")
-        .value("TOPIC", Destination::TOPIC)
-        .value("QUEUE", Destination::QUEUE)
-        .value("TEMPORARY_TOPIC", Destination::TEMPORARY_TOPIC)
-        .value("TEMPORARY_QUEUE", Destination::TEMPORARY_QUEUE)
         ;
 
 #if 0
