@@ -153,9 +153,7 @@ BOOST_PYTHON_MODULE(pyactivemq)
         .def("createBytesMessage", &Session::createBytesMessage, return_value_policy<manage_new_object>())
 #endif
         .def("createMapMessage", &Session::createMapMessage, return_value_policy<manage_new_object>())
-#if 0
-        .add_property("acknowledgeMode", &Session::getAcknowlegdeMode)
-#endif
+        .add_property("acknowledgeMode", &Session::getAcknowledgeMode)
         .add_property("transacted", &Session::isTransacted)
         ;
 
@@ -287,6 +285,31 @@ BOOST_PYTHON_MODULE(pyactivemq)
     // TODO see if we can do something to make MapMessage work nicely
     // with python maps
     class_<MapMessage, bases<Message>, boost::noncopyable>("MapMessage", no_init)
+        // TODO getMapNames
+        .def("itemExists", &MapMessage::itemExists)
+        .def("getBoolean", &MapMessage::getBoolean)
+        .def("setBoolean", &MapMessage::setBoolean)
+        .def("getByte", &MapMessage::getByte)
+        .def("setByte", &MapMessage::setByte)
+#if 0
+        // TODO need a return value policy
+        .def("getBytes", &MapMessage::getBytes)
+#endif
+        .def("setBytes", &MapMessage::setBytes)
+        .def("getChar", &MapMessage::getChar)
+        .def("setChar", &MapMessage::setChar)
+        .def("getDouble", &MapMessage::getDouble)
+        .def("setDouble", &MapMessage::setDouble)
+        .def("getFloat", &MapMessage::getFloat)
+        .def("setFloat", &MapMessage::setFloat)
+        .def("getInt", &MapMessage::getInt)
+        .def("setInt", &MapMessage::setInt)
+        .def("getLong", &MapMessage::getLong)
+        .def("setLong", &MapMessage::setLong)
+        .def("getShort", &MapMessage::getShort)
+        .def("setShort", &MapMessage::setShort)
+        .def("getString", &MapMessage::getString)
+        .def("setString", &MapMessage::setString)
         ;
 
     class_<ExceptionListenerWrap, boost::noncopyable>("ExceptionListener", no_init)
@@ -325,10 +348,6 @@ BOOST_PYTHON_MODULE(pyactivemq)
         .def("receiveNoWait",
              &MessageConsumer::receiveNoWait,
              return_value_policy<manage_new_object>())
-#if 0
-        .def_readonly("messageSelector", &MessageConsumer::getMessageSelector)
-#else
         .add_property("messageSelector", &MessageConsumer::getMessageSelector)
-#endif
         ;
 }
