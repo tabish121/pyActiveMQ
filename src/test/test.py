@@ -41,4 +41,11 @@ print session.transacted
 
 print session.createTopic
 print session.createQueue
+#print session.createConsumer
 #textMessage = session.createTextMessage()
+
+from pyactivemq import AcknowledgeMode
+print int(AcknowledgeMode.AUTO_ACKNOWLEDGE)
+print int(AcknowledgeMode.DUPS_OK_ACKNOWLEDGE)
+print int(AcknowledgeMode.CLIENT_ACKNOWLEDGE)
+print int(AcknowledgeMode.SESSION_TRANSACTED)
