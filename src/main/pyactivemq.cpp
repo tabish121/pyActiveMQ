@@ -189,7 +189,6 @@ BOOST_PYTHON_MODULE(pyactivemq)
         .add_property("providerString", &Destination::toProviderString)
         ;
 
-
     enum_<Destination::DestinationType>("DestinationType")
         .value("TOPIC", Destination::TOPIC)
         .value("QUEUE", Destination::QUEUE)

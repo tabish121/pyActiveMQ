@@ -64,6 +64,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="boost_python-vc80-mt-gd-1_33_1.lib ws2_32.lib rpcrt4.lib"
 				AdditionalLibraryDirectories="C:\Program Files\Microsoft Platform SDK\Lib;C:\Program Files\boost\boost_1_33_1\lib;C:\Python24\libs"
+				GenerateDebugInformation="true"
 			/>
 			<Tool
 				Name="VCALinkTool"
