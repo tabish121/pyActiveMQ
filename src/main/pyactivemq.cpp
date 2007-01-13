@@ -208,13 +208,48 @@ BOOST_PYTHON_MODULE(pyactivemq)
     DeliveryMode_scope.attr("NON_PERSISTANT") = DeliveryMode::NON_PERSISTANT;
 #endif
 
+    // TODO maybe some of these properties should be read-only?
     class_<Message, boost::noncopyable>("Message", no_init)
+        // TODO clone?
+        .def("acknowledge", &Message::acknowledge)
+        .def("clearBody", &Message::clearBody)
+        .def("clearProperties", &Message::clearProperties)
+        // TODO getPropertyNames
+        .def("propertyExists", &Message::propertyExists)
+        .def("getBooleanProperty", &Message::getBooleanProperty)
+        .def("getByteProperty", &Message::getByteProperty)
+        .def("getDoubleProperty", &Message::getDoubleProperty)
+        .def("getFloatProperty", &Message::getFloatProperty)
+        .def("getIntProperty", &Message::getIntProperty)
+        .def("getLongProperty", &Message::getLongProperty)
+        .def("getShortProperty", &Message::getShortProperty)
+        .def("getStringProperty", &Message::getStringProperty)
+        .def("setBooleanProperty", &Message::setBooleanProperty)
+        .def("setByteProperty", &Message::setByteProperty)
+        .def("setDoubleProperty", &Message::setDoubleProperty)
+        .def("setFloatProperty", &Message::setFloatProperty)
+        .def("setIntProperty", &Message::setIntProperty)
+        .def("setLongProperty", &Message::setLongProperty)
+        .def("setShortProperty", &Message::setShortProperty)
+        .def("setStringProperty", &Message::setStringProperty)
+        .add_property("correlationId", &Message::getCMSCorrelationId, &Message::setCMSCorrelationId)
+        .add_property("deliveryMode", &Message::getCMSDeliveryMode, &Message::setCMSDeliveryMode)
+#if 0
+        .add_property("destination", &Message::getCMSDestination, &Message::setCMSDestination)
+#endif
+        .add_property("expiration", &Message::getCMSExpiration, &Message::setCMSExpiration)
+        .add_property("messageId", &Message::getCMSMessageId, &Message::setCMSMessageId)
+        .add_property("priority", &Message::getCMSPriority, &Message::setCMSPriority)
+        .add_property("redelivered", &Message::getCMSRedelivered, &Message::setCMSRedelivered)
+#if 0
+        .add_property("replyTo", &Message::getCMSReplyTo, &Message::setCMSReplyTo)
+#endif
+        .add_property("timeStamp", &Message::getCMSTimeStamp, &Message::setCMSTimeStamp)
+        .add_property("messageType", &Message::getCMSMessageType, &Message::setCMSMessageType)
         ;
 
     class_<TextMessage, bases<Message>, boost::noncopyable>("TextMessage", no_init)
-#if 0
-        .def_readwrite("text", &TextMessage::getText, TextMessage_setText)
-#endif
+        .add_property("text", &TextMessage::getText, TextMessage_setText)
         ;
 
     class_<BytesMessage, bases<Message>, boost::noncopyable>("BytesMessage", no_init)
@@ -259,6 +294,25 @@ BOOST_PYTHON_MODULE(pyactivemq)
         ;
 
     class_<MessageProducer, bases<Closeable>, boost::noncopyable>("MessageProducer", no_init)
+        //send( message )
+        //send( message, deliveryMode, priority, timeToLive )
+        //send( destination, message )
+        //send( destination, message, deliveryMode, priority, timeToLive)
+        .add_property("deliveryMode",
+                      &MessageProducer::getDeliveryMode,
+                      &MessageProducer::setDeliveryMode)
+        .add_property("disableMessageId",
+                      &MessageProducer::getDisableMessageId,
+                      &MessageProducer::setDisableMessageId)
+        .add_property("disableMessageTimeStamp",
+                      &MessageProducer::getDisableMessageTimeStamp,
+                      &MessageProducer::setDisableMessageTimeStamp)
+        .add_property("priority",
+                      &MessageProducer::getPriority,
+                      &MessageProducer::setPriority)
+        .add_property("timeToLive",
+                      &MessageProducer::getTimeToLive,
+                      &MessageProducer::setTimeToLive)
         ;
 
     class_<MessageListenerWrap, boost::noncopyable>("MessageListener", no_init)
