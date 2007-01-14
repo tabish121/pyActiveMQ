@@ -106,27 +106,23 @@ BOOST_PYTHON_MODULE(pyactivemq)
         .def("createConnection",
              ActiveMQConnectionFactory_createConnection3,
              return_value_policy<manage_new_object>())
-
-         // TODO these should be properties
-        .def("setUsername", &ActiveMQConnectionFactory::setUsername)
-        .def("getUsername", &ActiveMQConnectionFactory::getUsername,
-             return_value_policy<return_by_value>())
 #if 0
-        .def("setPassword", &ActiveMQConnectionFactory::setPassword)
-        .def("getPassword", &ActiveMQConnectionFactory::getPassword, return_internal_reference<>())
-        .def("setBrokerURL", &ActiveMQConnectionFactory::setBrokerURL)
-        .def("getBrokerURL", &ActiveMQConnectionFactory::getBrokerURL, return_internal_reference<>())
-        .def("setClientId", &ActiveMQConnectionFactory::setClientId)
-        .def("getClientId", &ActiveMQConnectionFactory::getClientId, return_internal_reference<>())
-#endif
-
-#if 0
+        .add_property("username",
+                      make_getter(&ActiveMQConnectionFactory::getUsername,
+                                  return_value_policy<return_by_value>()),
+                      &ActiveMQConnectionFactory::setPassword)
+        .add_property("password",
+                      make_getter(&ActiveMQConnectionFactory::getPassword,
+                                  return_value_policy<return_by_value>()),
+                      &ActiveMQConnectionFactory::setPassword)
         .add_property("brokerURL",
                       make_getter(&ActiveMQConnectionFactory::getBrokerURL,
                                   return_value_policy<return_by_value>()),
-                      &ActiveMQConnectionFactory::setBrokerURL,
-            "Broker URL")
-
+                      &ActiveMQConnectionFactory::setBrokerURL)
+        .add_property("clientId",
+                      make_getter(&ActiveMQConnectionFactory::getClientId,
+                                  return_value_policy<return_by_value>()),
+                      &ActiveMQConnectionFactory::setClientId)
 #endif
         ;
 
@@ -150,19 +146,21 @@ BOOST_PYTHON_MODULE(pyactivemq)
                       make_getter(&Connection::getExceptionListener,
                                   return_value_policy<reference_existing_object>()))
 #endif
-        .def("createSession", Connection_createSession0, return_value_policy<manage_new_object>())
+        .def("createSession",
+             Connection_createSession0,
+             return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1> >())
         ;
 
     // TODO need to keep a reference to Session while stuff it created
     // is alive, especially producers and consumers
-    // TOOD probably need with_custodian_and_ward_postcall in a few places
+    // TODO probably need with_custodian_and_ward_postcall in a few places
     // http://mail.python.org/pipermail/c++-sig/2004-November/008189.html
     class_<Session, bases<Closeable>, boost::noncopyable>("Session", no_init)
         .def("commit", &Session::commit)
         .def("rollback", &Session::rollback)
-        .def("createConsumer", Session_createConsumer1, return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1>>())
-        .def("createConsumer", Session_createConsumer2, return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1>>())
-        .def("createConsumer", Session_createConsumer3, return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1>>())
+        .def("createConsumer", Session_createConsumer1, return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1> >())
+        .def("createConsumer", Session_createConsumer2, return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1> >())
+        .def("createConsumer", Session_createConsumer3, return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1> >())
         .def("createDurableConsumer", &Session::createDurableConsumer, return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1> >())
         .def("createProducer", &Session::createProducer, return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1> >())
         .def("createTopic", &Session::createTopic, return_value_policy<manage_new_object>())
@@ -333,7 +331,7 @@ BOOST_PYTHON_MODULE(pyactivemq)
         .def("setString", &MapMessage::setString)
         ;
 
-    class_<ExceptionListenerWrap, boost::noncopyable>("ExceptionListener", no_init)
+    class_<ExceptionListenerWrap, boost::noncopyable>("ExceptionListener")
         .def("onException", pure_virtual(&ExceptionListener::onException))
         ;
 
@@ -359,7 +357,10 @@ BOOST_PYTHON_MODULE(pyactivemq)
                       &MessageProducer::setTimeToLive)
         ;
 
-    class_<MessageListenerWrap, boost::noncopyable>("MessageListener", no_init)
+    // TODO look at issues with the GIL here when multiple session
+    // threads call into the Python code (could happen when Openwire
+    // support is added)
+    class_<MessageListenerWrap, boost::noncopyable>("MessageListener")
         .def("onMessage", pure_virtual(&MessageListener::onMessage))
         ;
 
@@ -372,7 +373,7 @@ BOOST_PYTHON_MODULE(pyactivemq)
 #if 0
         .add_property("messageListener",
                       &MessageConsumer::getMessageListener,
-                      make_setter(&MessageConsumer::setMessageListener))
+                      &MessageConsumer::setMessageListener)
 #endif
         .add_property("messageSelector", &MessageConsumer::getMessageSelector)
         ;

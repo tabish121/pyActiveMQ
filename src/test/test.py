@@ -18,6 +18,10 @@ import os
 import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'win_build', 'debug'))
 
+import time
+
+import pyactivemq
+
 from pyactivemq import AcknowledgeMode
 print int(AcknowledgeMode.AUTO_ACKNOWLEDGE)
 print int(AcknowledgeMode.DUPS_OK_ACKNOWLEDGE)
@@ -31,7 +35,7 @@ print f1
 f2 = ActiveMQConnectionFactory('url')
 print f2
 f3 = ActiveMQConnectionFactory('url', 'user')
-print f3.getUsername()
+#print f3.getUsername()
 f4 = ActiveMQConnectionFactory('url', 'user', 'pass')
 print f4
 f5 = ActiveMQConnectionFactory('url', 'user', 'pass', 'clientid')
@@ -45,9 +49,23 @@ session = conn.createSession()
 print session
 print session.transacted
 
-
 topic = session.createTopic("topic")
 queue = session.createQueue("queue")
+
+try:
+    temptopic = session.createTemporaryTopic()
+    assert False
+except UserWarning:
+    # not implemented for stomp
+    # XXX UserWarning says: caught unknown exception
+    pass
+
+try:
+    tempqueue = session.createTemporaryQueue()
+    assert False
+except UserWarning:
+    pass
+
 #print session.createConsumer
 textMessage = session.createTextMessage()
 print textMessage
@@ -65,13 +83,26 @@ bytesMessage = session.createBytesMessage()
 print bytesMessage
 assert bytesMessage.bodyLength == 0
 
+class MessageListener(pyactivemq.MessageListener):
+    def onMessage(message):
+        print 'got a', message
+
+class ExceptionListener(pyactivemq.ExceptionListener):
+    def onException(exc):
+        print 'got a', exc, 'exception'
+
+MessageListener()
+ExceptionListener()
 
 consumer = session.createConsumer(topic)
+# XXX doesn't work yet -- need to bind message listener methods
+#consumer2 = session.createConsumer(topic)
+#consumer2.messageListener = MessageListener()
 producer = session.createProducer(topic)
 conn.start()
 producer.send(textMessage)
 msg = consumer.receive()
-print msg
+print 'received a', msg
 
 session.close()
 conn.close()
