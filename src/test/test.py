@@ -63,6 +63,9 @@ assert f5.clientId == 'clientid'
 
 f = ActiveMQConnectionFactory('tcp://localhost:61613')
 conn = f.createConnection()
+assert conn.exceptionListener is None
+# XXX need to sort out a few more issues with exception listeners
+#conn.exceptionListener = ExceptionListener()
 session = conn.createSession()
 assert not session.transacted
 
@@ -93,14 +96,15 @@ textMessage.setIntProperty('int1', 123)
 assert 1 == len(textMessage.propertyNames)
 # XXX this crashes
 #print textMessage.propertyNames[0]
+assert textMessage.destination is None
+assert textMessage.replyTo is None
+textMessage.replyTo = queue
 
 bytesMessage = session.createBytesMessage()
 assert bytesMessage.bodyLength == 0
 
-MessageListener()
-ExceptionListener()
-
 consumer = session.createConsumer(topic)
+assert consumer.messageListener is None
 # XXX doesn't work yet
 #consumer2 = session.createConsumer(topic)
 #consumer2.messageListener = MessageListener()
@@ -109,6 +113,12 @@ conn.start()
 producer.send(textMessage)
 msg = consumer.receive()
 print 'received a', msg
+str(msg.destination) == str(topic)
+str(msg.replyTo) == str(queue)
+
+# XXX sleep, let exception listener fire and doing keyboard interrupt
+# leads to a crash
+#time.sleep(100000)
 
 session.close()
 conn.close()
