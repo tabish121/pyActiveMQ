@@ -18,18 +18,17 @@
 
 #include <boost/python.hpp>
 #include <activemq/core/ActiveMQConnectionFactory.h>
-
 #include <cms/ExceptionListener.h>
 
 using namespace boost::python;
 using namespace cms;
 using activemq::core::ActiveMQConnectionFactory;
 
-Connection* (ActiveMQConnectionFactory::*ActiveMQConnectionFactory_createConnection0)() =
-    &ActiveMQConnectionFactory::createConnection;
-Connection* (ActiveMQConnectionFactory::*ActiveMQConnectionFactory_createConnection3)(
+Connection* (ConnectionFactory::*ConnectionFactory_createConnection0)() =
+    &ConnectionFactory::createConnection;
+Connection* (ConnectionFactory::*ConnectionFactory_createConnection3)(
     const std::string&, const std::string&, const std::string&) =
-    &ActiveMQConnectionFactory::createConnection;
+    &ConnectionFactory::createConnection;
 
 Session* (Connection::*Connection_createSession0)() = &Connection::createSession;
 Session* (Connection::*Connection_createSession1)(Session::AcknowledgeMode) = &Connection::createSession;
@@ -99,32 +98,33 @@ BOOST_PYTHON_MODULE(pyactivemq)
     register_exception_translator<CMSException>(CMSException_translator);
     to_python_converter<std::vector<std::string>, vector_to_list<std::string> >();
 
-    class_<ActiveMQConnectionFactory>("ActiveMQConnectionFactory")
+    class_<ConnectionFactory, boost::noncopyable>("ConnectionFactory", no_init)
+        .def("createConnection",
+             ConnectionFactory_createConnection0,
+             return_value_policy<manage_new_object>())
+        .def("createConnection",
+             ConnectionFactory_createConnection3,
+             return_value_policy<manage_new_object>())
+        ;
+
+    class_<ActiveMQConnectionFactory, bases<ConnectionFactory>, boost::noncopyable>("ActiveMQConnectionFactory")
         .def(init<const std::string&, optional<const std::string&, const std::string&, const std::string&> >())
-        .def("createConnection",
-             ActiveMQConnectionFactory_createConnection0,
-             return_value_policy<manage_new_object>())
-        .def("createConnection",
-             ActiveMQConnectionFactory_createConnection3,
-             return_value_policy<manage_new_object>())
-#if 0
         .add_property("username",
-                      make_getter(&ActiveMQConnectionFactory::getUsername,
-                                  return_value_policy<return_by_value>()),
-                      &ActiveMQConnectionFactory::setPassword)
+                      make_function(&ActiveMQConnectionFactory::getUsername,
+                                    return_value_policy<return_by_value>()),
+                      &ActiveMQConnectionFactory::setUsername)
         .add_property("password",
-                      make_getter(&ActiveMQConnectionFactory::getPassword,
-                                  return_value_policy<return_by_value>()),
+                      make_function(&ActiveMQConnectionFactory::getPassword,
+                                    return_value_policy<return_by_value>()),
                       &ActiveMQConnectionFactory::setPassword)
         .add_property("brokerURL",
-                      make_getter(&ActiveMQConnectionFactory::getBrokerURL,
-                                  return_value_policy<return_by_value>()),
+                      make_function(&ActiveMQConnectionFactory::getBrokerURL,
+                                    return_value_policy<return_by_value>()),
                       &ActiveMQConnectionFactory::setBrokerURL)
         .add_property("clientId",
-                      make_getter(&ActiveMQConnectionFactory::getClientId,
-                                  return_value_policy<return_by_value>()),
+                      make_function(&ActiveMQConnectionFactory::getClientId,
+                                    return_value_policy<return_by_value>()),
                       &ActiveMQConnectionFactory::setClientId)
-#endif
         ;
 
     class_<Startable, boost::noncopyable>("Startable", no_init)
@@ -141,12 +141,9 @@ BOOST_PYTHON_MODULE(pyactivemq)
 
     class_<Connection, bases<Startable, Stoppable, Closeable>, boost::noncopyable>("Connection", no_init)
         .add_property("clientId", &Connection::getClientId)
-#if 0
-        // TODO setter
         .add_property("exceptionListener",
-                      make_getter(&Connection::getExceptionListener,
-                                  return_value_policy<reference_existing_object>()))
-#endif
+                      make_function(&Connection::getExceptionListener, return_internal_reference<>()),
+                      make_function(&Connection::setExceptionListener, with_custodian_and_ward<1,2>()))
         .def("createSession",
              Connection_createSession0,
              return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1> >())
@@ -155,10 +152,6 @@ BOOST_PYTHON_MODULE(pyactivemq)
              return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1> >())
         ;
 
-    // TODO need to keep a reference to Session while stuff it created
-    // is alive, especially producers and consumers
-    // TODO probably need with_custodian_and_ward_postcall in a few places
-    // http://mail.python.org/pipermail/c++-sig/2004-November/008189.html
     class_<Session, bases<Closeable>, boost::noncopyable>("Session", no_init)
         .def("commit", &Session::commit)
         .def("rollback", &Session::rollback)
@@ -255,16 +248,16 @@ BOOST_PYTHON_MODULE(pyactivemq)
         .def("setStringProperty", &Message::setStringProperty)
         .add_property("correlationId", &Message::getCMSCorrelationId, &Message::setCMSCorrelationId)
         .add_property("deliveryMode", &Message::getCMSDeliveryMode, &Message::setCMSDeliveryMode)
-#if 0
-        .add_property("destination", &Message::getCMSDestination, &Message::setCMSDestination)
-#endif
+        .add_property("destination",
+                      make_function(&Message::getCMSDestination, return_internal_reference<>()),
+                      make_function(&Message::setCMSDestination, with_custodian_and_ward<1,2>()))
         .add_property("expiration", &Message::getCMSExpiration, &Message::setCMSExpiration)
         .add_property("messageId", &Message::getCMSMessageId, &Message::setCMSMessageId)
         .add_property("priority", &Message::getCMSPriority, &Message::setCMSPriority)
         .add_property("redelivered", &Message::getCMSRedelivered, &Message::setCMSRedelivered)
-#if 0
-        .add_property("replyTo", &Message::getCMSReplyTo, &Message::setCMSReplyTo)
-#endif
+        .add_property("replyTo",
+                      make_function(&Message::getCMSReplyTo, return_internal_reference<>()),
+                      make_function(&Message::setCMSReplyTo, with_custodian_and_ward<1,2>()))
         .add_property("timeStamp", &Message::getCMSTimeStamp, &Message::setCMSTimeStamp)
         .add_property("messageType", &Message::getCMSMessageType, &Message::setCMSMessageType)
         ;
@@ -374,11 +367,9 @@ BOOST_PYTHON_MODULE(pyactivemq)
         .def("receiveNoWait",
              &MessageConsumer::receiveNoWait,
              return_value_policy<manage_new_object>())
-#if 0
         .add_property("messageListener",
-                      &MessageConsumer::getMessageListener,
-                      &MessageConsumer::setMessageListener)
-#endif
+                      make_function(&MessageConsumer::getMessageListener, return_internal_reference<>()),
+                      make_function(&MessageConsumer::setMessageListener, with_custodian_and_ward<1,2>()))
         .add_property("messageSelector", &MessageConsumer::getMessageSelector)
         ;
 }

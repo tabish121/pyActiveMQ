@@ -19,8 +19,7 @@ import sys
 topdir = os.path.join(os.path.dirname(__file__), '..', '..')
 topdir = os.path.abspath(topdir)
 from distutils.util import get_platform
-print get_platform()
-if sys.platform == 'win32':
+if get_platform() == 'win32':
     sys.path.insert(0, os.path.join(topdir, 'win_build', 'debug'))
 else:
     plat_specifier = ".%s-%s" % (get_platform(), sys.version[0:3])
@@ -28,36 +27,44 @@ else:
     build_platlib = os.path.join(build_base, 'lib' + plat_specifier)
     sys.path.insert(0, build_platlib)
 
+from pyactivemq import AcknowledgeMode
+from pyactivemq import ActiveMQConnectionFactory
+import pyactivemq
 import time
 
-import pyactivemq
+class MessageListener(pyactivemq.MessageListener):
+    def onMessage(message):
+        print 'got a', message
 
-from pyactivemq import AcknowledgeMode
-print int(AcknowledgeMode.AUTO_ACKNOWLEDGE)
-print int(AcknowledgeMode.DUPS_OK_ACKNOWLEDGE)
-print int(AcknowledgeMode.CLIENT_ACKNOWLEDGE)
-print int(AcknowledgeMode.SESSION_TRANSACTED)
+class ExceptionListener(pyactivemq.ExceptionListener):
+    def onException(exc):
+        print 'got a', exc, 'exception'
 
-from pyactivemq import ActiveMQConnectionFactory
-print ActiveMQConnectionFactory
+assert 0 == int(AcknowledgeMode.AUTO_ACKNOWLEDGE)
+assert 1 == int(AcknowledgeMode.DUPS_OK_ACKNOWLEDGE)
+assert 2 == int(AcknowledgeMode.CLIENT_ACKNOWLEDGE)
+assert 3 == int(AcknowledgeMode.SESSION_TRANSACTED)
+
 f1 = ActiveMQConnectionFactory()
-print f1
 f2 = ActiveMQConnectionFactory('url')
-print f2
+assert f2.brokerURL == 'url'
 f3 = ActiveMQConnectionFactory('url', 'user')
-#print f3.getUsername()
+assert f3.brokerURL == 'url'
+assert f3.username == 'user'
 f4 = ActiveMQConnectionFactory('url', 'user', 'pass')
-print f4
+assert f4.brokerURL == 'url'
+assert f4.username == 'user'
+assert f4.password == 'pass'
 f5 = ActiveMQConnectionFactory('url', 'user', 'pass', 'clientid')
-print f5
+assert f5.brokerURL == 'url'
+assert f5.username == 'user'
+assert f5.password == 'pass'
+assert f5.clientId == 'clientid'
 
 f = ActiveMQConnectionFactory('tcp://localhost:61613')
 conn = f.createConnection()
-print conn
-print conn.clientId
 session = conn.createSession()
-print session
-print session.transacted
+assert not session.transacted
 
 topic = session.createTopic("topic")
 queue = session.createQueue("queue")
@@ -76,36 +83,25 @@ try:
 except UserWarning:
     pass
 
-#print session.createConsumer
 textMessage = session.createTextMessage()
-print textMessage
 textMessage.text = "bye"
 assert textMessage.text == "bye"
 textMessage = session.createTextMessage("hello")
 assert textMessage.text == "hello"
 
 textMessage.setIntProperty('int1', 123)
-print len(textMessage.propertyNames)
+assert 1 == len(textMessage.propertyNames)
 # XXX this crashes
 #print textMessage.propertyNames[0]
 
 bytesMessage = session.createBytesMessage()
-print bytesMessage
 assert bytesMessage.bodyLength == 0
-
-class MessageListener(pyactivemq.MessageListener):
-    def onMessage(message):
-        print 'got a', message
-
-class ExceptionListener(pyactivemq.ExceptionListener):
-    def onException(exc):
-        print 'got a', exc, 'exception'
 
 MessageListener()
 ExceptionListener()
 
 consumer = session.createConsumer(topic)
-# XXX doesn't work yet -- need to bind message listener methods
+# XXX doesn't work yet
 #consumer2 = session.createConsumer(topic)
 #consumer2.messageListener = MessageListener()
 producer = session.createProducer(topic)
