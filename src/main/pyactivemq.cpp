@@ -33,41 +33,23 @@ Connection* (ActiveMQConnectionFactory::*ActiveMQConnectionFactory_createConnect
 
 Session* (Connection::*Connection_createSession0)() = &Connection::createSession;
 
-#if 0
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(Session_createConsumer_overloads, createConsumer, 1, 3)
-#else
 MessageConsumer* (Session::*Session_createConsumer1)(const Destination*) = &Session::createConsumer;
 MessageConsumer* (Session::*Session_createConsumer2)(const Destination*, const std::string&) = &Session::createConsumer;
 MessageConsumer* (Session::*Session_createConsumer3)(const Destination*, const std::string&, bool) = &Session::createConsumer;
-#endif
 
-#if 0
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(Session_createTextMessage_overloads, createTextMessage, 0, 1)
-#else
 TextMessage* (Session::*Session_createTextMessage0)() = &Session::createTextMessage;
 TextMessage* (Session::*Session_createTextMessage1)(const std::string&) = &Session::createTextMessage;
-#endif
 
-#if 0
-#else
 BytesMessage* (Session::*Session_createBytesMessage0)() = &Session::createBytesMessage;
 // TODO 2-argument createBytesMessage
-#endif
 
-#if 0
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(MessageConsumer_receive_overloads, receive, 0, 1)
-#else
 Message* (MessageConsumer::*MessageConsumer_receive0)() = &MessageConsumer::receive;
 Message* (MessageConsumer::*MessageConsumer_receive1)(int) = &MessageConsumer::receive;
-#endif
 
-#if 0
-#else
 void (MessageProducer::*MessageProducer_send1)(Message*) = &MessageProducer::send;
 void (MessageProducer::*MessageProducer_send4)(Message*, int, int, long long) = &MessageProducer::send;
 void (MessageProducer::*MessageProducer_send2)(const Destination*, Message*) = &MessageProducer::send;
 void (MessageProducer::*MessageProducer_send5)(const Destination*, Message*, int, int, long long) = &MessageProducer::send;
-#endif
 
 void (TextMessage::*TextMessage_setText)(const std::string&) = &TextMessage::setText;
 
@@ -79,11 +61,9 @@ struct ExceptionListenerWrap : ExceptionListener, wrapper<ExceptionListener>
 {
     virtual void onException(const CMSException& ex)
     {
-#if 0
-        this->getOverride("onException")(ex);
-#else
+        // should be: this->getOverride("onException")(ex);
+        // but that doesn't work with Visual C++
         call<void>(this->get_override("onException").ptr(), ex);
-#endif
     }
 };
 
@@ -91,11 +71,9 @@ struct MessageListenerWrap : MessageListener, wrapper<MessageConsumer>
 {
     virtual void onMessage(const Message* message)
     {
-#if 0
-        this->getOverride("onMessage")(message);
-#else
+        // should be: this->getOverride("onMessage")(message);
+        // but that doesn't work with Visual C++
         call<void>(this->get_override("onMessage").ptr(), message);
-#endif
     }
 };
 
@@ -122,21 +100,14 @@ BOOST_PYTHON_MODULE(pyactivemq)
 
     class_<ActiveMQConnectionFactory>("ActiveMQConnectionFactory")
         .def(init<const std::string&, optional<const std::string&, const std::string&, const std::string&> >())
-
-#if 0
-        .def("createConnection", &ActiveMQConnectionFactory::createConnection,
-             ActiveMQConnectionFactory_overloads(),
-             return_value_policy<manage_new_object>())
-#else
         .def("createConnection",
              ActiveMQConnectionFactory_createConnection0,
              return_value_policy<manage_new_object>())
         .def("createConnection",
              ActiveMQConnectionFactory_createConnection3,
              return_value_policy<manage_new_object>())
-#endif
 
-        // TODO these should be properties
+         // TODO these should be properties
         .def("setUsername", &ActiveMQConnectionFactory::setUsername)
         .def("getUsername", &ActiveMQConnectionFactory::getUsername,
              return_value_policy<return_by_value>())
@@ -189,18 +160,9 @@ BOOST_PYTHON_MODULE(pyactivemq)
     class_<Session, bases<Closeable>, boost::noncopyable>("Session", no_init)
         .def("commit", &Session::commit)
         .def("rollback", &Session::rollback)
-#if 0
-        .def("createConsumer",
-             &Session::createConsumer,
-             Session_createConsumer_overloads(
-                 args("destination", "selector", "nolocal"),
-                 "XXX docstring")
-             [return_value_policy<manage_new_object>()])
-#else
         .def("createConsumer", Session_createConsumer1, return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1>>())
         .def("createConsumer", Session_createConsumer2, return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1>>())
         .def("createConsumer", Session_createConsumer3, return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1>>())
-#endif
         .def("createDurableConsumer", &Session::createDurableConsumer, return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1> >())
         .def("createProducer", &Session::createProducer, return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1> >())
         .def("createTopic", &Session::createTopic, return_value_policy<manage_new_object>())
@@ -208,12 +170,8 @@ BOOST_PYTHON_MODULE(pyactivemq)
         .def("createTemporaryTopic", &Session::createTemporaryTopic, return_value_policy<manage_new_object>())
         .def("createTemporaryQueue", &Session::createTemporaryQueue, return_value_policy<manage_new_object>())
         .def("createMessage", &Session::createMessage, return_value_policy<manage_new_object>())
-#if 0
-        .def("createTextMessage", &Session::createTextMessage, Session_createTextMessage_overloads());
-#else
         .def("createTextMessage", Session_createTextMessage0, return_value_policy<manage_new_object>())
         .def("createTextMessage", Session_createTextMessage1, return_value_policy<manage_new_object>())
-#endif
         .def("createBytesMessage", Session_createBytesMessage0, return_value_policy<manage_new_object>())
         .def("createMapMessage", &Session::createMapMessage, return_value_policy<manage_new_object>())
         .add_property("acknowledgeMode", &Session::getAcknowledgeMode)
