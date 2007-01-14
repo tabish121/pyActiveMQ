@@ -32,6 +32,7 @@ Connection* (ActiveMQConnectionFactory::*ActiveMQConnectionFactory_createConnect
     &ActiveMQConnectionFactory::createConnection;
 
 Session* (Connection::*Connection_createSession0)() = &Connection::createSession;
+Session* (Connection::*Connection_createSession1)(Session::AcknowledgeMode) = &Connection::createSession;
 
 MessageConsumer* (Session::*Session_createConsumer1)(const Destination*) = &Session::createConsumer;
 MessageConsumer* (Session::*Session_createConsumer2)(const Destination*, const std::string&) = &Session::createConsumer;
@@ -148,6 +149,9 @@ BOOST_PYTHON_MODULE(pyactivemq)
 #endif
         .def("createSession",
              Connection_createSession0,
+             return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1> >())
+        .def("createSession",
+             Connection_createSession1,
              return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1> >())
         ;
 
