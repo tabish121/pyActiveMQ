@@ -9,6 +9,7 @@ if sys.platform == 'win32':
         ]
     libraries=[
         'activemq-cpp',
+        'uuid',
         'boost_python-vc71-mt-gd-1_33_1'
         ]
     library_dirs=[
@@ -21,9 +22,13 @@ else:
         ]
     libraries=[
         'activemq-cpp',
+        'uuid',
         'boost_python'
         ]
-    library_dirs=['/usr/lib']
+    library_dirs=[
+        '/usr/lib',
+        #'/path/to/amqcpp/lib'
+        ]
 
 files = [os.path.join('src', 'main', 'pyactivemq.cpp')]
 

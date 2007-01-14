@@ -84,7 +84,7 @@ struct vector_to_list
     static PyObject* convert(const std::vector<std::string>& x)
     {
         list y;
-        for (std::vector<T>::const_iterator it = x.begin();
+        for (typename std::vector<T>::const_iterator it = x.begin();
              it != x.end();
              ++it)
         {

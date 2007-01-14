@@ -16,7 +16,17 @@
 
 import os
 import sys
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'win_build', 'debug'))
+topdir = os.path.join(os.path.dirname(__file__), '..', '..')
+topdir = os.path.abspath(topdir)
+from distutils.util import get_platform
+print get_platform()
+if sys.platform == 'win32':
+    sys.path.insert(0, os.path.join(topdir, 'win_build', 'debug'))
+else:
+    plat_specifier = ".%s-%s" % (get_platform(), sys.version[0:3])
+    build_base = os.path.join(topdir, 'build')
+    build_platlib = os.path.join(build_base, 'lib' + plat_specifier)
+    sys.path.insert(0, build_platlib)
 
 import time
 
