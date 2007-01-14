@@ -87,6 +87,8 @@ except UserWarning:
     pass
 
 textMessage = session.createTextMessage()
+assert isinstance(textMessage, pyactivemq.Message)
+assert isinstance(textMessage, pyactivemq.TextMessage)
 textMessage.text = "bye"
 assert textMessage.text == "bye"
 textMessage = session.createTextMessage("hello")
@@ -101,6 +103,8 @@ assert textMessage.replyTo is None
 textMessage.replyTo = queue
 
 bytesMessage = session.createBytesMessage()
+assert isinstance(bytesMessage, pyactivemq.Message)
+assert isinstance(bytesMessage, pyactivemq.BytesMessage)
 assert bytesMessage.bodyLength == 0
 
 consumer = session.createConsumer(topic)
@@ -115,6 +119,10 @@ msg = consumer.receive()
 print 'received a', msg
 str(msg.destination) == str(topic)
 str(msg.replyTo) == str(queue)
+
+assert isinstance(msg, pyactivemq.Message)
+# XXX figure out how to make this work
+#assert isinstance(msg, pyactivemq.TextMessage)
 
 # XXX sleep, let exception listener fire and doing keyboard interrupt
 # leads to a crash
