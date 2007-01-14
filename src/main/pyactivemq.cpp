@@ -33,9 +33,43 @@ Connection* (ActiveMQConnectionFactory::*ActiveMQConnectionFactory_createConnect
 
 Session* (Connection::*Connection_createSession0)() = &Connection::createSession;
 
-void (TextMessage::*TextMessage_setText)(const std::string&) = &TextMessage::setText;
-
+#if 0
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(Session_createConsumer_overloads, createConsumer, 1, 3)
+#else
+MessageConsumer* (Session::*Session_createConsumer1)(const Destination*) = &Session::createConsumer;
+MessageConsumer* (Session::*Session_createConsumer2)(const Destination*, const std::string&) = &Session::createConsumer;
+MessageConsumer* (Session::*Session_createConsumer3)(const Destination*, const std::string&, bool) = &Session::createConsumer;
+#endif
+
+#if 0
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(Session_createTextMessage_overloads, createTextMessage, 0, 1)
+#else
+TextMessage* (Session::*Session_createTextMessage0)() = &Session::createTextMessage;
+TextMessage* (Session::*Session_createTextMessage1)(const std::string&) = &Session::createTextMessage;
+#endif
+
+#if 0
+#else
+BytesMessage* (Session::*Session_createBytesMessage0)() = &Session::createBytesMessage;
+// TODO 2-argument createBytesMessage
+#endif
+
+#if 0
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(MessageConsumer_receive_overloads, receive, 0, 1)
+#else
+Message* (MessageConsumer::*MessageConsumer_receive0)() = &MessageConsumer::receive;
+Message* (MessageConsumer::*MessageConsumer_receive1)(int) = &MessageConsumer::receive;
+#endif
+
+#if 0
+#else
+void (MessageProducer::*MessageProducer_send1)(Message*) = &MessageProducer::send;
+void (MessageProducer::*MessageProducer_send4)(Message*, int, int, long long) = &MessageProducer::send;
+void (MessageProducer::*MessageProducer_send2)(const Destination*, Message*) = &MessageProducer::send;
+void (MessageProducer::*MessageProducer_send5)(const Destination*, Message*, int, int, long long) = &MessageProducer::send;
+#endif
+
+void (TextMessage::*TextMessage_setText)(const std::string&) = &TextMessage::setText;
 
 void CMSException_translator(const CMSException& e) {
     PyErr_SetString(PyExc_UserWarning, e.getMessage().c_str());
@@ -65,9 +99,26 @@ struct MessageListenerWrap : MessageListener, wrapper<MessageConsumer>
     }
 };
 
+template<typename T>
+struct vector_to_list
+{
+    static PyObject* convert(const std::vector<std::string>& x)
+    {
+        list y;
+        for (std::vector<T>::const_iterator it = x.begin();
+             it != x.end();
+             ++it)
+        {
+             y.append(*it);
+        }
+        return y.ptr();
+    }
+};
+
 BOOST_PYTHON_MODULE(pyactivemq)
 {
     register_exception_translator<CMSException>(CMSException_translator);
+    to_python_converter<std::vector<std::string>, vector_to_list<std::string> >();
 
     class_<ActiveMQConnectionFactory>("ActiveMQConnectionFactory")
         .def(init<const std::string&, optional<const std::string&, const std::string&, const std::string&> >())
@@ -108,7 +159,6 @@ BOOST_PYTHON_MODULE(pyactivemq)
 #endif
         ;
 
-
     class_<Startable, boost::noncopyable>("Startable", no_init)
         .def("start", &Startable::start)
         ;
@@ -132,7 +182,11 @@ BOOST_PYTHON_MODULE(pyactivemq)
         .def("createSession", Connection_createSession0, return_value_policy<manage_new_object>())
         ;
 
-    class_<Session, boost::noncopyable>("Session", no_init)
+    // TODO need to keep a reference to Session while stuff it created
+    // is alive, especially producers and consumers
+    // TOOD probably need with_custodian_and_ward_postcall in a few places
+    // http://mail.python.org/pipermail/c++-sig/2004-November/008189.html
+    class_<Session, bases<Closeable>, boost::noncopyable>("Session", no_init)
         .def("commit", &Session::commit)
         .def("rollback", &Session::rollback)
 #if 0
@@ -142,16 +196,25 @@ BOOST_PYTHON_MODULE(pyactivemq)
                  args("destination", "selector", "nolocal"),
                  "XXX docstring")
              [return_value_policy<manage_new_object>()])
+#else
+        .def("createConsumer", Session_createConsumer1, return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1>>())
+        .def("createConsumer", Session_createConsumer2, return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1>>())
+        .def("createConsumer", Session_createConsumer3, return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1>>())
 #endif
+        .def("createDurableConsumer", &Session::createDurableConsumer, return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1> >())
+        .def("createProducer", &Session::createProducer, return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1> >())
         .def("createTopic", &Session::createTopic, return_value_policy<manage_new_object>())
         .def("createQueue", &Session::createQueue, return_value_policy<manage_new_object>())
         .def("createTemporaryTopic", &Session::createTemporaryTopic, return_value_policy<manage_new_object>())
         .def("createTemporaryQueue", &Session::createTemporaryQueue, return_value_policy<manage_new_object>())
         .def("createMessage", &Session::createMessage, return_value_policy<manage_new_object>())
 #if 0
-        .def("createTextMessage", &Session::createTextMessage, return_value_policy<manage_new_object>())
-        .def("createBytesMessage", &Session::createBytesMessage, return_value_policy<manage_new_object>())
+        .def("createTextMessage", &Session::createTextMessage, Session_createTextMessage_overloads());
+#else
+        .def("createTextMessage", Session_createTextMessage0, return_value_policy<manage_new_object>())
+        .def("createTextMessage", Session_createTextMessage1, return_value_policy<manage_new_object>())
 #endif
+        .def("createBytesMessage", Session_createBytesMessage0, return_value_policy<manage_new_object>())
         .def("createMapMessage", &Session::createMapMessage, return_value_policy<manage_new_object>())
         .add_property("acknowledgeMode", &Session::getAcknowledgeMode)
         .add_property("transacted", &Session::isTransacted)
@@ -212,7 +275,7 @@ BOOST_PYTHON_MODULE(pyactivemq)
         .def("acknowledge", &Message::acknowledge)
         .def("clearBody", &Message::clearBody)
         .def("clearProperties", &Message::clearProperties)
-        // TODO getPropertyNames
+        .add_property("propertyNames", &Message::getPropertyNames)
         .def("propertyExists", &Message::propertyExists)
         .def("getBooleanProperty", &Message::getBooleanProperty)
         .def("getByteProperty", &Message::getByteProperty)
@@ -317,10 +380,10 @@ BOOST_PYTHON_MODULE(pyactivemq)
         ;
 
     class_<MessageProducer, bases<Closeable>, boost::noncopyable>("MessageProducer", no_init)
-        //send( message )
-        //send( message, deliveryMode, priority, timeToLive )
-        //send( destination, message )
-        //send( destination, message, deliveryMode, priority, timeToLive)
+        .def("send", MessageProducer_send1)
+        .def("send", MessageProducer_send4)
+        .def("send", MessageProducer_send2)
+        .def("send", MessageProducer_send5)
         .add_property("deliveryMode",
                       &MessageProducer::getDeliveryMode,
                       &MessageProducer::setDeliveryMode)
@@ -343,11 +406,16 @@ BOOST_PYTHON_MODULE(pyactivemq)
         ;
 
     class_<MessageConsumer, bases<Closeable>, boost::noncopyable>("MessageConsumer", no_init)
-        // TODO make messageListener a property
-        // TODO 2 receive signatures
+        .def("receive", MessageConsumer_receive0, return_value_policy<manage_new_object>())
+        .def("receive", MessageConsumer_receive1, return_value_policy<manage_new_object>())
         .def("receiveNoWait",
              &MessageConsumer::receiveNoWait,
              return_value_policy<manage_new_object>())
+#if 0
+        .add_property("messageListener",
+                      &MessageConsumer::getMessageListener,
+                      make_setter(&MessageConsumer::setMessageListener))
+#endif
         .add_property("messageSelector", &MessageConsumer::getMessageSelector)
         ;
 }

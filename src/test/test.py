@@ -18,6 +18,12 @@ import os
 import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'win_build', 'debug'))
 
+from pyactivemq import AcknowledgeMode
+print int(AcknowledgeMode.AUTO_ACKNOWLEDGE)
+print int(AcknowledgeMode.DUPS_OK_ACKNOWLEDGE)
+print int(AcknowledgeMode.CLIENT_ACKNOWLEDGE)
+print int(AcknowledgeMode.SESSION_TRANSACTED)
+
 from pyactivemq import ActiveMQConnectionFactory
 print ActiveMQConnectionFactory
 f1 = ActiveMQConnectionFactory()
@@ -39,13 +45,33 @@ session = conn.createSession()
 print session
 print session.transacted
 
-print session.createTopic
-print session.createQueue
-#print session.createConsumer
-#textMessage = session.createTextMessage()
 
-from pyactivemq import AcknowledgeMode
-print int(AcknowledgeMode.AUTO_ACKNOWLEDGE)
-print int(AcknowledgeMode.DUPS_OK_ACKNOWLEDGE)
-print int(AcknowledgeMode.CLIENT_ACKNOWLEDGE)
-print int(AcknowledgeMode.SESSION_TRANSACTED)
+topic = session.createTopic("topic")
+queue = session.createQueue("queue")
+#print session.createConsumer
+textMessage = session.createTextMessage()
+print textMessage
+textMessage.text = "bye"
+assert textMessage.text == "bye"
+textMessage = session.createTextMessage("hello")
+assert textMessage.text == "hello"
+
+textMessage.setIntProperty('int1', 123)
+print len(textMessage.propertyNames)
+# XXX this crashes
+#print textMessage.propertyNames[0]
+
+bytesMessage = session.createBytesMessage()
+print bytesMessage
+assert bytesMessage.bodyLength == 0
+
+
+consumer = session.createConsumer(topic)
+producer = session.createProducer(topic)
+conn.start()
+producer.send(textMessage)
+msg = consumer.receive()
+print msg
+
+session.close()
+conn.close()
