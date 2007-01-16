@@ -19,6 +19,7 @@
 
 #include <boost/python.hpp>
 #include <cms/MessageListener.h>
+#include <cms/Message.h>
 
 using namespace boost::python;
 using cms::MessageListener;
