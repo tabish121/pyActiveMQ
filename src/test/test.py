@@ -65,7 +65,7 @@ f = ActiveMQConnectionFactory('tcp://localhost:61613')
 conn = f.createConnection()
 assert conn.exceptionListener is None
 # XXX need to sort out a few more issues with exception listeners
-#conn.exceptionListener = ExceptionListener()
+conn.exceptionListener = ExceptionListener()
 session = conn.createSession()
 assert not session.transacted
 
@@ -96,8 +96,7 @@ assert textMessage.text == "hello"
 
 textMessage.setIntProperty('int1', 123)
 assert 1 == len(textMessage.propertyNames)
-# XXX this crashes
-#print textMessage.propertyNames[0]
+assert 'int1' == textMessage.propertyNames[0]
 assert textMessage.destination is None
 assert textMessage.replyTo is None
 textMessage.replyTo = queue
@@ -106,6 +105,20 @@ bytesMessage = session.createBytesMessage()
 assert isinstance(bytesMessage, pyactivemq.Message)
 assert isinstance(bytesMessage, pyactivemq.BytesMessage)
 assert bytesMessage.bodyLength == 0
+
+try:
+    mapMessage = session.createMapMessage()
+    assert False
+
+    assert isinstance(bytesMessage, pyactivemq.Message)
+    assert isinstance(bytesMessage, pyactivemq.MapMessage)
+    mapMessage.setInt('int1', 123)
+    assert 123 == mapMessage.getInt('int1')
+    assert len(mapMessage.mapNames) == 1
+    assert 'int1' in mapMessage.mapNames
+except UserWarning:
+    # not implemented for stomp
+    pass
 
 consumer = session.createConsumer(topic)
 assert consumer.messageListener is None
@@ -124,8 +137,8 @@ assert isinstance(msg, pyactivemq.Message)
 # XXX figure out how to make this work
 #assert isinstance(msg, pyactivemq.TextMessage)
 
-# XXX sleep, let exception listener fire and doing keyboard interrupt
-# leads to a crash
+# XXX Sleep, let exception listener fire and then do keyboard
+# interrupt.  Leads to a crash while deleting Connection object
 #time.sleep(100000)
 
 session.close()

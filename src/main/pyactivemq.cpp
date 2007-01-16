@@ -78,6 +78,32 @@ struct MessageListenerWrap : MessageListener, wrapper<MessageConsumer>
 };
 
 template<typename T>
+struct to_tuple
+{
+    static PyObject* convert(const T& c)
+    {
+        list result;
+        for (typename T::const_iterator it = c.begin();
+             it != c.end();
+             ++it)
+        {
+            result.append(*it);
+        }
+        return incref(tuple(result).ptr());
+    }
+};
+
+template<typename T>
+struct std_vector_to_tuple
+{
+    std_vector_to_tuple()
+    {
+        to_python_converter<std::vector<T>,
+            to_tuple<std::vector<T> > >();
+    }
+};
+
+template<typename T>
 struct vector_to_list
 {
     static PyObject* convert(const std::vector<std::string>& x)
@@ -96,7 +122,7 @@ struct vector_to_list
 BOOST_PYTHON_MODULE(pyactivemq)
 {
     register_exception_translator<CMSException>(CMSException_translator);
-    to_python_converter<std::vector<std::string>, vector_to_list<std::string> >();
+    std_vector_to_tuple<std::string>();
 
     class_<ConnectionFactory, boost::noncopyable>("ConnectionFactory", no_init)
         .def("createConnection",
@@ -301,7 +327,7 @@ BOOST_PYTHON_MODULE(pyactivemq)
     // TODO see if we can do something to make MapMessage work nicely
     // with python maps
     class_<MapMessage, bases<Message>, boost::noncopyable>("MapMessage", no_init)
-        // TODO getMapNames
+        .add_property("mapNames", &MapMessage::getMapNames)
         .def("itemExists", &MapMessage::itemExists)
         .def("getBoolean", &MapMessage::getBoolean)
         .def("setBoolean", &MapMessage::setBoolean)
