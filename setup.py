@@ -30,7 +30,8 @@ else:
         #'/path/to/amqcpp/lib'
         ]
 
-files = [os.path.join('src', 'main', 'pyactivemq.cpp')]
+import glob
+files = glob.glob(os.path.join('src', 'main', '*.cpp'))
 
 setup(name='pyactivemq',
       ext_modules=[

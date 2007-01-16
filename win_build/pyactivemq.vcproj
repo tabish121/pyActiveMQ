@@ -174,7 +174,59 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\src\main\ActiveMQConnectionFactory.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\main\BytesMessage.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\main\Connection.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\main\ConnectionFactory.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\main\Destinations.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\main\ExceptionListener.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\main\MapMessage.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\main\Message.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\main\MessageConsumer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\main\MessageListener.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\main\MessageProducer.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\src\main\pyactivemq.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\main\Session.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\main\TextMessage.cpp"
 				>
 			</File>
 		</Filter>
