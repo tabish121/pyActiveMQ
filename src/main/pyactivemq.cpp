@@ -67,7 +67,7 @@ struct ExceptionListenerWrap : ExceptionListener, wrapper<ExceptionListener>
     }
 };
 
-struct MessageListenerWrap : MessageListener, wrapper<MessageConsumer>
+struct MessageListenerWrap : MessageListener, wrapper<MessageListener>
 {
     virtual void onMessage(const Message* message)
     {
