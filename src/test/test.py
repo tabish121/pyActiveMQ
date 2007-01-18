@@ -127,15 +127,26 @@ assert consumer.messageListener is None
 #consumer2.messageListener = MessageListener()
 producer = session.createProducer(topic)
 conn.start()
+
 producer.send(textMessage)
-msg = consumer.receive()
-print 'received a', msg
+msg = consumer.receive(1000)
+assert msg is not None
+print msg
 str(msg.destination) == str(topic)
 str(msg.replyTo) == str(queue)
-
 assert isinstance(msg, pyactivemq.Message)
-# XXX figure out how to make this work
-#assert isinstance(msg, pyactivemq.TextMessage)
+assert isinstance(msg, pyactivemq.TextMessage)
+msg = consumer.receive(50)
+assert msg is None
+
+producer.send(bytesMessage)
+msg = consumer.receive(1000)
+assert msg is not None
+print msg
+str(msg.destination) == str(topic)
+str(msg.replyTo) == str(queue)
+assert isinstance(msg, pyactivemq.Message)
+assert isinstance(msg, pyactivemq.BytesMessage)
 
 # XXX Sleep, let exception listener fire and then do keyboard
 # interrupt.  Leads to a crash while deleting Connection object
