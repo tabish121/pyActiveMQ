@@ -21,19 +21,52 @@ using namespace boost::python;
 using cms::BytesMessage;
 using cms::Message;
 
+std::string BytesMessage_getBodyBytes(BytesMessage const& This)
+{
+    // convert body bytes into a null-terminated buffer
+    char* buffer = new char[This.getBodyLength() + 1];
+    memcpy(buffer, This.getBodyBytes(), This.getBodyLength());
+    buffer[This.getBodyLength()] = '\0';
+    std::string buffer2(buffer);
+    delete buffer;
+    buffer = 0;
+    return buffer2;
+}
+
+void BytesMessage_setBodyBytes(BytesMessage& This, const std::string& buffer)
+{
+    This.setBodyBytes(reinterpret_cast<const unsigned char*>(buffer.c_str()), buffer.length());
+}
+
+std::string BytesMessage_readBytes(BytesMessage& This)
+{
+    std::vector<unsigned char> buffer;
+    int length = This.readBytes(buffer);
+    return "";
+}
+
+void BytesMessage_writeBytes(BytesMessage& This, const std::string& buffer)
+{
+    std::vector<unsigned char> buffer2(buffer.size());
+    for (std::size_t i = 0; i < buffer.size(); i++)
+    {
+        buffer2.push_back(buffer[i]);
+    }
+    This.writeBytes(buffer2);
+}
+
 void export_BytesMessage()
 {
     class_<BytesMessage, bases<Message>, boost::noncopyable>("BytesMessage", no_init)
-        // TODO setBodyBytes -- do something with buffer protocol?
-        // TODO getBodyBytes
+        .add_property("bodyBytes", BytesMessage_getBodyBytes, BytesMessage_setBodyBytes)
         .add_property("bodyLength", &BytesMessage::getBodyLength)
         .def("reset", &BytesMessage::reset)
         .def("readBoolean", &BytesMessage::readBoolean)
         .def("writeBoolean", &BytesMessage::writeBoolean)
         .def("readByte", &BytesMessage::readByte)
         .def("writeByte", &BytesMessage::writeByte)
-        // TODO readBytes
-        // TODO writeBytes
+        .def("readBytes", BytesMessage_readBytes)
+        .def("writeBytes", BytesMessage_writeBytes)
         .def("readChar", &BytesMessage::readChar)
         .def("writeChar", &BytesMessage::writeChar)
         .def("readFloat", &BytesMessage::readFloat)
@@ -52,6 +85,5 @@ void export_BytesMessage()
         .def("writeString", &BytesMessage::writeString)
         .def("readUTF", &BytesMessage::readUTF)
         .def("writeUTF", &BytesMessage::writeUTF)
-        // TODO clone?
         ;
 }

@@ -24,8 +24,12 @@ using namespace boost::python;
 using cms::MapMessage;
 using cms::Message;
 
-// TODO see if we can do something to make MapMessage work nicely with
-// python maps
+// TODO see if we can do something to make MapMessage work like a Python map
+
+const char* MapMessage_getBytes(MapMessage& This, const std::string& name)
+{
+    return reinterpret_cast<const char*>(This.getBytes(name));
+}
 
 void export_MapMessage()
 {
@@ -36,10 +40,7 @@ void export_MapMessage()
         .def("setBoolean", &MapMessage::setBoolean)
         .def("getByte", &MapMessage::getByte)
         .def("setByte", &MapMessage::setByte)
-#if 0
-        // TODO need a return value policy
-        .def("getBytes", &MapMessage::getBytes)
-#endif
+        .def("getBytes", MapMessage_getBytes)
         .def("setBytes", &MapMessage::setBytes)
         .def("getChar", &MapMessage::getChar)
         .def("setChar", &MapMessage::setChar)

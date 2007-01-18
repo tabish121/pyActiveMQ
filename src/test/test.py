@@ -105,13 +105,15 @@ bytesMessage = session.createBytesMessage()
 assert isinstance(bytesMessage, pyactivemq.Message)
 assert isinstance(bytesMessage, pyactivemq.BytesMessage)
 assert bytesMessage.bodyLength == 0
+bytesMessage.bodyBytes = 'hello123'
+assert 'hello123' == bytesMessage.bodyBytes
 
 try:
     mapMessage = session.createMapMessage()
     assert False
 
-    assert isinstance(bytesMessage, pyactivemq.Message)
-    assert isinstance(bytesMessage, pyactivemq.MapMessage)
+    assert isinstance(mapMessage, pyactivemq.Message)
+    assert isinstance(mapMessage, pyactivemq.MapMessage)
     mapMessage.setInt('int1', 123)
     assert 123 == mapMessage.getInt('int1')
     assert len(mapMessage.mapNames) == 1
@@ -122,8 +124,8 @@ except UserWarning:
 
 consumer = session.createConsumer(topic)
 assert consumer.messageListener is None
+consumer2 = session.createConsumer(topic)
 # XXX doesn't work yet
-#consumer2 = session.createConsumer(topic)
 #consumer2.messageListener = MessageListener()
 producer = session.createProducer(topic)
 conn.start()
@@ -143,13 +145,24 @@ producer.send(bytesMessage)
 msg = consumer.receive(1000)
 assert msg is not None
 print msg
+assert 'hello123' == msg.bodyBytes
 str(msg.destination) == str(topic)
 str(msg.replyTo) == str(queue)
 assert isinstance(msg, pyactivemq.Message)
 assert isinstance(msg, pyactivemq.BytesMessage)
 
+bytesMessage = session.createBytesMessage()
+bytesMessage.writeBytes('hello123')
+producer.send(bytesMessage)
+msg = consumer.receive(1000)
+assert msg is not None
+# XXX this crashes
+#assert 'hello123' == msg.readBytes()
+
 # XXX Sleep, let exception listener fire and then do keyboard
-# interrupt.  Leads to a crash while deleting Connection object
+# interrupt.  Leads to a crash while deleting Connection object, which
+# looks similar to what is reported here:
+# http://issues.apache.org/activemq/browse/AMQCPP-46
 #time.sleep(100000)
 
 session.close()
