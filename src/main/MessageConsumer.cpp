@@ -61,7 +61,7 @@ struct manage_new_Message
     template <class T>
     struct apply
     {
-        typedef typename to_python_Message<T> type;
+        typedef to_python_Message<T> type;
     };
 };
 
