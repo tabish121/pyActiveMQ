@@ -10,9 +10,12 @@ if sys.platform == 'win32':
     libraries=[
         'activemq-cpp',
         'uuid',
-        'boost_python-vc71-mt-gd-1_33_1'
+        'libboost_python-vc71-mt-1_33_1',
+        'ws2_32',
+        'rpcrt4'
         ]
     library_dirs=[
+        'win_build/release',
         'C:/Program Files/boost/boost_1_33_1/lib'
         ]
 else:
