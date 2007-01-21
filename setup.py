@@ -26,7 +26,6 @@ if sys.platform == 'win32':
     extra_compile_args = ['/GR', '/wd4290']
 else:
     include_dirs = [
-        '/usr/include',
         '../activemq-cpp/src/main'
         ]
     libraries = [
@@ -35,7 +34,6 @@ else:
         'boost_python'
         ]
     library_dirs = [
-        '/usr/lib',
         #'/path/to/amqcpp/lib'
         ]
     data_files = []
