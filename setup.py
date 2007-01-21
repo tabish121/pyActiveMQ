@@ -44,6 +44,9 @@ files = glob.glob(os.path.join('src', 'main', '*.cpp'))
 
 setup(name='pyactivemq',
       version='0.0.1',
+      author='Albert Strasheim',
+      author_email='fullung@gmail.com',
+      url='http://code.google.com/p/pyactivemq/',
       ext_modules=[
         Extension('pyactivemq',
                   files,
