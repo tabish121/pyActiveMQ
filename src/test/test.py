@@ -74,7 +74,24 @@ session = conn.createSession()
 assert not session.transacted
 
 topic = session.createTopic("topic")
+topic2 = session.createTopic("topic2")
 queue = session.createQueue("queue")
+queue2 = session.createQueue("queue2")
+
+assert topic == topic
+assert topic != topic2
+assert topic.destinationType == topic2.destinationType
+assert topic != queue
+assert queue == queue
+assert queue != queue2
+assert queue.destinationType == queue2.destinationType
+assert queue != topic
+
+from pyactivemq import DestinationType
+assert DestinationType.TOPIC == 0
+assert DestinationType.QUEUE == 1
+assert DestinationType.TEMPORARY_TOPIC == 2
+assert DestinationType.TEMPORARY_QUEUE == 3
 
 try:
     temptopic = session.createTemporaryTopic()
@@ -111,6 +128,7 @@ assert isinstance(bytesMessage, pyactivemq.BytesMessage)
 assert bytesMessage.bodyLength == 0
 bytesMessage.bodyBytes = 'hello123'
 assert 'hello123' == bytesMessage.bodyBytes
+bytesMessage.replyTo = topic
 
 try:
     mapMessage = session.createMapMessage()
@@ -138,8 +156,10 @@ producer.send(textMessage)
 msg = consumer.receive(1000)
 assert msg is not None
 print msg
-str(msg.destination) == str(topic)
-str(msg.replyTo) == str(queue)
+assert str(msg.destination) == str(topic)
+assert msg.destination == topic
+assert str(msg.replyTo) == str(queue)
+assert msg.replyTo == queue
 assert isinstance(msg, pyactivemq.Message)
 assert isinstance(msg, pyactivemq.TextMessage)
 msg = consumer.receive(50)
@@ -150,8 +170,10 @@ msg = consumer.receive(1000)
 assert msg is not None
 print msg
 assert 'hello123' == msg.bodyBytes
-str(msg.destination) == str(topic)
-str(msg.replyTo) == str(queue)
+assert msg.destination == topic
+assert str(msg.destination) == str(topic)
+assert str(msg.replyTo) == str(topic)
+assert msg.replyTo == topic
 assert isinstance(msg, pyactivemq.Message)
 assert isinstance(msg, pyactivemq.BytesMessage)
 

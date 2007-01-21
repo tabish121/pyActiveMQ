@@ -28,12 +28,55 @@ using cms::Queue;
 using cms::TemporaryTopic;
 using cms::TemporaryQueue;
 
+bool Destination__eq__(const Destination& self, const Destination& other)
+{
+    if (self.getDestinationType() != other.getDestinationType())
+    {
+        return false;
+    }
+    switch (self.getDestinationType())
+    {
+    case Destination::TOPIC:
+    {
+        const Topic& selfTopic = dynamic_cast<const Topic&>(self);
+        const Topic& otherTopic = dynamic_cast<const Topic&>(other);
+        return selfTopic.getTopicName() == otherTopic.getTopicName();
+    }
+    case Destination::QUEUE:
+    {
+        const Queue& selfQueue = dynamic_cast<const Queue&>(self);
+        const Queue& otherQueue = dynamic_cast<const Queue&>(other);
+        return selfQueue.getQueueName() == otherQueue.getQueueName();
+    }
+    case Destination::TEMPORARY_TOPIC:
+    {
+        const TemporaryTopic& selfTopic =
+            dynamic_cast<const TemporaryTopic&>(self);
+        const TemporaryTopic& otherTopic =
+            dynamic_cast<const TemporaryTopic&>(other);
+        return selfTopic.getTopicName() == otherTopic.getTopicName();
+    }
+    case Destination::TEMPORARY_QUEUE:
+    {
+        const TemporaryQueue& selfQueue =
+            dynamic_cast<const TemporaryQueue&>(self);
+        const TemporaryQueue& otherQueue =
+            dynamic_cast<const TemporaryQueue&>(other);
+        return selfQueue.getQueueName() == otherQueue.getQueueName();
+    }
+    default:
+        // TODO this is actually an error, so throw
+        return false;
+    }
+}
+
 void export_Destinations()
 {
     class_<Destination, boost::noncopyable>("Destination", no_init)
         .add_property("destinationType", &Destination::getDestinationType)
         .def("__str__", &Destination::toString)
         .def("__repr__", &Destination::toString)
+        .def("__eq__", Destination__eq__)
         .add_property("providerString", &Destination::toProviderString)
         ;
 
