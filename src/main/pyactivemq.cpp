@@ -89,6 +89,10 @@ BOOST_PYTHON_MODULE(pyactivemq)
         .def("close", &Closeable::close)
         ;
 
+    class_<CMSException, boost::noncopyable>("CMSException", no_init)
+        .def("getMessage", &CMSException::getMessage)
+        ;
+
     export_ConnectionFactory();
     export_ActiveMQConnectionFactory();
     export_Connection();

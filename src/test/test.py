@@ -33,11 +33,11 @@ import pyactivemq
 import time
 
 class MessageListener(pyactivemq.MessageListener):
-    def onMessage(message):
+    def onMessage(self, message):
         print 'got a', message
 
 class ExceptionListener(pyactivemq.ExceptionListener):
-    def onException(exc):
+    def onException(self, exc):
         print 'got a', exc, 'exception'
 
 assert 0 == int(AcknowledgeMode.AUTO_ACKNOWLEDGE)

@@ -30,7 +30,7 @@ struct ExceptionListenerWrap : ExceptionListener, wrapper<ExceptionListener>
     {
         // should be: this->getOverride("onException")(ex);
         // but that doesn't work with Visual C++
-        call<void>(this->get_override("onException").ptr(), ex);
+        call<void>(this->get_override("onException").ptr(), boost::ref(ex));
     }
 };
 
