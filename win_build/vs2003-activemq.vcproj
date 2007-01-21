@@ -860,6 +860,9 @@
 					RelativePath="..\..\activemq-cpp\src\main\activemq\transport\TransportFactoryMapRegistrar.h">
 				</File>
 				<File
+					RelativePath="..\..\activemq-cpp\src\main\activemq\transport\TransportFilter.cpp">
+				</File>
+				<File
 					RelativePath="..\..\activemq-cpp\src\main\activemq\transport\TransportFilter.h">
 				</File>
 			</Filter>

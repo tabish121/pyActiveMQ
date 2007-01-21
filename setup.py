@@ -4,8 +4,8 @@ import os.path
 import sys
 if sys.platform == 'win32':
     include_dirs = [
-        'C:/Program Files/boost/boost_1_33_1',
-        '../activemq-cpp/src/main'
+        'C:\\Program Files\\boost\\boost_1_33_1',
+        '..\\activemq-cpp\\src\\main'
         ]
     boost_lib = 'boost_python-vc71-mt-1_33_1'
     libraries = [
@@ -17,7 +17,7 @@ if sys.platform == 'win32':
         ]
     boost_lib_dir = 'C:\\Program Files\\boost\\boost_1_33_1\\lib'
     library_dirs = [
-        'win_build/release',
+        'win_build\\release',
         boost_lib_dir
         ]
     data_files = [
