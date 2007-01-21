@@ -370,6 +370,9 @@
 						RelativePath="..\..\activemq-cpp\src\main\activemq\connector\stomp\StompQueue.h">
 					</File>
 					<File
+						RelativePath="..\..\activemq-cpp\src\main\activemq\connector\stomp\StompSelector.cpp">
+					</File>
+					<File
 						RelativePath="..\..\activemq-cpp\src\main\activemq\connector\stomp\StompSelector.h">
 					</File>
 					<File
