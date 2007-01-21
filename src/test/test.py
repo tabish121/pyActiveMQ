@@ -38,7 +38,7 @@ class MessageListener(pyactivemq.MessageListener):
 
 class ExceptionListener(pyactivemq.ExceptionListener):
     def onException(self, exc):
-        print 'got a', exc, 'exception'
+        print exc, ':', exc.message
 
 assert 0 == int(AcknowledgeMode.AUTO_ACKNOWLEDGE)
 assert 1 == int(AcknowledgeMode.DUPS_OK_ACKNOWLEDGE)

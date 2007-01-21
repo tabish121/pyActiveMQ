@@ -90,7 +90,7 @@ BOOST_PYTHON_MODULE(pyactivemq)
         ;
 
     class_<CMSException, boost::noncopyable>("CMSException", no_init)
-        .def("getMessage", &CMSException::getMessage)
+        .add_property("message", &CMSException::getMessage)
         ;
 
     export_ConnectionFactory();
