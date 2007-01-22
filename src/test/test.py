@@ -69,7 +69,7 @@ except UserWarning:
     sys.exit(1)
 assert conn.exceptionListener is None
 # XXX need to sort out a few more issues with exception listeners
-conn.exceptionListener = ExceptionListener()
+#conn.exceptionListener = ExceptionListener()
 session = conn.createSession()
 assert not session.transacted
 
@@ -184,6 +184,28 @@ msg = consumer.receive(1000)
 assert msg is not None
 # XXX this crashes
 #assert 'hello123' == msg.readBytes()
+
+bytesMessage = session.createBytesMessage()
+bytesMessage.bodyBytes = '\x00\x00\x00'
+assert bytesMessage.bodyLength == 3
+producer.send(bytesMessage)
+msg = consumer.receive(1000)
+assert msg is not None
+assert isinstance(msg, pyactivemq.Message)
+assert isinstance(msg, pyactivemq.BytesMessage)
+assert msg.bodyLength == 3
+assert msg.bodyBytes == '\x00\x00\x00'
+
+bytesMessage = session.createBytesMessage()
+bytesMessage.bodyBytes = '\x01\x02\x03'
+assert bytesMessage.bodyLength == 3
+producer.send(bytesMessage)
+msg = consumer.receive(1000)
+assert msg is not None
+assert isinstance(msg, pyactivemq.Message)
+assert isinstance(msg, pyactivemq.BytesMessage)
+assert msg.bodyLength == 3
+assert msg.bodyBytes == '\x01\x02\x03'
 
 # XXX Sleep, let exception listener fire and then do keyboard
 # interrupt.  Leads to a crash while deleting Connection object, which

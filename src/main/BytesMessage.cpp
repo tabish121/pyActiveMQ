@@ -21,16 +21,9 @@ using namespace boost::python;
 using cms::BytesMessage;
 using cms::Message;
 
-std::string BytesMessage_getBodyBytes(BytesMessage const& This)
+PyObject* BytesMessage_getBodyBytes(BytesMessage const& self)
 {
-    // convert body bytes into a null-terminated buffer
-    char* buffer = new char[This.getBodyLength() + 1];
-    memcpy(buffer, This.getBodyBytes(), This.getBodyLength());
-    buffer[This.getBodyLength()] = '\0';
-    std::string buffer2(buffer);
-    delete[] buffer;
-    buffer = 0;
-    return buffer2;
+    return incref(str(reinterpret_cast<const char*>(self.getBodyBytes()),  self.getBodyLength()).ptr());
 }
 
 void BytesMessage_setBodyBytes(BytesMessage& This, const std::string& buffer)
