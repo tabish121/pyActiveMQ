@@ -28,7 +28,7 @@ std::string BytesMessage_getBodyBytes(BytesMessage const& This)
     memcpy(buffer, This.getBodyBytes(), This.getBodyLength());
     buffer[This.getBodyLength()] = '\0';
     std::string buffer2(buffer);
-    delete buffer;
+    delete[] buffer;
     buffer = 0;
     return buffer2;
 }
