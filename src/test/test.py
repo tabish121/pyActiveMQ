@@ -64,7 +64,8 @@ assert f5.clientId == 'clientid'
 f = ActiveMQConnectionFactory('tcp://localhost:61613')
 try:
     conn = f.createConnection()
-except UserWarning:
+except UserWarning, e:
+    print >>sys.stderr, e
     print >>sys.stderr, 'Connection failed. Is the broker running?'
     sys.exit(1)
 assert conn.exceptionListener is None
