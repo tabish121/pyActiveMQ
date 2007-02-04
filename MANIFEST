@@ -16,3 +16,7 @@ src/main/Session.cpp
 src/main/TextMessage.cpp
 src/main/pyactivemq.cpp
 src/test/test.py
+win_build/pyactivemq.sln
+win_build/vs2003-activemq-cpp.sln
+win_build/pyactivemq.vcproj
+win_build/vs2003-activemq.vcproj
