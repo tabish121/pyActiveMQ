@@ -57,7 +57,7 @@ import glob
 files = glob.glob(os.path.join('src', 'main', '*.cpp'))
 
 setup(name='pyactivemq',
-      version='0.0.1',
+      version='0.0.2',
       author='Albert Strasheim',
       author_email='fullung@gmail.com',
       url='http://code.google.com/p/pyactivemq/',
