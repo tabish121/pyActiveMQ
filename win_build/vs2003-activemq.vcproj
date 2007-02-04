@@ -31,9 +31,10 @@
 				UsePrecompiledHeader="0"
 				ObjectFile="$(IntDir)\$(ProjectName)\"
 				ProgramDataBaseFileName="$(IntDir)\$(ProjectName)\vc70.pdb"
-				WarningLevel="2"
+				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="3"/>
+				DebugInformationFormat="3"
+				DisableSpecificWarnings="4290"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -74,9 +75,10 @@
 				UsePrecompiledHeader="0"
 				ObjectFile="$(IntDir)\$(ProjectName)\"
 				ProgramDataBaseFileName="$(IntDir)\$(ProjectName)\vc70.pdb"
-				WarningLevel="2"
+				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="3"/>
+				DebugInformationFormat="3"
+				DisableSpecificWarnings="4290"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -191,6 +193,9 @@
 					RelativePath="..\..\activemq-cpp\src\main\activemq\util\Date.h">
 				</File>
 				<File
+					RelativePath="..\..\activemq-cpp\src\main\activemq\util\Endian.cpp">
+				</File>
+				<File
 					RelativePath="..\..\activemq-cpp\src\main\activemq\util\Endian.h">
 				</File>
 				<File
@@ -230,6 +235,9 @@
 					RelativePath="..\..\activemq-cpp\src\main\activemq\util\Queue.h">
 				</File>
 				<File
+					RelativePath="..\..\activemq-cpp\src\main\activemq\util\Set.h">
+				</File>
+				<File
 					RelativePath="..\..\activemq-cpp\src\main\activemq\util\SimpleProperties.h">
 				</File>
 				<File
@@ -237,6 +245,12 @@
 				</File>
 				<File
 					RelativePath="..\..\activemq-cpp\src\main\activemq\util\StringTokenizer.h">
+				</File>
+				<File
+					RelativePath="..\..\activemq-cpp\src\main\activemq\util\URISupport.cpp">
+				</File>
+				<File
+					RelativePath="..\..\activemq-cpp\src\main\activemq\util\URISupport.h">
 				</File>
 			</Filter>
 			<Filter
@@ -481,6 +495,72 @@
 						</File>
 						<File
 							RelativePath="..\..\activemq-cpp\src\main\activemq\connector\openwire\utils\HexTable.h">
+						</File>
+						<File
+							RelativePath="..\..\activemq-cpp\src\main\activemq\connector\openwire\utils\OpenwireStringSupport.cpp">
+						</File>
+						<File
+							RelativePath="..\..\activemq-cpp\src\main\activemq\connector\openwire\utils\OpenwireStringSupport.h">
+						</File>
+					</Filter>
+					<Filter
+						Name="marshal">
+						<File
+							RelativePath="..\..\activemq-cpp\src\main\activemq\connector\openwire\marshal\PrimitiveMapMarshaller.cpp">
+						</File>
+						<File
+							RelativePath="..\..\activemq-cpp\src\main\activemq\connector\openwire\marshal\PrimitiveMapMarshaller.h">
+						</File>
+					</Filter>
+					<Filter
+						Name="commands">
+						<File
+							RelativePath="..\..\activemq-cpp\src\main\activemq\connector\openwire\commands\ActiveMQDestination.cpp">
+						</File>
+						<File
+							RelativePath="..\..\activemq-cpp\src\main\activemq\connector\openwire\commands\ActiveMQDestination.h">
+						</File>
+						<File
+							RelativePath="..\..\activemq-cpp\src\main\activemq\connector\openwire\commands\ActiveMQQueue.cpp">
+						</File>
+						<File
+							RelativePath="..\..\activemq-cpp\src\main\activemq\connector\openwire\commands\ActiveMQQueue.h">
+						</File>
+						<File
+							RelativePath="..\..\activemq-cpp\src\main\activemq\connector\openwire\commands\ActiveMQTempDestination.cpp">
+						</File>
+						<File
+							RelativePath="..\..\activemq-cpp\src\main\activemq\connector\openwire\commands\ActiveMQTempDestination.h">
+						</File>
+						<File
+							RelativePath="..\..\activemq-cpp\src\main\activemq\connector\openwire\commands\ActiveMQTempQueue.cpp">
+						</File>
+						<File
+							RelativePath="..\..\activemq-cpp\src\main\activemq\connector\openwire\commands\ActiveMQTempQueue.h">
+						</File>
+						<File
+							RelativePath="..\..\activemq-cpp\src\main\activemq\connector\openwire\commands\ActiveMQTempTopic.cpp">
+						</File>
+						<File
+							RelativePath="..\..\activemq-cpp\src\main\activemq\connector\openwire\commands\ActiveMQTempTopic.h">
+						</File>
+						<File
+							RelativePath="..\..\activemq-cpp\src\main\activemq\connector\openwire\commands\ActiveMQTopic.cpp">
+						</File>
+						<File
+							RelativePath="..\..\activemq-cpp\src\main\activemq\connector\openwire\commands\ActiveMQTopic.h">
+						</File>
+						<File
+							RelativePath="..\..\activemq-cpp\src\main\activemq\connector\openwire\commands\BaseCommand.cpp">
+						</File>
+						<File
+							RelativePath="..\..\activemq-cpp\src\main\activemq\connector\openwire\commands\BaseCommand.h">
+						</File>
+						<File
+							RelativePath="..\..\activemq-cpp\src\main\activemq\connector\openwire\commands\BaseDataStructure.h">
+						</File>
+						<File
+							RelativePath="..\..\activemq-cpp\src\main\activemq\connector\openwire\commands\BooleanExpression.h">
 						</File>
 					</Filter>
 				</Filter>
@@ -744,6 +824,12 @@
 				</File>
 				<File
 					RelativePath="..\..\activemq-cpp\src\main\activemq\network\Socket.h">
+				</File>
+				<File
+					RelativePath="..\..\activemq-cpp\src\main\activemq\network\SocketError.cpp">
+				</File>
+				<File
+					RelativePath="..\..\activemq-cpp\src\main\activemq\network\SocketError.h">
 				</File>
 				<File
 					RelativePath="..\..\activemq-cpp\src\main\activemq\network\SocketException.h">
