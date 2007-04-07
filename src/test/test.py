@@ -55,13 +55,8 @@ f4 = ActiveMQConnectionFactory('url', 'user', 'pass')
 assert f4.brokerURL == 'url'
 assert f4.username == 'user'
 assert f4.password == 'pass'
-f5 = ActiveMQConnectionFactory('url', 'user', 'pass', 'clientid')
-assert f5.brokerURL == 'url'
-assert f5.username == 'user'
-assert f5.password == 'pass'
-assert f5.clientId == 'clientid'
 
-f = ActiveMQConnectionFactory('tcp://localhost:61613')
+f = ActiveMQConnectionFactory('tcp://localhost:61613?wireFormat=stomp')
 try:
     conn = f.createConnection()
 except UserWarning, e:

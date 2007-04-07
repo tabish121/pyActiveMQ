@@ -47,19 +47,19 @@ void export_Message()
         .def("setLongProperty", &Message::setLongProperty)
         .def("setShortProperty", &Message::setShortProperty)
         .def("setStringProperty", &Message::setStringProperty)
-        .add_property("correlationId", &Message::getCMSCorrelationId, &Message::setCMSCorrelationId)
+        .add_property("correlationID", &Message::getCMSCorrelationID, &Message::setCMSCorrelationID)
         .add_property("deliveryMode", &Message::getCMSDeliveryMode, &Message::setCMSDeliveryMode)
         .add_property("destination",
                       make_function(&Message::getCMSDestination, return_internal_reference<>()),
                       make_function(&Message::setCMSDestination, with_custodian_and_ward<1,2>()))
         .add_property("expiration", &Message::getCMSExpiration, &Message::setCMSExpiration)
-        .add_property("messageId", &Message::getCMSMessageId, &Message::setCMSMessageId)
+        .add_property("messageID", &Message::getCMSMessageID, &Message::setCMSMessageID)
         .add_property("priority", &Message::getCMSPriority, &Message::setCMSPriority)
         .add_property("redelivered", &Message::getCMSRedelivered, &Message::setCMSRedelivered)
         .add_property("replyTo",
                       make_function(&Message::getCMSReplyTo, return_internal_reference<>()),
                       make_function(&Message::setCMSReplyTo, with_custodian_and_ward<1,2>()))
-        .add_property("timeStamp", &Message::getCMSTimeStamp, &Message::setCMSTimeStamp)
-        .add_property("messageType", &Message::getCMSMessageType, &Message::setCMSMessageType)
+        .add_property("timestamp", &Message::getCMSTimestamp, &Message::setCMSTimestamp)
+        .add_property("type", &Message::getCMSType, &Message::setCMSType)
         ;
 }

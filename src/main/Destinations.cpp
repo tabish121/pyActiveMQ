@@ -74,8 +74,8 @@ void export_Destinations()
 {
     class_<Destination, boost::noncopyable>("Destination", no_init)
         .add_property("destinationType", &Destination::getDestinationType)
-        .def("__str__", &Destination::toString)
-        .def("__repr__", &Destination::toString)
+        .def("__str__", &Destination::toProviderString)
+        .def("__repr__", &Destination::toProviderString)
         .def("__eq__", Destination__eq__)
         .add_property("providerString", &Destination::toProviderString)
         ;

@@ -24,7 +24,7 @@ using cms::ConnectionFactory;
 void export_ActiveMQConnectionFactory()
 {
     class_<ActiveMQConnectionFactory, bases<ConnectionFactory>, boost::noncopyable>("ActiveMQConnectionFactory")
-        .def(init<const std::string&, optional<const std::string&, const std::string&, const std::string&> >())
+        .def(init<const std::string&, optional<const std::string&, const std::string&> >())
         .add_property("username",
                       make_function(&ActiveMQConnectionFactory::getUsername,
                                     return_value_policy<return_by_value>()),
@@ -37,9 +37,5 @@ void export_ActiveMQConnectionFactory()
                       make_function(&ActiveMQConnectionFactory::getBrokerURL,
                                     return_value_policy<return_by_value>()),
                       &ActiveMQConnectionFactory::setBrokerURL)
-        .add_property("clientId",
-                      make_function(&ActiveMQConnectionFactory::getClientId,
-                                    return_value_policy<return_by_value>()),
-                      &ActiveMQConnectionFactory::setClientId)
         ;
 }

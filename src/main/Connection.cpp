@@ -34,7 +34,7 @@ Session* (Connection::*Connection_createSession1)(Session::AcknowledgeMode) =
 void export_Connection()
 {
     class_<Connection, bases<Startable, Stoppable, Closeable>, boost::noncopyable>("Connection", no_init)
-        .add_property("clientId", &Connection::getClientId)
+        .add_property("clientID", &Connection::getClientID)
         .add_property("exceptionListener",
                       make_function(&Connection::getExceptionListener, return_internal_reference<>()),
                       make_function(&Connection::setExceptionListener, with_custodian_and_ward<1,2>()))

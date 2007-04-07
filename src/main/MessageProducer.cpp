@@ -47,9 +47,9 @@ void export_MessageProducer()
         .add_property("deliveryMode",
                       &MessageProducer::getDeliveryMode,
                       &MessageProducer::setDeliveryMode)
-        .add_property("disableMessageId",
-                      &MessageProducer::getDisableMessageId,
-                      &MessageProducer::setDisableMessageId)
+        .add_property("disableMessageID",
+                      &MessageProducer::getDisableMessageID,
+                      &MessageProducer::setDisableMessageID)
         .add_property("disableMessageTimeStamp",
                       &MessageProducer::getDisableMessageTimeStamp,
                       &MessageProducer::setDisableMessageTimeStamp)

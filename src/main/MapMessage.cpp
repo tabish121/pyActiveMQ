@@ -28,7 +28,11 @@ using cms::Message;
 
 const char* MapMessage_getBytes(MapMessage& This, const std::string& name)
 {
+#if 0
     return reinterpret_cast<const char*>(This.getBytes(name));
+#else
+    return 0;
+#endif
 }
 
 void export_MapMessage()
