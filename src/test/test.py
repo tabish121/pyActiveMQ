@@ -108,14 +108,35 @@ class _test_any_protocol:
         random_id = "%08x" % rand.randrange(0, 2**31)
         return session.createTopic("topic-%s" % random_id)
 
-    def test_default_exceptionListener_is_None(self):
-        self.assert_(self.conn.exceptionListener is None)
+    def test_Connection(self):
+        conn = self.conn
+        self.assert_(conn.exceptionListener is None)
+        self.assert_(isinstance(conn, pyactivemq.Closeable))
+        self.assert_(isinstance(conn, pyactivemq.Connection))
+        from pyactivemq import AcknowledgeMode
+        self.conn.createSession(AcknowledgeMode.AUTO_ACKNOWLEDGE)
+        self.conn.createSession(AcknowledgeMode.DUPS_OK_ACKNOWLEDGE)
+        self.conn.createSession(AcknowledgeMode.CLIENT_ACKNOWLEDGE)
+        self.conn.createSession(AcknowledgeMode.SESSION_TRANSACTED)
+        conn.close()
 
-    def test_session_not_transacted(self):
+    def test_Session(self):
         session = self.conn.createSession()
+        self.assert_(isinstance(session, pyactivemq.Closeable))
+        self.assert_(isinstance(session, pyactivemq.Session))
         self.assert_(not session.transacted)
+        from pyactivemq import AcknowledgeMode
+        ackmode = AcknowledgeMode.AUTO_ACKNOWLEDGE
+        self.assertEqual(ackmode, session.acknowledgeMode)
+        try:
+            session.acknowledgeMode = ackmode
+            self.assert_(False)
+        except AttributeError:
+            # shouldn't be able to set this attribute
+            self.assert_(True)
+        session.close()
 
-    def test_topics_queues(self):
+    def test_Topic_and_Queue(self):
         session = self.conn.createSession()
         topic = session.createTopic("topic")
         self.assertEqual("topic", topic.name)
@@ -134,6 +155,15 @@ class _test_any_protocol:
         self.assertEqual(queue.destinationType, queue2.destinationType)
         self.assertNotEqual(queue, topic)
 
+    def test_MessageConsumer(self):
+        session = self.conn.createSession()
+        topic = session.createTopic("topic")
+        consumer1 = session.createConsumer(topic)
+        self.assert_(isinstance(consumer1, pyactivemq.Closeable))
+        self.assert_(isinstance(consumer1, pyactivemq.MessageConsumer))
+        consumer2 = session.createConsumer(topic, "selector")
+        consumer2 = session.createConsumer(topic, "selector", True)
+
     def test_MessageProducer(self):
         session = self.conn.createSession()
         topic = session.createTopic("topic")
@@ -148,9 +178,20 @@ class _test_any_protocol:
         self.assertEqual(False, producer.disableMessageTimeStamp)
         producer.disableMessageTimeStamp = True
         self.assertEqual(True, producer.disableMessageTimeStamp)
+        # time to live of 0 means message never expires
         self.assertEqual(0, producer.timeToLive)
+        # unit of time to live is milliseconds
         producer.timeToLive = 60
         self.assertEqual(60, producer.timeToLive)
+
+    def xtest_durable_consumer(self):
+        # TODO test durable subscription
+        #session = self.conn.createSession()
+        #subscriptionName = "mysub"
+        #f = session.createDurableConsumer
+        #consumer3 = f(topic, subscriptionName, "selector", False)
+        #session.unsubscribe(subscriptionName)
+        pass
 
     def test_TextMessage(self):
         session = self.conn.createSession()
@@ -278,6 +319,34 @@ class _test_any_protocol:
         self.assertEqual(3, msg.bodyLength)
         self.assertEqual('\x01\x02\x03', msg.bodyBytes)
 
+    def test_transaction(self):
+        from pyactivemq import AcknowledgeMode
+        session = self.conn.createSession(AcknowledgeMode.SESSION_TRANSACTED)
+        self.assert_(session.transacted)
+        topic = self.random_topic(session)
+        consumer = session.createConsumer(topic)
+        producer = session.createProducer(topic)
+        textMessage = session.createTextMessage()
+        textMessage.text = 'hello123'
+        producer.send(textMessage)
+        producer.send(textMessage)
+        session.rollback()
+        producer.send(textMessage)
+        session.commit()
+        msg = consumer.receive(1000)
+        self.assert_(msg is not None)
+        self.assertEqual('hello123', msg.text)
+        # two sends were rolled back, so expect only one message
+        msg = consumer.receive(500)
+        self.assert_(msg is None)
+        # roll session back so message is available again
+        session.rollback()
+        msg = consumer.receive(1000)
+        self.assertEqual('hello123', msg.text)
+        self.assert_(msg is not None)
+        msg = consumer.receive(500)
+        self.assert_(msg is None)
+
 class test_stomp(_test_any_protocol, unittest.TestCase):
     def setUp(self):
         self.url = 'tcp://localhost:61613?wireFormat=stomp'
@@ -351,6 +420,25 @@ class test_openwire(_test_any_protocol, unittest.TestCase):
         self.assertEqual(123, mapMessage.getInt('int1'))
         self.assertEqual(1, len(mapMessage.mapNames))
         self.assert_('int1' in mapMessage.mapNames)
+
+    def test_nolocal(self):
+        # TODO this test might also apply to Stomp, but noLocal
+        # doesn't seem to work when using Stomp at present
+        session = self.conn.createSession()
+        textMessage = session.createTextMessage()
+        topic = self.random_topic(session)
+        # consumer with empty selector
+        consumer1 = session.createConsumer(topic, "")
+        # consumer with empty selector and nolocal set
+        consumer2 = session.createConsumer(topic, "", True)
+        producer = session.createProducer(topic)
+        self.conn.start()
+        producer.send(textMessage)
+        msg = consumer1.receive(2000)
+        self.assert_(msg is not None)
+        # nolocal consumer shouldn't receive the message
+        msg = consumer2.receive(500)
+        self.assert_(msg is None)
 
 # XXX Sleep, let exception listener fire and then do keyboard
 # interrupt.  Leads to a crash while deleting Connection object, which

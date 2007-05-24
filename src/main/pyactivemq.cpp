@@ -17,11 +17,12 @@
 // TODO map clones so that they work with Python's copy module
 
 #include <boost/python.hpp>
-#include <cms/CMSException.h>
+
 #include <cms/Startable.h>
 #include <cms/Stoppable.h>
 #include <cms/Closeable.h>
 #include <cms/DeliveryMode.h>
+#include <cms/CMSException.h>
 
 using namespace boost::python;
 using cms::CMSException;
@@ -75,7 +76,6 @@ void export_MessageConsumer();
 
 BOOST_PYTHON_MODULE(pyactivemq)
 {
-    register_exception_translator<CMSException>(CMSException_translator);
     std_vector_to_tuple<std::string>();
 
     class_<Startable, boost::noncopyable>("Startable", no_init)
@@ -90,9 +90,14 @@ BOOST_PYTHON_MODULE(pyactivemq)
         .def("close", &Closeable::close)
         ;
 
+    void (CMSException::*CMSException_printStackTrace0)() const =
+        &CMSException::printStackTrace;
     class_<CMSException, boost::noncopyable>("CMSException", no_init)
+        .def("printStackTrace", CMSException_printStackTrace0)
+        .def("getStackTraceString", &CMSException::getStackTraceString)
         .add_property("message", &CMSException::getMessage)
         ;
+    register_exception_translator<CMSException>(CMSException_translator);
 
     export_ConnectionFactory();
     export_ActiveMQConnectionFactory();
@@ -108,7 +113,10 @@ BOOST_PYTHON_MODULE(pyactivemq)
     export_MessageListener();
     export_MessageConsumer();
 
+#if 1
+    // TODO DeliveryMode causes problems with GCC
     scope s = class_<cms::DeliveryMode, boost::noncopyable>("DeliveryMode", no_init);
     s.attr("PERSISTENT") = cms::DeliveryMode::PERSISTENT;
     s.attr("NON_PERSISTENT") = cms::DeliveryMode::NON_PERSISTENT;
+#endif
 }

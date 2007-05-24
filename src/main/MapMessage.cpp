@@ -14,9 +14,6 @@
   limitations under the License.
 */
 
-// TODO look at issues with the GIL here when multiple session threads
-// call into the Python code (could happen with Openwire?)
-
 #include <boost/python.hpp>
 #include <cms/MapMessage.h>
 
