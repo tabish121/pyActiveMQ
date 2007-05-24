@@ -21,7 +21,7 @@ if sys.platform == 'win32':
         'C:\\Program Files\\boost\\boost_1_33_1',
         '..\\activemq-cpp\\src\\main'
         ]
-    boost_lib = 'boost_python-vc71-mt-1_33_1'
+    boost_lib = 'libboost_python-vc71-mt-1_33_1'
     libraries = [
         'activemq-cpp',
         'uuid',
@@ -34,10 +34,8 @@ if sys.platform == 'win32':
         'win_build\\release',
         boost_lib_dir
         ]
-    data_files = [
-        os.path.join(boost_lib_dir, boost_lib + '.dll')
-        ]
     extra_compile_args = ['/GR', '/wd4290']
+    define_macros = [('BOOST_PYTHON_STATIC_LIB', 1)]
 else:
     include_dirs = [
         '../activemq-cpp/src/main'
@@ -50,8 +48,8 @@ else:
     library_dirs = [
         #'/path/to/amqcpp/lib'
         ]
-    data_files = []
     extra_compile_args = []
+    define_macros = []
 
 import glob
 files = glob.glob(os.path.join('src', 'main', '*.cpp'))
@@ -68,6 +66,7 @@ setup(name='pyactivemq',
                   libraries=libraries,
                   include_dirs=include_dirs,
                   extra_compile_args=extra_compile_args,
-                  depends=[]),
-        ],
-      data_files=data_files)
+                  depends=[],
+                  define_macros=define_macros),
+        ]
+      )

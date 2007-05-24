@@ -41,7 +41,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\src\main;&quot;..\..\activemq-cpp\src\main&quot;;&quot;C:\Program Files\boost\boost_1_33_1&quot;;C:\Python24\include;&quot;C:\Program Files\Microsoft Platform SDK\Include&quot;"
-				PreprocessorDefinitions="_DEBUG;_DLL;_WIN32;WIN32;_WINDOWS;_MBCS;_USE_MATH_DEFINES;NOMINMAX;VC_EXTRALEAN;WIN32_LEAN_AND_MEAN;BOOST_LIB_DIAGNOSTIC;BOOST_ALL_DYN_LINK"
+				PreprocessorDefinitions="_DEBUG;_DLL;_WIN32;WIN32;_WINDOWS;_MBCS;_USE_MATH_DEFINES;NOMINMAX;VC_EXTRALEAN;WIN32_LEAN_AND_MEAN;BOOST_LIB_DIAGNOSTIC;BOOST_PYTHON_STATIC_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -62,7 +62,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="boost_python-vc80-mt-gd-1_33_1.lib ws2_32.lib rpcrt4.lib"
+				AdditionalDependencies="libboost_python-vc80-mt-gd-1_33_1.lib ws2_32.lib rpcrt4.lib"
 				AdditionalLibraryDirectories="C:\Program Files\Microsoft Platform SDK\Lib;C:\Program Files\boost\boost_1_33_1\lib;C:\Python24\libs"
 				GenerateDebugInformation="true"
 			/>
@@ -117,7 +117,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="..\src\main;&quot;..\..\activemq-cpp\src\main&quot;;&quot;C:\Program Files\boost\boost_1_33_1&quot;;C:\Python24\include;&quot;C:\Program Files\Microsoft Platform SDK\Include&quot;"
-				PreprocessorDefinitions="NDEBUG;_DLL;_WIN32;WIN32;_WINDOWS;_MBCS;_USE_MATH_DEFINES;NOMINMAX;VC_EXTRALEAN;WIN32_LEAN_AND_MEAN;BOOST_LIB_DIAGNOSTIC;BOOST_ALL_DYN_LINK"
+				PreprocessorDefinitions="NDEBUG;_DLL;_WIN32;WIN32;_WINDOWS;_MBCS;_USE_MATH_DEFINES;NOMINMAX;VC_EXTRALEAN;WIN32_LEAN_AND_MEAN;BOOST_LIB_DIAGNOSTIC;BOOST_PYTHON_STATIC_LIB"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -136,7 +136,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="boost_python-vc80-mt-1_33_1.lib ws2_32.lib rpcrt4.lib"
+				AdditionalDependencies="libboost_python-vc80-mt-1_33_1.lib ws2_32.lib rpcrt4.lib"
 				AdditionalLibraryDirectories="C:\Program Files\Microsoft Platform SDK\Lib;C:\Program Files\boost\boost_1_33_1\lib;C:\Python24\libs"
 			/>
 			<Tool

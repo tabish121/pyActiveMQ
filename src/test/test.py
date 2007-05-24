@@ -16,21 +16,23 @@
 
 import os
 import sys
-topdir = os.path.join(os.path.dirname(__file__), '..', '..')
-topdir = os.path.abspath(topdir)
-from distutils.util import get_platform
-if get_platform() == 'win32':
-    sys.path.insert(0, os.path.join(topdir, 'win_build', 'debug'))
-else:
-    plat_specifier = ".%s-%s" % (get_platform(), sys.version[0:3])
-    build_base = os.path.join(topdir, 'build')
-    build_platlib = os.path.join(build_base, 'lib' + plat_specifier)
-    sys.path.insert(0, build_platlib)
+import time
 
+if not(len(sys.argv) == 2 and sys.argv[1] == 'release'):
+    topdir = os.path.join(os.path.dirname(__file__), '..', '..')
+    topdir = os.path.abspath(topdir)
+    from distutils.util import get_platform
+    if get_platform() == 'win32':
+        sys.path.insert(0, os.path.join(topdir, 'win_build', 'debug'))
+    else:
+        plat_specifier = ".%s-%s" % (get_platform(), sys.version[0:3])
+        build_base = os.path.join(topdir, 'build')
+        build_platlib = os.path.join(build_base, 'lib' + plat_specifier)
+        sys.path.insert(0, build_platlib)
+
+import pyactivemq
 from pyactivemq import AcknowledgeMode
 from pyactivemq import ActiveMQConnectionFactory
-import pyactivemq
-import time
 
 class MessageListener(pyactivemq.MessageListener):
     def onMessage(self, message):
@@ -39,6 +41,8 @@ class MessageListener(pyactivemq.MessageListener):
 class ExceptionListener(pyactivemq.ExceptionListener):
     def onException(self, exc):
         print exc, ':', exc.message
+
+print pyactivemq
 
 assert 0 == int(AcknowledgeMode.AUTO_ACKNOWLEDGE)
 assert 1 == int(AcknowledgeMode.DUPS_OK_ACKNOWLEDGE)
