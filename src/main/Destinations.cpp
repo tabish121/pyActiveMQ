@@ -88,18 +88,18 @@ void export_Destinations()
         ;
 
     class_<Topic, bases<Destination>, boost::noncopyable>("Topic", no_init)
-        .add_property("topicName", &Topic::getTopicName)
+        .add_property("name", &Topic::getTopicName)
         ;
 
     class_<Queue, bases<Destination>, boost::noncopyable>("Queue", no_init)
-        .add_property("queueName", &Queue::getQueueName)
+        .add_property("name", &Queue::getQueueName)
         ;
 
     class_<TemporaryTopic, bases<Destination>, boost::noncopyable>("TemporaryTopic", no_init)
-        .add_property("topicName", &Topic::getTopicName)
+        .add_property("name", &TemporaryTopic::getTopicName)
         ;
 
     class_<TemporaryQueue, bases<Destination>, boost::noncopyable>("TemporaryQueue", no_init)
-        .add_property("queueName", &Queue::getQueueName)
+        .add_property("name", &TemporaryQueue::getQueueName)
         ;
 }

@@ -51,8 +51,8 @@ struct to_python_Message
         else if (dynamic_cast<cms::MapMessage*>(p) != 0) {
             return make_owning_holder::execute(dynamic_cast<cms::MapMessage*>(p));
         }
-        // TODO throw some kind of error
-        return 0;
+        PyErr_SetString(PyExc_NotImplementedError, "unsupported Message type");
+        throw error_already_set();
     }
 };
 

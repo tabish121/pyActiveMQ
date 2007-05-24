@@ -35,13 +35,36 @@ if not(len(sys.argv) == 2 and sys.argv[1] == 'release'):
 import pyactivemq
 print pyactivemq
 
-class MessageListener(pyactivemq.MessageListener):
-    def onMessage(self, message):
-        print 'got a', message
-
-class ExceptionListener(pyactivemq.ExceptionListener):
-    def onException(self, exc):
-        print exc, ':', exc.message
+class test_pyactivemq(unittest.TestCase):
+    def test_dir(self):
+        names = [
+            'AcknowledgeMode',
+            'ActiveMQConnectionFactory',
+            'BytesMessage',
+            'CMSException',
+            'Closeable',
+            'Connection',
+            'ConnectionFactory',
+            'DeliveryMode',
+            'Destination',
+            'DestinationType',
+            'ExceptionListener',
+            'MapMessage',
+            'Message',
+            'MessageConsumer',
+            'MessageListener',
+            'MessageProducer',
+            'Queue',
+            'Session',
+            'Startable',
+            'Stoppable',
+            'TemporaryQueue',
+            'TemporaryTopic',
+            'TextMessage',
+            'Topic'
+            ]
+        for name in names:
+            self.assert_(name in dir(pyactivemq))
 
 class test_AcknowledgeMode(unittest.TestCase):
     def test_values(self):
@@ -85,10 +108,8 @@ class _test_any_protocol:
         random_id = "%08x" % rand.randrange(0, 2**31)
         return session.createTopic("topic-%s" % random_id)
 
-    def test_exceptionListener_is_None(self):
+    def test_default_exceptionListener_is_None(self):
         self.assert_(self.conn.exceptionListener is None)
-        # XXX need to sort out a few more issues with exception listeners
-        #conn.exceptionListener = ExceptionListener()
 
     def test_session_not_transacted(self):
         session = self.conn.createSession()
@@ -97,8 +118,12 @@ class _test_any_protocol:
     def test_topics_queues(self):
         session = self.conn.createSession()
         topic = session.createTopic("topic")
+        self.assertEqual("topic", topic.name)
+        self.assert_(isinstance(topic, pyactivemq.Destination))
         topic2 = session.createTopic("topic2")
         queue = session.createQueue("queue")
+        self.assertEqual("queue", queue.name)
+        self.assert_(isinstance(queue, pyactivemq.Destination))
         queue2 = session.createQueue("queue2")
         self.assertEqual(topic, topic)
         self.assertNotEqual(topic, topic2)
@@ -108,6 +133,24 @@ class _test_any_protocol:
         self.assertNotEqual(queue, queue2)
         self.assertEqual(queue.destinationType, queue2.destinationType)
         self.assertNotEqual(queue, topic)
+
+    def test_MessageProducer(self):
+        session = self.conn.createSession()
+        topic = session.createTopic("topic")
+        producer = session.createProducer(topic)
+        from pyactivemq import DeliveryMode
+        self.assertEqual(DeliveryMode.PERSISTENT, producer.deliveryMode)
+        producer.deliveryMode = DeliveryMode.PERSISTENT
+        self.assertEqual(DeliveryMode.PERSISTENT, producer.deliveryMode)
+        self.assertEqual(False, producer.disableMessageID)
+        producer.disableMessageID = True
+        self.assertEqual(True, producer.disableMessageID)
+        self.assertEqual(False, producer.disableMessageTimeStamp)
+        producer.disableMessageTimeStamp = True
+        self.assertEqual(True, producer.disableMessageTimeStamp)
+        self.assertEqual(0, producer.timeToLive)
+        producer.timeToLive = 60
+        self.assertEqual(60, producer.timeToLive)
 
     def test_TextMessage(self):
         session = self.conn.createSession()
@@ -284,6 +327,20 @@ class test_openwire(_test_any_protocol, unittest.TestCase):
     def tearDown(self):
         self.conn.close()
         del self.conn
+
+    def test_temporary_topic(self):
+        session = self.conn.createSession()
+        temptopic = session.createTemporaryTopic()
+        self.assert_(len(temptopic.name) > 0)
+        self.assert_(isinstance(temptopic, pyactivemq.Destination))
+        self.assert_(not isinstance(temptopic, pyactivemq.Topic))
+
+    def test_temporary_queue(self):
+        session = self.conn.createSession()
+        tempqueue = session.createTemporaryQueue()
+        self.assert_(len(tempqueue.name) > 0)
+        self.assert_(isinstance(tempqueue, pyactivemq.Destination))
+        self.assert_(not isinstance(tempqueue, pyactivemq.Queue))
 
     def test_MapMessage(self):
         session = self.conn.createSession()
