@@ -102,11 +102,13 @@ class test_DestinationType(unittest.TestCase):
         self.assertEqual(2, DestinationType.TEMPORARY_TOPIC)
         self.assertEqual(3, DestinationType.TEMPORARY_QUEUE)
 
+def random_topic(self, session):
+    rand = random.Random()
+    random_id = "%08x" % rand.randrange(0, 2**31)
+    return session.createTopic("topic-%s" % random_id)
+
 class _test_any_protocol:
-    def random_topic(self, session):
-        rand = random.Random()
-        random_id = "%08x" % rand.randrange(0, 2**31)
-        return session.createTopic("topic-%s" % random_id)
+    random_topic = random_topic
 
     def test_Connection(self):
         conn = self.conn
@@ -161,8 +163,15 @@ class _test_any_protocol:
         consumer1 = session.createConsumer(topic)
         self.assert_(isinstance(consumer1, pyactivemq.Closeable))
         self.assert_(isinstance(consumer1, pyactivemq.MessageConsumer))
-        consumer2 = session.createConsumer(topic, "selector")
-        consumer2 = session.createConsumer(topic, "selector", True)
+        consumer2 = session.createConsumer(topic, "select1")
+        self.assertEqual('select1', consumer2.messageSelector)
+        try:
+            consumer2.messageSelector = 'select2'
+            self.assert_(False)
+        except AttributeError:
+            # can't set message selector after consumer creation
+            self.assert_(True)
+        consumer3 = session.createConsumer(topic, "", True)
 
     def test_MessageProducer(self):
         session = self.conn.createSession()
@@ -439,6 +448,64 @@ class test_openwire(_test_any_protocol, unittest.TestCase):
         # nolocal consumer shouldn't receive the message
         msg = consumer2.receive(500)
         self.assert_(msg is None)
+
+class _test_async:
+    random_topic = random_topic
+
+    class MessageListener(pyactivemq.MessageListener):
+        def onMessage(self, message):
+            print 'got a', message
+
+    # TODO this test fails completely at present
+    def xtest_multiple_sessions(self):
+        # create a single producer
+        session1 = self.conn.createSession()
+        topic = self.random_topic(session1)
+        producer = session1.createProducer(topic)
+
+        # create multiple consumers in separate sessions
+        consumer1 = session1.createConsumer(topic)
+        listener1 = self.MessageListener()
+        consumer1.messageListener = listener1
+
+        session2 = self.conn.createSession()
+        consumer2 = session2.createConsumer(topic)
+        listener2 = self.MessageListener()
+        consumer2.messageListener = listener2
+
+        session3 = self.conn.createSession()
+        consumer3 = session3.createConsumer(topic)
+        listener3 = self.MessageListener()
+        consumer3.messageListener = listener3
+
+        self.conn.start()
+        textMessage = session1.createTextMessage()
+        for i in xrange(2000):
+            textMessage.text = 'hello%d' % (i,)
+            producer.send(textMessage)
+        time.sleep(100)
+
+class test_stomp_async(_test_async, unittest.TestCase):
+    def setUp(self):
+        self.url = 'tcp://localhost:61613?wireFormat=stomp'
+        from pyactivemq import ActiveMQConnectionFactory
+        f = ActiveMQConnectionFactory(self.url)
+        self.conn = f.createConnection()
+
+    def tearDown(self):
+        self.conn.close()
+        del self.conn
+
+class test_openwire_async(_test_async, unittest.TestCase):
+    def setUp(self):
+        self.url = 'tcp://localhost:61616?wireFormat=openwire'
+        from pyactivemq import ActiveMQConnectionFactory
+        f = ActiveMQConnectionFactory(self.url)
+        self.conn = f.createConnection()
+
+    def tearDown(self):
+        self.conn.close()
+        del self.conn
 
 # XXX Sleep, let exception listener fire and then do keyboard
 # interrupt.  Leads to a crash while deleting Connection object, which
