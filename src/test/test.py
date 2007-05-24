@@ -302,4 +302,4 @@ class test_openwire(_test_any_protocol, unittest.TestCase):
 #time.sleep(100000)
 
 if __name__ == '__main__':
-    unittest.main()
+    unittest.main(argv=sys.argv)
