@@ -15,8 +15,10 @@
 # limitations under the License.
 
 import os
+import random
 import sys
 import time
+import unittest
 
 if not(len(sys.argv) == 2 and sys.argv[1] == 'release'):
     topdir = os.path.join(os.path.dirname(__file__), '..', '..')
@@ -31,9 +33,7 @@ if not(len(sys.argv) == 2 and sys.argv[1] == 'release'):
         sys.path.insert(0, build_platlib)
 
 import pyactivemq
-from pyactivemq import AcknowledgeMode
-from pyactivemq import DeliveryMode
-from pyactivemq import ActiveMQConnectionFactory
+print pyactivemq
 
 class MessageListener(pyactivemq.MessageListener):
     def onMessage(self, message):
@@ -43,173 +43,257 @@ class ExceptionListener(pyactivemq.ExceptionListener):
     def onException(self, exc):
         print exc, ':', exc.message
 
-print pyactivemq
+class test_AcknowledgeMode(unittest.TestCase):
+    def test_values(self):
+        from pyactivemq import AcknowledgeMode
+        self.assertEqual(0, int(AcknowledgeMode.AUTO_ACKNOWLEDGE))
+        self.assertEqual(1, int(AcknowledgeMode.DUPS_OK_ACKNOWLEDGE))
+        self.assertEqual(2, int(AcknowledgeMode.CLIENT_ACKNOWLEDGE))
+        self.assertEqual(3, int(AcknowledgeMode.SESSION_TRANSACTED))
 
-assert 0 == int(AcknowledgeMode.AUTO_ACKNOWLEDGE)
-assert 1 == int(AcknowledgeMode.DUPS_OK_ACKNOWLEDGE)
-assert 2 == int(AcknowledgeMode.CLIENT_ACKNOWLEDGE)
-assert 3 == int(AcknowledgeMode.SESSION_TRANSACTED)
+class test_DeliveryMode(unittest.TestCase):
+    def test_values(self):
+        from pyactivemq import DeliveryMode
+        self.assertEqual(0, DeliveryMode.PERSISTENT)
+        self.assertEqual(1, DeliveryMode.NON_PERSISTENT)
 
-assert 0 == DeliveryMode.PERSISTENT
-assert 1 == DeliveryMode.NON_PERSISTENT
+class test_ActiveMQConnectionFactory(unittest.TestCase):
+    def test_properties(self):
+        from pyactivemq import ActiveMQConnectionFactory
+        f1 = ActiveMQConnectionFactory()
+        f2 = ActiveMQConnectionFactory('url')
+        self.assertEqual('url', f2.brokerURL)
+        f3 = ActiveMQConnectionFactory('url', 'user')
+        self.assertEqual('url', f3.brokerURL)
+        self.assertEqual('user', f3.username)
+        f4 = ActiveMQConnectionFactory('url', 'user', 'pass')
+        self.assertEqual('url', f4.brokerURL)
+        self.assertEqual('user', f4.username)
+        self.assertEqual('pass', f4.password)
 
-f1 = ActiveMQConnectionFactory()
-f2 = ActiveMQConnectionFactory('url')
-assert f2.brokerURL == 'url'
-f3 = ActiveMQConnectionFactory('url', 'user')
-assert f3.brokerURL == 'url'
-assert f3.username == 'user'
-f4 = ActiveMQConnectionFactory('url', 'user', 'pass')
-assert f4.brokerURL == 'url'
-assert f4.username == 'user'
-assert f4.password == 'pass'
+class test_DestinationType(unittest.TestCase):
+    def test_values(self):
+        from pyactivemq import DestinationType
+        self.assertEqual(0, DestinationType.TOPIC)
+        self.assertEqual(1, DestinationType.QUEUE)
+        self.assertEqual(2, DestinationType.TEMPORARY_TOPIC)
+        self.assertEqual(3, DestinationType.TEMPORARY_QUEUE)
 
-f = ActiveMQConnectionFactory('tcp://localhost:61613?wireFormat=stomp')
-try:
-    conn = f.createConnection()
-except UserWarning, e:
-    print >>sys.stderr, e
-    print >>sys.stderr, 'Connection failed. Is the broker running?'
-    sys.exit(1)
-assert conn.exceptionListener is None
-# XXX need to sort out a few more issues with exception listeners
-#conn.exceptionListener = ExceptionListener()
-session = conn.createSession()
-assert not session.transacted
+class _test_any_protocol:
+    def random_topic(self, session):
+        rand = random.Random()
+        random_id = "%08x" % rand.randrange(0, 2**31)
+        return session.createTopic("topic-%s" % random_id)
 
-topic = session.createTopic("topic")
-topic2 = session.createTopic("topic2")
-queue = session.createQueue("queue")
-queue2 = session.createQueue("queue2")
+    def test_exceptionListener_is_None(self):
+        self.assert_(self.conn.exceptionListener is None)
+        # XXX need to sort out a few more issues with exception listeners
+        #conn.exceptionListener = ExceptionListener()
 
-assert topic == topic
-assert topic != topic2
-assert topic.destinationType == topic2.destinationType
-assert topic != queue
-assert queue == queue
-assert queue != queue2
-assert queue.destinationType == queue2.destinationType
-assert queue != topic
+    def test_session_not_transacted(self):
+        session = self.conn.createSession()
+        self.assert_(not session.transacted)
 
-from pyactivemq import DestinationType
-assert DestinationType.TOPIC == 0
-assert DestinationType.QUEUE == 1
-assert DestinationType.TEMPORARY_TOPIC == 2
-assert DestinationType.TEMPORARY_QUEUE == 3
+    def test_topics_queues(self):
+        session = self.conn.createSession()
+        topic = session.createTopic("topic")
+        topic2 = session.createTopic("topic2")
+        queue = session.createQueue("queue")
+        queue2 = session.createQueue("queue2")
+        self.assertEqual(topic, topic)
+        self.assertNotEqual(topic, topic2)
+        self.assertEqual(topic.destinationType, topic2.destinationType)
+        self.assertNotEqual(topic, queue)
+        self.assertEqual(queue, queue)
+        self.assertNotEqual(queue, queue2)
+        self.assertEqual(queue.destinationType, queue2.destinationType)
+        self.assertNotEqual(queue, topic)
 
-try:
-    temptopic = session.createTemporaryTopic()
-    assert False
-except UserWarning:
-    # not implemented for stomp
-    # XXX UserWarning says: caught unknown exception
-    pass
+    def test_TextMessage(self):
+        session = self.conn.createSession()
+        textMessage = session.createTextMessage()
+        self.assert_(isinstance(textMessage, pyactivemq.Message))
+        self.assert_(isinstance(textMessage, pyactivemq.TextMessage))
+        textMessage.text = "bye"
+        self.assertEqual("bye", textMessage.text)
+        textMessage = session.createTextMessage("hello")
+        self.assertEqual("hello", textMessage.text)
 
-try:
-    tempqueue = session.createTemporaryQueue()
-    assert False
-except UserWarning:
-    pass
+        textMessage.setIntProperty('int1', 123)
+        self.assertEqual(1, len(textMessage.propertyNames))
+        self.assertEqual('int1', textMessage.propertyNames[0])
+        self.assert_(textMessage.destination is None)
+        self.assert_(textMessage.replyTo is None)
+        queue = session.createQueue("queue")
+        textMessage.replyTo = queue
+        self.assertEqual(queue, textMessage.replyTo)
 
-textMessage = session.createTextMessage()
-assert isinstance(textMessage, pyactivemq.Message)
-assert isinstance(textMessage, pyactivemq.TextMessage)
-textMessage.text = "bye"
-assert textMessage.text == "bye"
-textMessage = session.createTextMessage("hello")
-assert textMessage.text == "hello"
+    def test_BytesMessage(self):
+        session = self.conn.createSession()
+        bytesMessage = session.createBytesMessage()
+        self.assert_(isinstance(bytesMessage, pyactivemq.Message))
+        self.assert_(isinstance(bytesMessage, pyactivemq.BytesMessage))
+        self.assertEqual(0, bytesMessage.bodyLength)
+        bytesMessage.bodyBytes = 'hello123'
+        self.assertEqual('hello123', bytesMessage.bodyBytes)
+        self.assert_(bytesMessage.replyTo is None)
+        queue = session.createQueue("queue")
+        bytesMessage.replyTo = queue
+        self.assertEqual(queue, bytesMessage.replyTo)
 
-textMessage.setIntProperty('int1', 123)
-assert 1 == len(textMessage.propertyNames)
-assert 'int1' == textMessage.propertyNames[0]
-assert textMessage.destination is None
-assert textMessage.replyTo is None
-textMessage.replyTo = queue
+    def test_send_TextMessage(self):
+        session = self.conn.createSession()
 
-bytesMessage = session.createBytesMessage()
-assert isinstance(bytesMessage, pyactivemq.Message)
-assert isinstance(bytesMessage, pyactivemq.BytesMessage)
-assert bytesMessage.bodyLength == 0
-bytesMessage.bodyBytes = 'hello123'
-assert 'hello123' == bytesMessage.bodyBytes
-bytesMessage.replyTo = topic
+        textMessage = session.createTextMessage()
+        queue = session.createQueue("queue")
+        textMessage.replyTo = queue
 
-try:
-    mapMessage = session.createMapMessage()
-    assert False
+        topic = self.random_topic(session)
+        consumer = session.createConsumer(topic)
+        self.assert_(consumer.messageListener is None)
+        consumer2 = session.createConsumer(topic)
+        # XXX doesn't work yet
+        #consumer2.messageListener = MessageListener()
+        producer = session.createProducer(topic)
 
-    assert isinstance(mapMessage, pyactivemq.Message)
-    assert isinstance(mapMessage, pyactivemq.MapMessage)
-    mapMessage.setInt('int1', 123)
-    assert 123 == mapMessage.getInt('int1')
-    assert len(mapMessage.mapNames) == 1
-    assert 'int1' in mapMessage.mapNames
-except UserWarning:
-    # not implemented for stomp
-    pass
+        self.conn.start()
+        producer.send(textMessage)
+        msg = consumer.receive(1000)
 
-consumer = session.createConsumer(topic)
-assert consumer.messageListener is None
-consumer2 = session.createConsumer(topic)
-# XXX doesn't work yet
-#consumer2.messageListener = MessageListener()
-producer = session.createProducer(topic)
-conn.start()
+        self.assert_(msg is not None)
+        self.assertEqual(str(msg.destination), str(topic))
+        self.assertEqual(topic, msg.destination)
+        self.assertEqual(str(queue), str(msg.replyTo))
+        self.assertEqual(queue, msg.replyTo)
+        self.assert_(isinstance(msg, pyactivemq.Message))
+        self.assert_(isinstance(msg, pyactivemq.TextMessage))
 
-producer.send(textMessage)
-msg = consumer.receive(1000)
-assert msg is not None
-print msg
-assert str(msg.destination) == str(topic)
-assert msg.destination == topic
-assert str(msg.replyTo) == str(queue)
-assert msg.replyTo == queue
-assert isinstance(msg, pyactivemq.Message)
-assert isinstance(msg, pyactivemq.TextMessage)
-msg = consumer.receive(50)
-assert msg is None
+        msg = consumer.receive(50)
+        self.assert_(msg is None)
 
-producer.send(bytesMessage)
-msg = consumer.receive(1000)
-assert msg is not None
-print msg
-assert 'hello123' == msg.bodyBytes
-assert msg.destination == topic
-assert str(msg.destination) == str(topic)
-assert str(msg.replyTo) == str(topic)
-assert msg.replyTo == topic
-assert isinstance(msg, pyactivemq.Message)
-assert isinstance(msg, pyactivemq.BytesMessage)
+    def test_send_BytesMessage(self):
+        session = self.conn.createSession()
+        topic = self.random_topic(session)
+        consumer = session.createConsumer(topic)
+        producer = session.createProducer(topic)
+        bytesMessage = session.createBytesMessage()
+        bytesMessage.bodyBytes = 'hello123'
+        bytesMessage.replyTo = topic
 
-bytesMessage = session.createBytesMessage()
-bytesMessage.writeBytes('hello123')
-producer.send(bytesMessage)
-msg = consumer.receive(1000)
-assert msg is not None
-# XXX this crashes
-#assert 'hello123' == msg.readBytes()
+        self.conn.start()
+        producer.send(bytesMessage)
+        msg = consumer.receive(1000)
 
-bytesMessage = session.createBytesMessage()
-bytesMessage.bodyBytes = '\x00\x00\x00'
-assert bytesMessage.bodyLength == 3
-producer.send(bytesMessage)
-msg = consumer.receive(1000)
-assert msg is not None
-assert isinstance(msg, pyactivemq.Message)
-assert isinstance(msg, pyactivemq.BytesMessage)
-assert msg.bodyLength == 3
-assert msg.bodyBytes == '\x00\x00\x00'
+        self.assert_(msg is not None)
+        self.assertEqual('hello123', msg.bodyBytes)
+        self.assertEqual(topic, msg.destination)
+        self.assertEqual(str(topic), str(msg.destination))
+        self.assertEqual(str(topic), str(msg.replyTo))
+        self.assertEqual(topic, msg.replyTo)
+        self.assert_(isinstance(msg, pyactivemq.Message))
+        self.assert_(isinstance(msg, pyactivemq.BytesMessage))
 
-bytesMessage = session.createBytesMessage()
-bytesMessage.bodyBytes = '\x01\x02\x03'
-assert bytesMessage.bodyLength == 3
-producer.send(bytesMessage)
-msg = consumer.receive(1000)
-assert msg is not None
-assert isinstance(msg, pyactivemq.Message)
-assert isinstance(msg, pyactivemq.BytesMessage)
-assert msg.bodyLength == 3
-assert msg.bodyBytes == '\x01\x02\x03'
+        bytesMessage = session.createBytesMessage()
+        bytesMessage.writeBytes('hello123')
+        producer.send(bytesMessage)
+        msg = consumer.receive(1000)
+        self.assert_(msg is not None)
+        # XXX this doesn't return anything yet
+        #self.assertEqual('hello123', msg.readBytes())
+        self.assertEqual('', msg.readBytes())
+
+        msg = consumer.receive(50)
+        self.assert_(msg is None)
+
+    def test_BytesMessage_bodyBytes(self):
+        session = self.conn.createSession()
+        topic = self.random_topic(session)
+        consumer = session.createConsumer(topic)
+        producer = session.createProducer(topic)
+        bytesMessage = session.createBytesMessage()
+        bytesMessage.bodyBytes = '\x00\x00\x00'
+        self.assertEqual(3, bytesMessage.bodyLength)
+
+        self.conn.start()
+        producer.send(bytesMessage)
+        msg = consumer.receive(1000)
+
+        self.assert_(msg is not None)
+        self.assert_(isinstance(msg, pyactivemq.Message))
+        self.assert_(isinstance(msg, pyactivemq.BytesMessage))
+        self.assertEqual(3, msg.bodyLength)
+        self.assertEqual('\x00\x00\x00', msg.bodyBytes)
+
+        bytesMessage = session.createBytesMessage()
+        bytesMessage.bodyBytes = '\x01\x02\x03'
+        self.assertEqual(3, bytesMessage.bodyLength)
+        producer.send(bytesMessage)
+        msg = consumer.receive(1000)
+        self.assert_(msg is not None)
+        self.assert_(isinstance(msg, pyactivemq.Message))
+        self.assert_(isinstance(msg, pyactivemq.BytesMessage))
+        self.assertEqual(3, msg.bodyLength)
+        self.assertEqual('\x01\x02\x03', msg.bodyBytes)
+
+class test_stomp(_test_any_protocol, unittest.TestCase):
+    def setUp(self):
+        self.url = 'tcp://localhost:61613?wireFormat=stomp'
+        from pyactivemq import ActiveMQConnectionFactory
+        f = ActiveMQConnectionFactory(self.url)
+        self.conn = f.createConnection()
+
+    def tearDown(self):
+        self.conn.close()
+        del self.conn
+
+    def test_temporary_topic(self):
+        session = self.conn.createSession()
+        try:
+            temptopic = session.createTemporaryTopic()
+            self.assert_(False)
+        except UserWarning:
+            # not implemented for stomp
+            # XXX UserWarning says: caught unknown exception
+            self.assert_(True)
+
+    def test_temporary_queue(self):
+        session = self.conn.createSession()
+        try:
+            tempqueue = session.createTemporaryQueue()
+            self.assert_(False)
+        except UserWarning:
+            # not implemented for stomp
+            self.assert_(True)
+
+    def test_MapMessage(self):
+        session = self.conn.createSession()
+        try:
+            mapMessage = session.createMapMessage()
+            self.assert_(False)
+        except UserWarning:
+            # not implemented for stomp
+            self.assert_(True)
+
+class test_openwire(_test_any_protocol, unittest.TestCase):
+    def setUp(self):
+        self.url = 'tcp://localhost:61616?wireFormat=openwire'
+        from pyactivemq import ActiveMQConnectionFactory
+        f = ActiveMQConnectionFactory(self.url)
+        self.conn = f.createConnection()
+
+    def tearDown(self):
+        self.conn.close()
+        del self.conn
+
+    def test_MapMessage(self):
+        session = self.conn.createSession()
+        mapMessage = session.createMapMessage()
+        self.assert_(isinstance(mapMessage, pyactivemq.Message))
+        self.assert_(isinstance(mapMessage, pyactivemq.MapMessage))
+        mapMessage.setInt('int1', 123)
+        self.assertEqual(123, mapMessage.getInt('int1'))
+        self.assertEqual(1, len(mapMessage.mapNames))
+        self.assert_('int1' in mapMessage.mapNames)
 
 # XXX Sleep, let exception listener fire and then do keyboard
 # interrupt.  Leads to a crash while deleting Connection object, which
@@ -217,5 +301,5 @@ assert msg.bodyBytes == '\x01\x02\x03'
 # http://issues.apache.org/activemq/browse/AMQCPP-46
 #time.sleep(100000)
 
-session.close()
-conn.close()
+if __name__ == '__main__':
+    unittest.main()

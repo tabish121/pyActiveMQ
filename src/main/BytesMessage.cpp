@@ -21,9 +21,19 @@ using namespace boost::python;
 using cms::BytesMessage;
 using cms::Message;
 
+#include <iostream>
+
 PyObject* BytesMessage_getBodyBytes(BytesMessage const& self)
 {
-    return incref(str(reinterpret_cast<const char*>(self.getBodyBytes()),  self.getBodyLength()).ptr());
+    // workaround for https://issues.apache.org/activemq/browse/AMQCPP-117
+    if (self.getBodyLength() > 0)
+    {
+        return incref(str(reinterpret_cast<const char*>(self.getBodyBytes()), self.getBodyLength()).ptr());
+    }
+    else
+    {
+        return incref(str((const char*)NULL, (std::size_t)0).ptr());
+    }
 }
 
 void BytesMessage_setBodyBytes(BytesMessage& This, const std::string& buffer)
@@ -33,7 +43,8 @@ void BytesMessage_setBodyBytes(BytesMessage& This, const std::string& buffer)
 
 std::string BytesMessage_readBytes(BytesMessage& This)
 {
-    std::vector<unsigned char> buffer;
+    // TODO make this buffer size configurable
+    std::vector<unsigned char> buffer(This.getBodyLength());
     int length = This.readBytes(buffer);
     return "";
 }
