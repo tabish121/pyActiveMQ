@@ -123,6 +123,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\activemq-cpp\src\main\cms\CMSProperties.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\activemq-cpp\src\main\cms\Config.h"
 				>
 			</File>
@@ -287,10 +291,6 @@
 				</File>
 				<File
 					RelativePath="..\..\activemq-cpp\src\main\activemq\util\Set.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\activemq-cpp\src\main\activemq\util\SimpleProperties.h"
 					>
 				</File>
 				<File
