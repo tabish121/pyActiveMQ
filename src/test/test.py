@@ -32,6 +32,7 @@ if not(len(sys.argv) == 2 and sys.argv[1] == 'release'):
 
 import pyactivemq
 from pyactivemq import AcknowledgeMode
+from pyactivemq import DeliveryMode
 from pyactivemq import ActiveMQConnectionFactory
 
 class MessageListener(pyactivemq.MessageListener):
@@ -48,6 +49,9 @@ assert 0 == int(AcknowledgeMode.AUTO_ACKNOWLEDGE)
 assert 1 == int(AcknowledgeMode.DUPS_OK_ACKNOWLEDGE)
 assert 2 == int(AcknowledgeMode.CLIENT_ACKNOWLEDGE)
 assert 3 == int(AcknowledgeMode.SESSION_TRANSACTED)
+
+assert 0 == DeliveryMode.PERSISTENT
+assert 1 == DeliveryMode.NON_PERSISTENT
 
 f1 = ActiveMQConnectionFactory()
 f2 = ActiveMQConnectionFactory('url')

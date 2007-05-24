@@ -21,6 +21,7 @@
 #include <cms/Startable.h>
 #include <cms/Stoppable.h>
 #include <cms/Closeable.h>
+#include <cms/DeliveryMode.h>
 
 using namespace boost::python;
 using cms::CMSException;
@@ -107,15 +108,7 @@ BOOST_PYTHON_MODULE(pyactivemq)
     export_MessageListener();
     export_MessageConsumer();
 
-#if 0
-    enum_<DeliveryMode>("DeliveryMode")
-        .value("PERSISTANT", DeliveryMode::PERSISTANT)
-        .value("NON_PERSISTANT", DeliveryMode::NON_PERSISTANT)
-        ;
-#endif
-#if 0
-    DeliveryMode_scope = class_<DeliveryMode>("DeliveryMode");
-    DeliveryMode_scope.attr("PERSISTANT") = DeliveryMode::PERSISTANT;
-    DeliveryMode_scope.attr("NON_PERSISTANT") = DeliveryMode::NON_PERSISTANT;
-#endif
+    scope s = class_<cms::DeliveryMode, boost::noncopyable>("DeliveryMode", no_init);
+    s.attr("PERSISTENT") = cms::DeliveryMode::PERSISTENT;
+    s.attr("NON_PERSISTENT") = cms::DeliveryMode::NON_PERSISTENT;
 }
