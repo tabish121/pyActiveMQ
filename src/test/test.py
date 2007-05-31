@@ -131,11 +131,11 @@ class _test_any_protocol:
         ackmode = AcknowledgeMode.AUTO_ACKNOWLEDGE
         self.assertEqual(ackmode, session.acknowledgeMode)
         try:
+            # check that attribute is read-only
             session.acknowledgeMode = ackmode
-            self.assert_(False)
+            self.assert_(False, 'Expected AttributeError exception to be raised')
         except AttributeError:
-            # shouldn't be able to set this attribute
-            self.assert_(True)
+            pass
         session.close()
 
     def test_Topic_and_Queue(self):
@@ -167,10 +167,10 @@ class _test_any_protocol:
         self.assertEqual('select1', consumer2.messageSelector)
         try:
             consumer2.messageSelector = 'select2'
-            self.assert_(False)
-        except AttributeError:
             # can't set message selector after consumer creation
-            self.assert_(True)
+            self.assert_(False, 'Expected AttributeError exception to be raised')
+        except AttributeError:
+            pass
         consumer3 = session.createConsumer(topic, "", True)
 
     def test_MessageProducer(self):
@@ -369,31 +369,19 @@ class test_stomp(_test_any_protocol, unittest.TestCase):
 
     def test_temporary_topic(self):
         session = self.conn.createSession()
-        try:
-            temptopic = session.createTemporaryTopic()
-            self.assert_(False)
-        except UserWarning:
-            # not implemented for stomp
-            # XXX UserWarning says: caught unknown exception
-            self.assert_(True)
+        # not implemented for stomp
+        # XXX UserWarning says: caught unknown exception
+        self.assertRaises(UserWarning, session.createTemporaryTopic)
 
     def test_temporary_queue(self):
         session = self.conn.createSession()
-        try:
-            tempqueue = session.createTemporaryQueue()
-            self.assert_(False)
-        except UserWarning:
-            # not implemented for stomp
-            self.assert_(True)
+        # not implemented for stomp
+        self.assertRaises(UserWarning, session.createTemporaryQueue)
 
     def test_MapMessage(self):
         session = self.conn.createSession()
-        try:
-            mapMessage = session.createMapMessage()
-            self.assert_(False)
-        except UserWarning:
-            # not implemented for stomp
-            self.assert_(True)
+        # not implemented for stomp
+        self.assertRaises(UserWarning, session.createMapMessage)
 
 class test_openwire(_test_any_protocol, unittest.TestCase):
     def setUp(self):
@@ -453,37 +441,54 @@ class _test_async:
     random_topic = random_topic
 
     class MessageListener(pyactivemq.MessageListener):
+        def __init__(self, queue):
+            pyactivemq.MessageListener.__init__(self)
+            self.queue = queue
+
         def onMessage(self, message):
-            print 'got a', message
+            # XXX TODO allow messages to be put into the queue. This
+            # isn't currently possible because messages are always
+            # deallocated after this method is called.
+            self.queue.put(True)
 
     # TODO this test fails completely at present
-    def xtest_multiple_sessions(self):
+    def test_multiple_sessions(self):
+        nmessages = 100
+        nconsumers = 3
+
         # create a single producer
-        session1 = self.conn.createSession()
-        topic = self.random_topic(session1)
-        producer = session1.createProducer(topic)
+        producer_session = self.conn.createSession()
+        topic = self.random_topic(producer_session)
+        producer = producer_session.createProducer(topic)
+
+        # create infinite queue that is shared by consumers
+        import Queue
+        queue = Queue.Queue(0)
 
         # create multiple consumers in separate sessions
-        consumer1 = session1.createConsumer(topic)
-        listener1 = self.MessageListener()
-        consumer1.messageListener = listener1
-
-        session2 = self.conn.createSession()
-        consumer2 = session2.createConsumer(topic)
-        listener2 = self.MessageListener()
-        consumer2.messageListener = listener2
-
-        session3 = self.conn.createSession()
-        consumer3 = session3.createConsumer(topic)
-        listener3 = self.MessageListener()
-        consumer3.messageListener = listener3
+        # keep consumers in a list, because if we don't hold a
+        # reference to the consumer, it is closed
+        consumers = []
+        for i in xrange(nconsumers):
+            session = self.conn.createSession()
+            consumer = session.createConsumer(topic)
+            listener = self.MessageListener(queue)
+            consumer.messageListener = listener
+            consumers.append(consumer)
 
         self.conn.start()
-        textMessage = session1.createTextMessage()
-        for i in xrange(2000):
+        textMessage = producer_session.createTextMessage()
+        for i in xrange(nmessages):
             textMessage.text = 'hello%d' % (i,)
             producer.send(textMessage)
-        time.sleep(100)
+
+        qsize = nmessages * nconsumers
+        try:
+            for i in xrange(qsize):
+                queue.get(block=True, timeout=5)
+        except Queue.Empty:
+            self.assert_(False, 'Expected %d messages in queue' % qsize)
+        self.assert_(queue.empty())
 
 class test_stomp_async(_test_async, unittest.TestCase):
     def setUp(self):

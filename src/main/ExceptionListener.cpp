@@ -14,9 +14,6 @@
   limitations under the License.
 */
 
-// TODO look at issues with the GIL here when multiple session threads
-// call into the Python code (could happen with Openwire?)
-
 #include <boost/python.hpp>
 #include <cms/ExceptionListener.h>
 
@@ -28,9 +25,11 @@ struct ExceptionListenerWrap : ExceptionListener, wrapper<ExceptionListener>
 {
     virtual void onException(const CMSException& ex)
     {
-        // should be: this->getOverride("onException")(ex);
-        // but that doesn't work with Visual C++
+        PyGILState_STATE gstate = PyGILState_Ensure();
+#if 0
         call<void>(this->get_override("onException").ptr(), boost::ref(ex));
+#endif
+        PyGILState_Release(gstate);
     }
 };
 

@@ -14,24 +14,47 @@
   limitations under the License.
 */
 
-// TODO look at issues with the GIL here when multiple session threads
-// call into the Python code (could happen with Openwire?)
-
 #include <boost/python.hpp>
 #include <cms/MessageListener.h>
 #include <cms/Message.h>
+#include <cms/BytesMessage.h>
+#include <cms/TextMessage.h>
+#include <cms/MapMessage.h>
 
 using namespace boost::python;
 using cms::MessageListener;
 using cms::Message;
+using cms::BytesMessage;
+using cms::TextMessage;
+using cms::MapMessage;
 
 struct MessageListenerWrap : MessageListener, wrapper<MessageListener>
 {
     virtual void onMessage(const Message* message)
     {
-        // should be: this->getOverride("onMessage")(message);
-        // but that doesn't work with Visual C++
-        call<void>(this->get_override("onMessage").ptr(), message);
+        PyGILState_STATE gstate = PyGILState_Ensure();
+        if (dynamic_cast<const BytesMessage*>(message) != 0) {
+            BytesMessage* m = dynamic_cast<BytesMessage*>(message->clone());
+            call<void>(this->get_override("onMessage").ptr(), boost::ref(*m));
+            delete m;
+            m = 0;
+        }
+        else if (dynamic_cast<const TextMessage*>(message) != 0) {
+            TextMessage* m = dynamic_cast<TextMessage*>(message->clone());
+            call<void>(this->get_override("onMessage").ptr(), boost::ref(*m));
+            delete m;
+            m = 0;
+        }
+        else if (dynamic_cast<const MapMessage*>(message) != 0) {
+            MapMessage* m = dynamic_cast<MapMessage*>(message->clone());
+            call<void>(this->get_override("onMessage").ptr(), boost::ref(*m));
+            delete m;
+            m = 0;
+        }
+        else {
+            Py_FatalError("invalid Message type encountered in MessageListener");
+        }
+        PyGILState_Release(gstate);
     }
 };
 

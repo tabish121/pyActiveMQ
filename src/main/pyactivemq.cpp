@@ -76,6 +76,8 @@ void export_MessageConsumer();
 
 BOOST_PYTHON_MODULE(pyactivemq)
 {
+    PyEval_InitThreads();
+
     std_vector_to_tuple<std::string>();
 
     class_<Startable, boost::noncopyable>("Startable", no_init)
