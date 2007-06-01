@@ -446,10 +446,7 @@ class _test_async:
             self.queue = queue
 
         def onMessage(self, message):
-            # XXX TODO allow messages to be put into the queue. This
-            # isn't currently possible because messages are always
-            # deallocated after this method is called.
-            self.queue.put(True)
+            self.queue.put(message)
 
     def test_multiple_sessions(self):
         nmessages = 100
@@ -484,7 +481,8 @@ class _test_async:
         qsize = nmessages * nconsumers
         try:
             for i in xrange(qsize):
-                queue.get(block=True, timeout=5)
+                message = queue.get(block=True, timeout=5)
+                self.assert_(message.text.startswith('hello'))
         except Queue.Empty:
             self.assert_(False, 'Expected %d messages in queue' % qsize)
         self.assert_(queue.empty())

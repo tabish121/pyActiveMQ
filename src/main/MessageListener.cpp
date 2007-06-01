@@ -15,6 +15,8 @@
 */
 
 #include <boost/python.hpp>
+#include <boost/shared_ptr.hpp>
+
 #include <cms/MessageListener.h>
 #include <cms/Message.h>
 #include <cms/BytesMessage.h>
@@ -22,39 +24,54 @@
 #include <cms/MapMessage.h>
 
 using namespace boost::python;
+
 using cms::MessageListener;
 using cms::Message;
 using cms::BytesMessage;
 using cms::TextMessage;
 using cms::MapMessage;
 
+struct make_owning_holder
+{
+    template<class T>
+    static PyObject* execute(T* p)
+    {
+        typedef boost::shared_ptr<T> smart_pointer;
+        typedef objects::pointer_holder<smart_pointer, T> holder_t;
+        smart_pointer ptr(const_cast<T*>(p));
+        return objects::make_ptr_instance<T, holder_t>::execute(ptr);
+    }
+};
+
 struct MessageListenerWrap : MessageListener, wrapper<MessageListener>
 {
     virtual void onMessage(const Message* message)
     {
         PyGILState_STATE gstate = PyGILState_Ensure();
+
         if (dynamic_cast<const BytesMessage*>(message) != 0) {
-            BytesMessage* m = dynamic_cast<BytesMessage*>(message->clone());
-            call<void>(this->get_override("onMessage").ptr(), boost::ref(*m));
-            delete m;
-            m = 0;
+            call_onMessage<BytesMessage>(message);
         }
         else if (dynamic_cast<const TextMessage*>(message) != 0) {
-            TextMessage* m = dynamic_cast<TextMessage*>(message->clone());
-            call<void>(this->get_override("onMessage").ptr(), boost::ref(*m));
-            delete m;
-            m = 0;
+            call_onMessage<TextMessage>(message);
         }
         else if (dynamic_cast<const MapMessage*>(message) != 0) {
-            MapMessage* m = dynamic_cast<MapMessage*>(message->clone());
-            call<void>(this->get_override("onMessage").ptr(), boost::ref(*m));
-            delete m;
-            m = 0;
+            call_onMessage<MapMessage>(message);
         }
         else {
             Py_FatalError("invalid Message type encountered in MessageListener");
         }
+
         PyGILState_Release(gstate);
+    }
+
+    template<class T>
+    void call_onMessage(const Message* message)
+    {
+        // TODO consolidate with very similar code in MessageConsumer
+        T* m = dynamic_cast<T*>(message->clone());
+        PyObject* obj = to_python_indirect<T*, make_owning_holder>()(m);
+        call<void>(this->get_override("onMessage").ptr(), handle<>(obj));
     }
 };
 

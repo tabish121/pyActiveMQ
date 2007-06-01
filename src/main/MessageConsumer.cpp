@@ -15,6 +15,7 @@
 */
 
 #include <boost/python.hpp>
+
 #include <cms/MessageConsumer.h>
 #include <cms/TextMessage.h>
 #include <cms/BytesMessage.h>
@@ -25,11 +26,6 @@ using namespace boost::python::detail;
 using cms::MessageConsumer;
 using cms::Closeable;
 using cms::Message;
-
-Message* (MessageConsumer::*MessageConsumer_receive0)() =
-    &MessageConsumer::receive;
-Message* (MessageConsumer::*MessageConsumer_receive1)(int) =
-    &MessageConsumer::receive;
 
 template <class T>
 struct to_python_Message
@@ -52,7 +48,7 @@ struct to_python_Message
             return make_owning_holder::execute(dynamic_cast<cms::MapMessage*>(p));
         }
         Py_FatalError("invalid Message type encountered in MessageConsumer");
-		return 0;
+        return 0;
     }
 };
 
@@ -67,6 +63,8 @@ struct manage_new_Message
 
 void export_MessageConsumer()
 {
+    Message* (MessageConsumer::*MessageConsumer_receive0)() = &MessageConsumer::receive;
+    Message* (MessageConsumer::*MessageConsumer_receive1)(int) = &MessageConsumer::receive;
     class_<MessageConsumer, bases<Closeable>, boost::noncopyable>("MessageConsumer", no_init)
         .def("receive", MessageConsumer_receive0, return_value_policy<manage_new_Message>())
         .def("receive", MessageConsumer_receive1, return_value_policy<manage_new_Message>())
