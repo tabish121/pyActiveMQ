@@ -451,7 +451,6 @@ class _test_async:
             # deallocated after this method is called.
             self.queue.put(True)
 
-    # TODO this test fails completely at present
     def test_multiple_sessions(self):
         nmessages = 100
         nconsumers = 3
