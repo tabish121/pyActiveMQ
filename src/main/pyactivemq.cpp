@@ -115,10 +115,11 @@ BOOST_PYTHON_MODULE(pyactivemq)
     export_MessageListener();
     export_MessageConsumer();
 
-#if 1
-    // TODO DeliveryMode causes problems with GCC
+    // assigning DeliveryModes to ints first avoids issue with
+    // unresolved symbols at runtime
     scope s = class_<cms::DeliveryMode, boost::noncopyable>("DeliveryMode", no_init);
-    s.attr("PERSISTENT") = cms::DeliveryMode::PERSISTENT;
-    s.attr("NON_PERSISTENT") = cms::DeliveryMode::NON_PERSISTENT;
-#endif
+    int persistent = cms::DeliveryMode::PERSISTENT;
+    s.attr("PERSISTENT") = persistent;
+    int non_persistent = cms::DeliveryMode::NON_PERSISTENT;
+    s.attr("NON_PERSISTENT") = non_persistent;
 }
