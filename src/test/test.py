@@ -142,13 +142,16 @@ class _test_any_protocol:
         session.close()
 
     def test_Topic_and_Queue(self):
+        from pyactivemq import DestinationType
         session = self.conn.createSession()
         topic = session.createTopic("topic")
         self.assertEqual("topic", topic.name)
+        self.assertEqual(DestinationType.TOPIC, topic.destinationType)
         self.assert_(isinstance(topic, pyactivemq.Destination))
         topic2 = session.createTopic("topic2")
         queue = session.createQueue("queue")
         self.assertEqual("queue", queue.name)
+        self.assertEqual(DestinationType.QUEUE, queue.destinationType)
         self.assert_(isinstance(queue, pyactivemq.Destination))
         queue2 = session.createQueue("queue2")
         self.assertEqual(topic, topic)
@@ -220,9 +223,14 @@ class _test_any_protocol:
         self.assertEqual('int1', textMessage.propertyNames[0])
         self.assert_(textMessage.destination is None)
         self.assert_(textMessage.replyTo is None)
+
         queue = session.createQueue("queue")
         textMessage.replyTo = queue
         self.assertEqual(queue, textMessage.replyTo)
+        del queue
+        # TODO allow derived type of destination to be retrieved from
+        # replyTo and destination properties
+        #self.assert_(isinstance(textMessage.replyTo, pyactivemq.Queue))
 
     def test_BytesMessage(self):
         session = self.conn.createSession()
@@ -400,6 +408,9 @@ class test_openwire(_test_any_protocol, unittest.TestCase):
         self.assert_(len(temptopic.name) > 0)
         self.assert_(isinstance(temptopic, pyactivemq.Destination))
         self.assert_(not isinstance(temptopic, pyactivemq.Topic))
+        from pyactivemq import DestinationType
+        self.assertEqual(DestinationType.TEMPORARY_TOPIC,
+                         temptopic.destinationType)
 
     def test_temporary_queue(self):
         session = self.conn.createSession()
@@ -407,6 +418,9 @@ class test_openwire(_test_any_protocol, unittest.TestCase):
         self.assert_(len(tempqueue.name) > 0)
         self.assert_(isinstance(tempqueue, pyactivemq.Destination))
         self.assert_(not isinstance(tempqueue, pyactivemq.Queue))
+        from pyactivemq import DestinationType
+        self.assertEqual(DestinationType.TEMPORARY_QUEUE,
+                         tempqueue.destinationType)
 
     def test_MapMessage(self):
         session = self.conn.createSession()

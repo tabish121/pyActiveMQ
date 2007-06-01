@@ -14,14 +14,14 @@
   limitations under the License.
 */
 
-#include <boost/python.hpp>
+#include <boost/python/class.hpp>
+
 #include <cms/MapMessage.h>
 
-using namespace boost::python;
+namespace py = boost::python;
+
 using cms::MapMessage;
 using cms::Message;
-
-// TODO see if we can do something to make MapMessage work like a Python map
 
 const char* MapMessage_getBytes(MapMessage& This, const std::string& name)
 {
@@ -34,7 +34,7 @@ const char* MapMessage_getBytes(MapMessage& This, const std::string& name)
 
 void export_MapMessage()
 {
-    class_<MapMessage, bases<Message>, boost::noncopyable>("MapMessage", no_init)
+    py::class_<MapMessage, py::bases<Message>, boost::noncopyable>("MapMessage", py::no_init)
         .add_property("mapNames", &MapMessage::getMapNames)
         .def("itemExists", &MapMessage::itemExists)
         .def("getBoolean", &MapMessage::getBoolean)

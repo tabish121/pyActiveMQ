@@ -14,8 +14,8 @@
   limitations under the License.
 */
 
-#include <boost/python.hpp>
-#include <boost/shared_ptr.hpp>
+#include <boost/python/class.hpp>
+#include <boost/python/pure_virtual.hpp>
 
 #include <cms/MessageListener.h>
 #include <cms/Message.h>
@@ -23,7 +23,9 @@
 #include <cms/TextMessage.h>
 #include <cms/MapMessage.h>
 
-using namespace boost::python;
+#include "pyactivemq.h"
+
+namespace py = boost::python;
 
 using cms::MessageListener;
 using cms::Message;
@@ -31,19 +33,7 @@ using cms::BytesMessage;
 using cms::TextMessage;
 using cms::MapMessage;
 
-struct make_owning_holder
-{
-    template<class T>
-    static PyObject* execute(T* p)
-    {
-        typedef boost::shared_ptr<T> smart_pointer;
-        typedef objects::pointer_holder<smart_pointer, T> holder_t;
-        smart_pointer ptr(const_cast<T*>(p));
-        return objects::make_ptr_instance<T, holder_t>::execute(ptr);
-    }
-};
-
-struct MessageListenerWrap : MessageListener, wrapper<MessageListener>
+struct MessageListenerWrap : MessageListener, py::wrapper<MessageListener>
 {
     virtual void onMessage(const Message* message)
     {
@@ -51,15 +41,12 @@ struct MessageListenerWrap : MessageListener, wrapper<MessageListener>
 
         if (dynamic_cast<const BytesMessage*>(message) != 0) {
             call_onMessage<BytesMessage>(message);
-        }
-        else if (dynamic_cast<const TextMessage*>(message) != 0) {
+        } else if (dynamic_cast<const TextMessage*>(message) != 0) {
             call_onMessage<TextMessage>(message);
-        }
-        else if (dynamic_cast<const MapMessage*>(message) != 0) {
+        } else if (dynamic_cast<const MapMessage*>(message) != 0) {
             call_onMessage<MapMessage>(message);
-        }
-        else {
-            Py_FatalError("invalid Message type encountered in MessageListener");
+        } else {
+            Py_FatalError("Invalid Message type encountered in MessageListener");
         }
 
         PyGILState_Release(gstate);
@@ -68,16 +55,15 @@ struct MessageListenerWrap : MessageListener, wrapper<MessageListener>
     template<class T>
     void call_onMessage(const Message* message)
     {
-        // TODO consolidate with very similar code in MessageConsumer
         T* m = dynamic_cast<T*>(message->clone());
-        PyObject* obj = to_python_indirect<T*, make_owning_holder>()(m);
-        call<void>(this->get_override("onMessage").ptr(), handle<>(obj));
+        PyObject* obj = py::to_python_indirect<T*, make_owning_holder>()(m);
+        py::call<void>(this->get_override("onMessage").ptr(), py::handle<>(obj));
     }
 };
 
 void export_MessageListener()
 {
-    class_<MessageListenerWrap, boost::noncopyable>("MessageListener")
-        .def("onMessage", pure_virtual(&MessageListener::onMessage))
+    py::class_<MessageListenerWrap, boost::noncopyable>("MessageListener")
+        .def("onMessage", py::pure_virtual(&MessageListener::onMessage))
         ;
 }

@@ -14,32 +14,31 @@
   limitations under the License.
 */
 
-#include <boost/python.hpp>
+#include <boost/python/class.hpp>
+
 #include <cms/MessageProducer.h>
 
-using namespace boost::python;
+namespace py = boost::python;
+
 using cms::Closeable;
 using cms::MessageProducer;
 using cms::Message;
 using cms::Destination;
 
-void (MessageProducer::*MessageProducer_send1)(
-    Message*) =
-    &MessageProducer::send;
-void (MessageProducer::*MessageProducer_send4)(
-    Message*, int, int, long long) =
-    &MessageProducer::send;
-void (MessageProducer::*MessageProducer_send2)(
-    const Destination*, Message*) =
-    &MessageProducer::send;
-void (MessageProducer::*MessageProducer_send5)(
-    const Destination*, Message*, int, int, long long) =
-    &MessageProducer::send;
-
 void export_MessageProducer()
 {
-    class_<MessageProducer, bases<Closeable>, boost::noncopyable>(
-        "MessageProducer", no_init)
+    void (MessageProducer::*MessageProducer_send1)(Message*) =
+        &MessageProducer::send;
+    void (MessageProducer::*MessageProducer_send4)(Message*, int, int, long long) =
+        &MessageProducer::send;
+    void (MessageProducer::*MessageProducer_send2)(const Destination*, Message*) =
+        &MessageProducer::send;
+    void (MessageProducer::*MessageProducer_send5)(
+        const Destination*, Message*, int, int, long long) =
+        &MessageProducer::send;
+
+    py::class_<MessageProducer, py::bases<Closeable>, boost::noncopyable>(
+        "MessageProducer", py::no_init)
         .def("send", MessageProducer_send1)
         .def("send", MessageProducer_send4)
         .def("send", MessageProducer_send2)

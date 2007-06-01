@@ -14,9 +14,13 @@
   limitations under the License.
 */
 
-// TODO map clones so that they work with Python's copy module
-
-#include <boost/python.hpp>
+#include <boost/python/module.hpp>
+#include <boost/python/class.hpp>
+#include <boost/python/to_python_converter.hpp>
+#include <boost/python/exception_translator.hpp>
+#include <boost/python/scope.hpp>
+#include <boost/python/tuple.hpp>
+#include <boost/python/list.hpp>
 
 #include <cms/Startable.h>
 #include <cms/Stoppable.h>
@@ -24,13 +28,15 @@
 #include <cms/DeliveryMode.h>
 #include <cms/CMSException.h>
 
-using namespace boost::python;
+namespace py = boost::python;
+
 using cms::CMSException;
 using cms::Startable;
 using cms::Stoppable;
 using cms::Closeable;
 
-void CMSException_translator(const CMSException& e) {
+void CMSException_translator(const CMSException& e)
+{
     PyErr_SetString(PyExc_UserWarning, e.getMessage().c_str());
 }
 
@@ -39,14 +45,14 @@ struct to_tuple
 {
     static PyObject* convert(const T& c)
     {
-        list result;
+        py::list result;
         for (typename T::const_iterator it = c.begin();
              it != c.end();
              ++it)
         {
             result.append(*it);
         }
-        return incref(tuple(result).ptr());
+        return py::incref(py::tuple(result).ptr());
     }
 };
 
@@ -55,8 +61,7 @@ struct std_vector_to_tuple
 {
     std_vector_to_tuple()
     {
-        to_python_converter<std::vector<T>,
-            to_tuple<std::vector<T> > >();
+        py::to_python_converter<std::vector<T>, to_tuple<std::vector<T> > >();
     }
 };
 
@@ -80,26 +85,26 @@ BOOST_PYTHON_MODULE(pyactivemq)
 
     std_vector_to_tuple<std::string>();
 
-    class_<Startable, boost::noncopyable>("Startable", no_init)
+    py::class_<Startable, boost::noncopyable>("Startable", py::no_init)
         .def("start", &Startable::start)
         ;
 
-    class_<Stoppable, boost::noncopyable>("Stoppable", no_init)
+    py::class_<Stoppable, boost::noncopyable>("Stoppable", py::no_init)
         .def("stop", &Stoppable::stop)
         ;
 
-    class_<Closeable, boost::noncopyable>("Closeable", no_init)
+    py::class_<Closeable, boost::noncopyable>("Closeable", py::no_init)
         .def("close", &Closeable::close)
         ;
 
     void (CMSException::*CMSException_printStackTrace0)() const =
         &CMSException::printStackTrace;
-    class_<CMSException, boost::noncopyable>("CMSException", no_init)
+    py::class_<CMSException, boost::noncopyable>("CMSException", py::no_init)
         .def("printStackTrace", CMSException_printStackTrace0)
         .def("getStackTraceString", &CMSException::getStackTraceString)
         .add_property("message", &CMSException::getMessage)
         ;
-    register_exception_translator<CMSException>(CMSException_translator);
+    py::register_exception_translator<CMSException>(CMSException_translator);
 
     export_ConnectionFactory();
     export_ActiveMQConnectionFactory();
@@ -117,7 +122,7 @@ BOOST_PYTHON_MODULE(pyactivemq)
 
     // assigning DeliveryModes to ints first avoids issue with
     // unresolved symbols at runtime
-    scope s = class_<cms::DeliveryMode, boost::noncopyable>("DeliveryMode", no_init);
+    py::scope s = py::class_<cms::DeliveryMode, boost::noncopyable>("DeliveryMode", py::no_init);
     int persistent = cms::DeliveryMode::PERSISTENT;
     s.attr("PERSISTENT") = persistent;
     int non_persistent = cms::DeliveryMode::NON_PERSISTENT;

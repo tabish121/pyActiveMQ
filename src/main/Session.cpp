@@ -14,10 +14,14 @@
   limitations under the License.
 */
 
-#include <boost/python.hpp>
+#include <boost/python/class.hpp>
+#include <boost/python/enum.hpp>
+#include <boost/python/manage_new_object.hpp>
+
 #include <cms/Session.h>
 
-using namespace boost::python;
+namespace py = boost::python;
+
 using cms::Session;
 using cms::Closeable;
 using cms::MessageConsumer;
@@ -25,25 +29,27 @@ using cms::Destination;
 using cms::TextMessage;
 using cms::BytesMessage;
 
-MessageConsumer* (Session::*Session_createConsumer1)(const Destination*) =
-    &Session::createConsumer;
-MessageConsumer* (Session::*Session_createConsumer2)(
-    const Destination*, const std::string&) =
-    &Session::createConsumer;
-MessageConsumer* (Session::*Session_createConsumer3)(
-    const Destination*, const std::string&, bool) =
-    &Session::createConsumer;
-TextMessage* (Session::*Session_createTextMessage0)() =
-    &Session::createTextMessage;
-TextMessage* (Session::*Session_createTextMessage1)(const std::string&) =
-    &Session::createTextMessage;
-BytesMessage* (Session::*Session_createBytesMessage0)() =
-    &Session::createBytesMessage;
-// TODO 2-argument createBytesMessage
-
 void export_Session()
 {
-    class_<Session, bases<Closeable>, boost::noncopyable>("Session", no_init)
+    MessageConsumer* (Session::*Session_createConsumer1)(const Destination*) =
+        &Session::createConsumer;
+    MessageConsumer* (Session::*Session_createConsumer2)(
+        const Destination*, const std::string&) =
+        &Session::createConsumer;
+    MessageConsumer* (Session::*Session_createConsumer3)(
+        const Destination*, const std::string&, bool) =
+        &Session::createConsumer;
+    TextMessage* (Session::*Session_createTextMessage0)() =
+        &Session::createTextMessage;
+    TextMessage* (Session::*Session_createTextMessage1)(const std::string&) =
+        &Session::createTextMessage;
+    BytesMessage* (Session::*Session_createBytesMessage0)() =
+        &Session::createBytesMessage;
+
+    using py::return_value_policy;
+    using py::manage_new_object;
+    using py::with_custodian_and_ward_postcall;
+    py::class_<Session, py::bases<Closeable>, boost::noncopyable>("Session", py::no_init)
         .def("commit", &Session::commit)
         .def("rollback", &Session::rollback)
         .def("unsubscribe", &Session::unsubscribe)
@@ -65,7 +71,7 @@ void export_Session()
         .add_property("transacted", &Session::isTransacted)
         ;
 
-    enum_<Session::AcknowledgeMode>("AcknowledgeMode")
+    py::enum_<Session::AcknowledgeMode>("AcknowledgeMode")
         .value("AUTO_ACKNOWLEDGE", Session::AUTO_ACKNOWLEDGE)
         .value("DUPS_OK_ACKNOWLEDGE", Session::DUPS_OK_ACKNOWLEDGE)
         .value("CLIENT_ACKNOWLEDGE", Session::CLIENT_ACKNOWLEDGE)

@@ -14,20 +14,22 @@
   limitations under the License.
 */
 
-#include <boost/python.hpp>
+#include <boost/python/class.hpp>
 
 #include <cms/MessageConsumer.h>
 #include <cms/TextMessage.h>
 #include <cms/BytesMessage.h>
 #include <cms/MapMessage.h>
 
-using namespace boost::python;
-using namespace boost::python::detail;
+#include "pyactivemq.h"
+
+namespace py = boost::python;
+
 using cms::MessageConsumer;
 using cms::Closeable;
 using cms::Message;
 
-template <class T>
+template<class T>
 struct to_python_Message
 {
     template <class U>
@@ -47,14 +49,14 @@ struct to_python_Message
         else if (dynamic_cast<cms::MapMessage*>(p) != 0) {
             return make_owning_holder::execute(dynamic_cast<cms::MapMessage*>(p));
         }
-        Py_FatalError("invalid Message type encountered in MessageConsumer");
+        Py_FatalError("Invalid Message type encountered in MessageConsumer");
         return 0;
     }
 };
 
 struct manage_new_Message
 {
-    template <class T>
+    template<class T>
     struct apply
     {
         typedef to_python_Message<T> type;
@@ -65,15 +67,15 @@ void export_MessageConsumer()
 {
     Message* (MessageConsumer::*MessageConsumer_receive0)() = &MessageConsumer::receive;
     Message* (MessageConsumer::*MessageConsumer_receive1)(int) = &MessageConsumer::receive;
-    class_<MessageConsumer, bases<Closeable>, boost::noncopyable>("MessageConsumer", no_init)
-        .def("receive", MessageConsumer_receive0, return_value_policy<manage_new_Message>())
-        .def("receive", MessageConsumer_receive1, return_value_policy<manage_new_Message>())
+    py::class_<MessageConsumer, py::bases<Closeable>, boost::noncopyable>("MessageConsumer", py::no_init)
+        .def("receive", MessageConsumer_receive0, py::return_value_policy<manage_new_Message>())
+        .def("receive", MessageConsumer_receive1, py::return_value_policy<manage_new_Message>())
         .def("receiveNoWait",
              &MessageConsumer::receiveNoWait,
-             return_value_policy<manage_new_Message>())
+             py::return_value_policy<manage_new_Message>())
         .add_property("messageListener",
-                      make_function(&MessageConsumer::getMessageListener, return_internal_reference<>()),
-                      make_function(&MessageConsumer::setMessageListener, with_custodian_and_ward<1,2>()))
+                      make_function(&MessageConsumer::getMessageListener, py::return_internal_reference<>()),
+                      make_function(&MessageConsumer::setMessageListener, py::with_custodian_and_ward<1,2>()))
         .add_property("messageSelector", &MessageConsumer::getMessageSelector)
         ;
 }

@@ -14,14 +14,17 @@
   limitations under the License.
 */
 
-#include <boost/python.hpp>
+#include <boost/python/class.hpp>
+#include <boost/python/enum.hpp>
+
 #include <cms/Destination.h>
 #include <cms/Topic.h>
 #include <cms/Queue.h>
 #include <cms/TemporaryTopic.h>
 #include <cms/TemporaryQueue.h>
 
-using namespace boost::python;
+namespace py = boost::python;
+
 using cms::Destination;
 using cms::Topic;
 using cms::Queue;
@@ -30,8 +33,7 @@ using cms::TemporaryQueue;
 
 bool Destination__eq__(const Destination& self, const Destination& other)
 {
-    if (self.getDestinationType() != other.getDestinationType())
-    {
+    if (self.getDestinationType() != other.getDestinationType()) {
         return false;
     }
     switch (self.getDestinationType())
@@ -65,14 +67,14 @@ bool Destination__eq__(const Destination& self, const Destination& other)
         return selfQueue.getQueueName() == otherQueue.getQueueName();
     }
     default:
-        // TODO this is actually an error, so throw
+        Py_FatalError("Invalid Destination type encountered in Destinations");
         return false;
     }
 }
 
 void export_Destinations()
 {
-    class_<Destination, boost::noncopyable>("Destination", no_init)
+    py::class_<Destination, boost::noncopyable>("Destination", py::no_init)
         .add_property("destinationType", &Destination::getDestinationType)
         .def("__str__", &Destination::toProviderString)
         .def("__repr__", &Destination::toProviderString)
@@ -80,26 +82,26 @@ void export_Destinations()
         .add_property("providerString", &Destination::toProviderString)
         ;
 
-    enum_<Destination::DestinationType>("DestinationType")
+    py::enum_<Destination::DestinationType>("DestinationType")
         .value("TOPIC", Destination::TOPIC)
         .value("QUEUE", Destination::QUEUE)
         .value("TEMPORARY_TOPIC", Destination::TEMPORARY_TOPIC)
         .value("TEMPORARY_QUEUE", Destination::TEMPORARY_QUEUE)
         ;
 
-    class_<Topic, bases<Destination>, boost::noncopyable>("Topic", no_init)
+    py::class_<Topic, py::bases<Destination>, boost::noncopyable>("Topic", py::no_init)
         .add_property("name", &Topic::getTopicName)
         ;
 
-    class_<Queue, bases<Destination>, boost::noncopyable>("Queue", no_init)
+    py::class_<Queue, py::bases<Destination>, boost::noncopyable>("Queue", py::no_init)
         .add_property("name", &Queue::getQueueName)
         ;
 
-    class_<TemporaryTopic, bases<Destination>, boost::noncopyable>("TemporaryTopic", no_init)
+    py::class_<TemporaryTopic, py::bases<Destination>, boost::noncopyable>("TemporaryTopic", py::no_init)
         .add_property("name", &TemporaryTopic::getTopicName)
         ;
 
-    class_<TemporaryQueue, bases<Destination>, boost::noncopyable>("TemporaryQueue", no_init)
+    py::class_<TemporaryQueue, py::bases<Destination>, boost::noncopyable>("TemporaryQueue", py::no_init)
         .add_property("name", &TemporaryQueue::getQueueName)
         ;
 }

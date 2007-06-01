@@ -14,19 +14,22 @@
   limitations under the License.
 */
 
-#include <boost/python/class.hpp>
+#ifndef PYACTIVEMQ_H_
+#define PYACTIVEMQ_H_
 
-#include <cms/TextMessage.h>
+#include <boost/shared_ptr.hpp>
+#include <boost/python/object/pointer_holder.hpp>
 
-namespace py = boost::python;
-
-using cms::TextMessage;
-using cms::Message;
-
-void export_TextMessage()
+struct make_owning_holder
 {
-    void (TextMessage::*TextMessage_setText)(const std::string&) = &TextMessage::setText;
-    py::class_<TextMessage, py::bases<Message>, boost::noncopyable>("TextMessage", py::no_init)
-        .add_property("text", &TextMessage::getText, TextMessage_setText)
-        ;
-}
+    template<class T>
+    static PyObject* execute(T* p)
+    {
+        typedef boost::shared_ptr<T> smart_pointer;
+        typedef boost::python::objects::pointer_holder<smart_pointer, T> holder_t;
+        smart_pointer ptr(const_cast<T*>(p));
+        return boost::python::objects::make_ptr_instance<T, holder_t>::execute(ptr);
+    }
+};
+
+#endif

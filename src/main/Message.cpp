@@ -14,18 +14,17 @@
   limitations under the License.
 */
 
-#include <boost/python.hpp>
+#include <boost/python/class.hpp>
+
 #include <cms/Message.h>
 
-using namespace boost::python;
-using cms::Message;
+namespace py = boost::python;
 
-// TODO maybe some of these properties should be read only?
+using cms::Message;
 
 void export_Message()
 {
-    class_<Message, boost::noncopyable>("Message", no_init)
-        // TODO clone?
+    py::class_<Message, boost::noncopyable>("Message", py::no_init)
         .def("acknowledge", &Message::acknowledge)
         .def("clearBody", &Message::clearBody)
         .def("clearProperties", &Message::clearProperties)
@@ -50,15 +49,15 @@ void export_Message()
         .add_property("correlationID", &Message::getCMSCorrelationID, &Message::setCMSCorrelationID)
         .add_property("deliveryMode", &Message::getCMSDeliveryMode, &Message::setCMSDeliveryMode)
         .add_property("destination",
-                      make_function(&Message::getCMSDestination, return_internal_reference<>()),
-                      make_function(&Message::setCMSDestination, with_custodian_and_ward<1,2>()))
+                      make_function(&Message::getCMSDestination, py::return_internal_reference<>()),
+                      make_function(&Message::setCMSDestination, py::with_custodian_and_ward<1, 2>()))
         .add_property("expiration", &Message::getCMSExpiration, &Message::setCMSExpiration)
         .add_property("messageID", &Message::getCMSMessageID, &Message::setCMSMessageID)
         .add_property("priority", &Message::getCMSPriority, &Message::setCMSPriority)
         .add_property("redelivered", &Message::getCMSRedelivered, &Message::setCMSRedelivered)
         .add_property("replyTo",
-                      make_function(&Message::getCMSReplyTo, return_internal_reference<>()),
-                      make_function(&Message::setCMSReplyTo, with_custodian_and_ward<1,2>()))
+                      make_function(&Message::getCMSReplyTo, py::return_internal_reference<>()),
+                      make_function(&Message::setCMSReplyTo, py::with_custodian_and_ward<1, 2>()))
         .add_property("timestamp", &Message::getCMSTimestamp, &Message::setCMSTimestamp)
         .add_property("type", &Message::getCMSType, &Message::setCMSType)
         ;

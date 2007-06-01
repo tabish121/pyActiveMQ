@@ -14,26 +14,31 @@
   limitations under the License.
 */
 
-#include <boost/python.hpp>
+#include <boost/python/class.hpp>
+#include <boost/python/pure_virtual.hpp>
+
 #include <cms/ExceptionListener.h>
 
-using namespace boost::python;
+namespace py = boost::python;
+
 using cms::ExceptionListener;
 using cms::CMSException;
 
-struct ExceptionListenerWrap : ExceptionListener, wrapper<ExceptionListener>
+struct ExceptionListenerWrap : ExceptionListener, py::wrapper<ExceptionListener>
 {
     virtual void onException(const CMSException& ex)
     {
         PyGILState_STATE gstate = PyGILState_Ensure();
-        call<void>(this->get_override("onException").ptr(), boost::ref(ex));
+        // TODO clone exception so that exception listener can keep a
+        // reference to it
+        py::call<void>(this->get_override("onException").ptr(), boost::ref(ex));
         PyGILState_Release(gstate);
     }
 };
 
 void export_ExceptionListener()
 {
-    class_<ExceptionListenerWrap, boost::noncopyable>("ExceptionListener")
-        .def("onException", pure_virtual(&ExceptionListener::onException))
+    py::class_<ExceptionListenerWrap, boost::noncopyable>("ExceptionListener")
+        .def("onException", py::pure_virtual(&ExceptionListener::onException))
         ;
 }

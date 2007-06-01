@@ -63,6 +63,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="libboost_python-vc80-mt-gd-1_33_1.lib ws2_32.lib rpcrt4.lib"
+				OutputFile="$(OutDir)\$(ProjectName).pyd"
 				AdditionalLibraryDirectories="C:\Program Files\Microsoft Platform SDK\Lib;C:\Program Files\boost\boost_1_33_1\lib;C:\Python24\libs"
 				GenerateDebugInformation="true"
 			/>
@@ -137,6 +138,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="libboost_python-vc80-mt-1_33_1.lib ws2_32.lib rpcrt4.lib"
+				OutputFile="$(OutDir)\$(ProjectName).pyd"
 				AdditionalLibraryDirectories="C:\Program Files\Microsoft Platform SDK\Lib;C:\Program Files\boost\boost_1_33_1\lib;C:\Python24\libs"
 			/>
 			<Tool
@@ -235,6 +237,10 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath="..\src\main\pyactivemq.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
