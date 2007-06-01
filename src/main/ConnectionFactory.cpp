@@ -14,27 +14,30 @@
   limitations under the License.
 */
 
-#include <boost/python.hpp>
+#include <boost/python/class.hpp>
+#include <boost/python/manage_new_object.hpp>
+
 #include <cms/ConnectionFactory.h>
 
-using namespace boost::python;
+namespace py = boost::python;
+
 using cms::ConnectionFactory;
 using cms::Connection;
 
-Connection* (ConnectionFactory::*ConnectionFactory_createConnection0)() =
-    &ConnectionFactory::createConnection;
-Connection* (ConnectionFactory::*ConnectionFactory_createConnection3)(
-    const std::string&, const std::string&, const std::string&) =
-    &ConnectionFactory::createConnection;
-
 void export_ConnectionFactory()
 {
-    class_<ConnectionFactory, boost::noncopyable>("ConnectionFactory", no_init)
+    Connection* (ConnectionFactory::*ConnectionFactory_createConnection0)() =
+        &ConnectionFactory::createConnection;
+    Connection* (ConnectionFactory::*ConnectionFactory_createConnection3)(
+        const std::string&, const std::string&, const std::string&) =
+        &ConnectionFactory::createConnection;
+
+    py::class_<ConnectionFactory, boost::noncopyable>("ConnectionFactory", py::no_init)
         .def("createConnection",
              ConnectionFactory_createConnection0,
-             return_value_policy<manage_new_object>())
+             py::return_value_policy<py::manage_new_object>())
         .def("createConnection",
              ConnectionFactory_createConnection3,
-             return_value_policy<manage_new_object>())
+             py::return_value_policy<py::manage_new_object>())
         ;
 }

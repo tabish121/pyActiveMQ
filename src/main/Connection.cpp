@@ -14,11 +14,14 @@
   limitations under the License.
 */
 
-#include <boost/python.hpp>
+#include <boost/python/class.hpp>
+#include <boost/python/manage_new_object.hpp>
+
 #include <cms/Connection.h>
 #include <cms/ExceptionListener.h>
 
-using namespace boost::python;
+namespace py = boost::python;
+
 using cms::Connection;
 using cms::Startable;
 using cms::Stoppable;
@@ -26,23 +29,23 @@ using cms::Closeable;
 using cms::Session;
 using cms::ExceptionListener;
 
-Session* (Connection::*Connection_createSession0)() =
-    &Connection::createSession;
-Session* (Connection::*Connection_createSession1)(Session::AcknowledgeMode) =
-    &Connection::createSession;
-
 void export_Connection()
 {
-    class_<Connection, bases<Startable, Stoppable, Closeable>, boost::noncopyable>("Connection", no_init)
+    Session* (Connection::*Connection_createSession0)() =
+        &Connection::createSession;
+    Session* (Connection::*Connection_createSession1)(Session::AcknowledgeMode) =
+        &Connection::createSession;
+
+    py::class_<Connection, py::bases<Startable, Stoppable, Closeable>, boost::noncopyable>("Connection", py::no_init)
         .add_property("clientID", &Connection::getClientID)
         .add_property("exceptionListener",
-                      make_function(&Connection::getExceptionListener, return_internal_reference<>()),
-                      make_function(&Connection::setExceptionListener, with_custodian_and_ward<1,2>()))
+                      make_function(&Connection::getExceptionListener, py::return_internal_reference<>()),
+                      make_function(&Connection::setExceptionListener, py::with_custodian_and_ward<1,2>()))
         .def("createSession",
              Connection_createSession0,
-             return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1> >())
+             py::return_value_policy<py::manage_new_object, py::with_custodian_and_ward_postcall<0, 1> >())
         .def("createSession",
              Connection_createSession1,
-             return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1> >())
+             py::return_value_policy<py::manage_new_object, py::with_custodian_and_ward_postcall<0, 1> >())
         ;
 }

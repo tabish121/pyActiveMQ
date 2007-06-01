@@ -14,28 +14,30 @@
   limitations under the License.
 */
 
-#include <boost/python.hpp>
+#include <boost/python/class.hpp>
+
 #include <activemq/core/ActiveMQConnectionFactory.h>
 
-using namespace boost::python;
+namespace py = boost::python;
+
 using activemq::core::ActiveMQConnectionFactory;
 using cms::ConnectionFactory;
 
 void export_ActiveMQConnectionFactory()
 {
-    class_<ActiveMQConnectionFactory, bases<ConnectionFactory>, boost::noncopyable>("ActiveMQConnectionFactory")
-        .def(init<const std::string&, optional<const std::string&, const std::string&> >())
+    py::class_<ActiveMQConnectionFactory, py::bases<ConnectionFactory>, boost::noncopyable>("ActiveMQConnectionFactory")
+        .def(py::init<const std::string&, py::optional<const std::string&, const std::string&> >())
         .add_property("username",
                       make_function(&ActiveMQConnectionFactory::getUsername,
-                                    return_value_policy<return_by_value>()),
+                                    py::return_value_policy<py::return_by_value>()),
                       &ActiveMQConnectionFactory::setUsername)
         .add_property("password",
                       make_function(&ActiveMQConnectionFactory::getPassword,
-                                    return_value_policy<return_by_value>()),
+                                    py::return_value_policy<py::return_by_value>()),
                       &ActiveMQConnectionFactory::setPassword)
         .add_property("brokerURL",
                       make_function(&ActiveMQConnectionFactory::getBrokerURL,
-                                    return_value_policy<return_by_value>()),
+                                    py::return_value_policy<py::return_by_value>()),
                       &ActiveMQConnectionFactory::setBrokerURL)
         ;
 }

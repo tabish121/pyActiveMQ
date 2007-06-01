@@ -14,26 +14,21 @@
   limitations under the License.
 */
 
-#include <boost/python.hpp>
-#include <cms/BytesMessage.h>
+#include <boost/python/class.hpp>
+#include <boost/python/str.hpp>
 
-using namespace boost::python;
-using cms::BytesMessage;
-using cms::Message;
+#include <cms/BytesMessage.h>
 
 #include <iostream>
 
+namespace py = boost::python;
+
+using cms::BytesMessage;
+using cms::Message;
+
 PyObject* BytesMessage_getBodyBytes(BytesMessage const& self)
 {
-    // workaround for https://issues.apache.org/activemq/browse/AMQCPP-117
-    if (self.getBodyLength() > 0)
-    {
-        return incref(str(reinterpret_cast<const char*>(self.getBodyBytes()), self.getBodyLength()).ptr());
-    }
-    else
-    {
-        return incref(str((const char*)NULL, (std::size_t)0).ptr());
-    }
+    return py::incref(py::str(reinterpret_cast<const char*>(self.getBodyBytes()), self.getBodyLength()).ptr());
 }
 
 void BytesMessage_setBodyBytes(BytesMessage& This, const std::string& buffer)
@@ -52,8 +47,7 @@ std::string BytesMessage_readBytes(BytesMessage& This)
 void BytesMessage_writeBytes(BytesMessage& This, const std::string& buffer)
 {
     std::vector<unsigned char> buffer2(buffer.size());
-    for (std::size_t i = 0; i < buffer.size(); i++)
-    {
+    for (std::size_t i = 0; i < buffer.size(); i++) {
         buffer2.push_back(buffer[i]);
     }
     This.writeBytes(buffer2);
@@ -61,7 +55,7 @@ void BytesMessage_writeBytes(BytesMessage& This, const std::string& buffer)
 
 void export_BytesMessage()
 {
-    class_<BytesMessage, bases<Message>, boost::noncopyable>("BytesMessage", no_init)
+    py::class_<BytesMessage, py::bases<Message>, boost::noncopyable>("BytesMessage", py::no_init)
         .add_property("bodyBytes", BytesMessage_getBodyBytes, BytesMessage_setBodyBytes)
         .add_property("bodyLength", &BytesMessage::getBodyLength)
         .def("reset", &BytesMessage::reset)
