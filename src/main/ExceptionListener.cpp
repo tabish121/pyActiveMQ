@@ -26,9 +26,7 @@ struct ExceptionListenerWrap : ExceptionListener, wrapper<ExceptionListener>
     virtual void onException(const CMSException& ex)
     {
         PyGILState_STATE gstate = PyGILState_Ensure();
-#if 0
         call<void>(this->get_override("onException").ptr(), boost::ref(ex));
-#endif
         PyGILState_Release(gstate);
     }
 };

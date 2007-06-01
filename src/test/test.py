@@ -20,7 +20,10 @@ import sys
 import time
 import unittest
 
-if not(len(sys.argv) == 2 and sys.argv[1] == 'release'):
+if len(sys.argv) not in [1, 2] or (len(sys.argv) == 2 and sys.argv[1] != 'release'):
+    print >>sys.stderr, 'usage: %s [release]' % sys.argv[0]
+    sys.exit(1)
+elif len(sys.argv) == 1:
     topdir = os.path.join(os.path.dirname(__file__), '..', '..')
     topdir = os.path.abspath(topdir)
     from distutils.util import get_platform
@@ -244,9 +247,6 @@ class _test_any_protocol:
         topic = self.random_topic(session)
         consumer = session.createConsumer(topic)
         self.assert_(consumer.messageListener is None)
-        consumer2 = session.createConsumer(topic)
-        # XXX doesn't work yet
-        #consumer2.messageListener = MessageListener()
         producer = session.createProducer(topic)
 
         self.conn.start()
@@ -511,11 +511,20 @@ class test_openwire_async(_test_async, unittest.TestCase):
         self.conn.close()
         del self.conn
 
-# XXX Sleep, let exception listener fire and then do keyboard
-# interrupt.  Leads to a crash while deleting Connection object, which
-# looks similar to what is reported here:
-# http://issues.apache.org/activemq/browse/AMQCPP-46
-#time.sleep(100000)
+def test_ExceptionListener():
+    url = 'tcp://localhost:61613?wireFormat=stomp'
+    from pyactivemq import ActiveMQConnectionFactory
+    f = ActiveMQConnectionFactory(url)
+    class ExceptionListener(pyactivemq.ExceptionListener):
+        def onException(self, ex):
+            # TODO test what happens if we keep a reference to this
+            # exception object
+            print ex
+    conn = f.createConnection()
+    conn.exceptionListener = ExceptionListener()
+    time.sleep(20)
+    del conn
 
 if __name__ == '__main__':
     unittest.main(argv=sys.argv)
+    #test_ExceptionListener()
