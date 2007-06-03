@@ -20,20 +20,16 @@ import sys
 import time
 import unittest
 
-if len(sys.argv) not in [1, 2] or (len(sys.argv) == 2 and sys.argv[1] != 'release'):
-    print >>sys.stderr, 'usage: %s [release]' % sys.argv[0]
-    sys.exit(1)
-elif len(sys.argv) == 1:
-    topdir = os.path.join(os.path.dirname(__file__), '..', '..')
-    topdir = os.path.abspath(topdir)
-    from distutils.util import get_platform
-    if get_platform() == 'win32':
-        sys.path.insert(0, os.path.join(topdir, 'win_build', 'debug'))
-    else:
-        plat_specifier = ".%s-%s" % (get_platform(), sys.version[0:3])
-        build_base = os.path.join(topdir, 'build')
-        build_platlib = os.path.join(build_base, 'lib' + plat_specifier)
-        sys.path.insert(0, build_platlib)
+topdir = os.path.join(os.path.dirname(__file__), '..', '..')
+topdir = os.path.abspath(topdir)
+from distutils.util import get_platform
+if get_platform() == 'win32':
+    sys.path.insert(0, os.path.join(topdir, 'win_build', 'debug'))
+else:
+    plat_specifier = ".%s-%s" % (get_platform(), sys.version[0:3])
+    build_base = os.path.join(topdir, 'build')
+    build_platlib = os.path.join(build_base, 'lib' + plat_specifier)
+    sys.path.insert(0, build_platlib)
 
 import pyactivemq
 print pyactivemq
@@ -114,17 +110,23 @@ class _test_any_protocol:
     random_topic = random_topic
 
     def test_Connection(self):
+        self.assertEqual(2, sys.getrefcount(self.conn))
         conn = self.conn
+        self.assertEqual(3, sys.getrefcount(conn))
         self.assert_(isinstance(conn, pyactivemq.Closeable))
         self.assert_(isinstance(conn, pyactivemq.Connection))
         from pyactivemq import AcknowledgeMode
-        conn.createSession(AcknowledgeMode.AUTO_ACKNOWLEDGE)
-        conn.createSession(AcknowledgeMode.DUPS_OK_ACKNOWLEDGE)
-        conn.createSession(AcknowledgeMode.CLIENT_ACKNOWLEDGE)
-        conn.createSession(AcknowledgeMode.SESSION_TRANSACTED)
+        session0 = conn.createSession()
+        session1 = conn.createSession(AcknowledgeMode.AUTO_ACKNOWLEDGE)
+        session2 = conn.createSession(AcknowledgeMode.DUPS_OK_ACKNOWLEDGE)
+        session3 = conn.createSession(AcknowledgeMode.CLIENT_ACKNOWLEDGE)
+        session4 = conn.createSession(AcknowledgeMode.SESSION_TRANSACTED)
+        self.assertEqual(8, sys.getrefcount(conn))
         self.assert_(conn.clientID is not None)
         conn.close()
         self.assertEqual('', conn.clientID)
+        del conn, session0, session1, session2, session3, session4
+        self.assertEqual(2, sys.getrefcount(self.conn))
 
     def test_Connection_ExceptionListener(self):
         conn = self.conn
@@ -181,11 +183,15 @@ class _test_any_protocol:
 
     def test_MessageConsumer(self):
         session = self.conn.createSession()
+        self.assertEqual(2, sys.getrefcount(session))
         topic = session.createTopic("topic")
+        self.assertEqual(2, sys.getrefcount(session))
         consumer1 = session.createConsumer(topic)
+        self.assertEqual(3, sys.getrefcount(session))
         self.assert_(isinstance(consumer1, pyactivemq.Closeable))
         self.assert_(isinstance(consumer1, pyactivemq.MessageConsumer))
         consumer2 = session.createConsumer(topic, "select1")
+        self.assertEqual(4, sys.getrefcount(session))
         self.assertEqual('select1', consumer2.messageSelector)
         try:
             consumer2.messageSelector = 'select2'
@@ -194,11 +200,17 @@ class _test_any_protocol:
         except AttributeError:
             pass
         consumer3 = session.createConsumer(topic, "", True)
+        self.assertEqual(5, sys.getrefcount(session))
+        del consumer1, consumer2, consumer3
+        self.assertEqual(2, sys.getrefcount(session))
 
     def test_MessageProducer(self):
         session = self.conn.createSession()
+        self.assertEqual(2, sys.getrefcount(session))
         topic = session.createTopic("topic")
+        self.assertEqual(2, sys.getrefcount(session))
         producer = session.createProducer(topic)
+        self.assertEqual(3, sys.getrefcount(session))
         from pyactivemq import DeliveryMode
         self.assertEqual(DeliveryMode.PERSISTENT, producer.deliveryMode)
         producer.deliveryMode = DeliveryMode.PERSISTENT
@@ -214,6 +226,8 @@ class _test_any_protocol:
         # unit of time to live is milliseconds
         producer.timeToLive = 60
         self.assertEqual(60, producer.timeToLive)
+        del producer
+        self.assertEqual(2, sys.getrefcount(session))
 
     def xtest_durable_consumer(self):
         # TODO test durable subscription
@@ -222,6 +236,7 @@ class _test_any_protocol:
         #f = session.createDurableConsumer
         #consumer3 = f(topic, subscriptionName, "selector", False)
         #session.unsubscribe(subscriptionName)
+        # TODO test refcounts before and after creating consumer
         pass
 
     def test_TextMessage(self):
@@ -241,9 +256,12 @@ class _test_any_protocol:
         self.assert_(textMessage.replyTo is None)
 
         queue = session.createQueue("queue")
+        self.assertEqual(2, sys.getrefcount(queue))
         textMessage.replyTo = queue
+        self.assertEqual(3, sys.getrefcount(queue))
         self.assertEqual(queue, textMessage.replyTo)
         del queue
+        self.assertEqual(1, sys.getrefcount(textMessage.replyTo))
         # TODO allow derived type of destination to be retrieved from
         # replyTo and destination properties
         #self.assert_(isinstance(textMessage.replyTo, pyactivemq.Queue))
@@ -449,10 +467,31 @@ class test_openwire(_test_any_protocol, unittest.TestCase):
         mapMessage = session.createMapMessage()
         self.assert_(isinstance(mapMessage, pyactivemq.Message))
         self.assert_(isinstance(mapMessage, pyactivemq.MapMessage))
-        mapMessage.setInt('int1', 123)
-        self.assertEqual(123, mapMessage.getInt('int1'))
-        self.assertEqual(1, len(mapMessage.mapNames))
-        self.assert_('int1' in mapMessage.mapNames)
+        mapMessage.setBoolean('bool1', True)
+        mapMessage.setByte('byte1', 123)
+        mapMessage.setChar('char1', 'X')
+        mapMessage.setDouble('double1', 123.456)
+        mapMessage.setFloat('float1', 123.456)
+        mapMessage.setInt('int1', 123456)
+        mapMessage.setLong('long1', 123456789)
+        mapMessage.setShort('short1', 1234)
+        mapMessage.setString('string1', 'hello123')
+        self.assertEqual(9, len(mapMessage.mapNames))
+        for name in mapMessage.mapNames:
+            self.assert_(mapMessage.itemExists(name))
+        self.assertEqual(True, mapMessage.getBoolean('bool1'))
+        self.assertEqual(123, mapMessage.getByte('byte1'))
+        self.assertEqual('X', mapMessage.getChar('char1'))
+        self.assertAlmostEqual(123.456, mapMessage.getDouble('double1'), 5)
+        self.assertAlmostEqual(123.456, mapMessage.getFloat('float1'), 5)
+        self.assertEqual(123456, mapMessage.getInt('int1'))
+        self.assertEqual(123456789, mapMessage.getLong('long1'))
+        self.assertEqual(1234, mapMessage.getShort('short1'))
+        self.assertEqual('hello123', mapMessage.getString('string1'))
+
+    def xtest_send_MapMessage(self):
+        # TODO implement testing of MapMessage send
+        pass
 
     def test_nolocal(self):
         # TODO this test might also apply to Stomp, but noLocal
@@ -561,4 +600,3 @@ def test_ExceptionListener():
 
 if __name__ == '__main__':
     unittest.main(argv=sys.argv)
-    #test_ExceptionListener()
