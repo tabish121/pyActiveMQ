@@ -115,15 +115,31 @@ class _test_any_protocol:
 
     def test_Connection(self):
         conn = self.conn
-        self.assert_(conn.exceptionListener is None)
         self.assert_(isinstance(conn, pyactivemq.Closeable))
         self.assert_(isinstance(conn, pyactivemq.Connection))
         from pyactivemq import AcknowledgeMode
-        self.conn.createSession(AcknowledgeMode.AUTO_ACKNOWLEDGE)
-        self.conn.createSession(AcknowledgeMode.DUPS_OK_ACKNOWLEDGE)
-        self.conn.createSession(AcknowledgeMode.CLIENT_ACKNOWLEDGE)
-        self.conn.createSession(AcknowledgeMode.SESSION_TRANSACTED)
+        conn.createSession(AcknowledgeMode.AUTO_ACKNOWLEDGE)
+        conn.createSession(AcknowledgeMode.DUPS_OK_ACKNOWLEDGE)
+        conn.createSession(AcknowledgeMode.CLIENT_ACKNOWLEDGE)
+        conn.createSession(AcknowledgeMode.SESSION_TRANSACTED)
+        self.assert_(conn.clientID is not None)
         conn.close()
+        self.assertEqual('', conn.clientID)
+
+    def test_Connection_ExceptionListener(self):
+        conn = self.conn
+        self.assert_(conn.exceptionListener is None)
+        class ExceptionListener(pyactivemq.ExceptionListener):
+            def onException(ex):
+                pass
+        exlistener = ExceptionListener()
+        self.assertEqual(2, sys.getrefcount(exlistener))
+        conn.exceptionListener = exlistener
+        self.assertEqual(3, sys.getrefcount(exlistener))
+        self.assert_(exlistener is conn.exceptionListener)
+        del exlistener
+        self.assertEqual(2, sys.getrefcount(conn.exceptionListener))
+        conn.exceptionListener = None
 
     def test_Session(self):
         session = self.conn.createSession()
@@ -136,7 +152,7 @@ class _test_any_protocol:
         try:
             # check that attribute is read-only
             session.acknowledgeMode = ackmode
-            self.assert_(False, 'Expected AttributeError exception to be raised')
+            self.assert_(False, 'Expected AttributeError to be raised')
         except AttributeError:
             pass
         session.close()
@@ -174,7 +190,7 @@ class _test_any_protocol:
         try:
             consumer2.messageSelector = 'select2'
             # can't set message selector after consumer creation
-            self.assert_(False, 'Expected AttributeError exception to be raised')
+            self.assert_(False, 'Expected AttributeError to be raised')
         except AttributeError:
             pass
         consumer3 = session.createConsumer(topic, "", True)
@@ -256,18 +272,20 @@ class _test_any_protocol:
         consumer = session.createConsumer(topic)
         self.assert_(consumer.messageListener is None)
         producer = session.createProducer(topic)
+        del session
 
         self.conn.start()
+        del self.conn
         producer.send(textMessage)
         msg = consumer.receive(1000)
 
         self.assert_(msg is not None)
+        self.assert_(isinstance(msg, pyactivemq.Message))
+        self.assert_(isinstance(msg, pyactivemq.TextMessage))
         self.assertEqual(str(msg.destination), str(topic))
         self.assertEqual(topic, msg.destination)
         self.assertEqual(str(queue), str(msg.replyTo))
         self.assertEqual(queue, msg.replyTo)
-        self.assert_(isinstance(msg, pyactivemq.Message))
-        self.assert_(isinstance(msg, pyactivemq.TextMessage))
 
         msg = consumer.receive(50)
         self.assert_(msg is None)
@@ -286,13 +304,13 @@ class _test_any_protocol:
         msg = consumer.receive(1000)
 
         self.assert_(msg is not None)
+        self.assert_(isinstance(msg, pyactivemq.Message))
+        self.assert_(isinstance(msg, pyactivemq.BytesMessage))
         self.assertEqual('hello123', msg.bodyBytes)
         self.assertEqual(topic, msg.destination)
         self.assertEqual(str(topic), str(msg.destination))
         self.assertEqual(str(topic), str(msg.replyTo))
         self.assertEqual(topic, msg.replyTo)
-        self.assert_(isinstance(msg, pyactivemq.Message))
-        self.assert_(isinstance(msg, pyactivemq.BytesMessage))
 
         bytesMessage = session.createBytesMessage()
         bytesMessage.writeBytes('hello123')
@@ -311,6 +329,7 @@ class _test_any_protocol:
         topic = self.random_topic(session)
         consumer = session.createConsumer(topic)
         producer = session.createProducer(topic)
+        del topic
         bytesMessage = session.createBytesMessage()
         bytesMessage.bodyBytes = '\x00\x00\x00'
         self.assertEqual(3, bytesMessage.bodyLength)
@@ -329,6 +348,7 @@ class _test_any_protocol:
         bytesMessage.bodyBytes = '\x01\x02\x03'
         self.assertEqual(3, bytesMessage.bodyLength)
         producer.send(bytesMessage)
+        del producer
         msg = consumer.receive(1000)
         self.assert_(msg is not None)
         self.assert_(isinstance(msg, pyactivemq.Message))
@@ -372,8 +392,9 @@ class test_stomp(_test_any_protocol, unittest.TestCase):
         self.conn = f.createConnection()
 
     def tearDown(self):
-        self.conn.close()
-        del self.conn
+        if hasattr(self, 'conn'):
+            self.conn.close()
+            del self.conn
 
     def test_temporary_topic(self):
         session = self.conn.createSession()
@@ -399,8 +420,9 @@ class test_openwire(_test_any_protocol, unittest.TestCase):
         self.conn = f.createConnection()
 
     def tearDown(self):
-        self.conn.close()
-        del self.conn
+        if hasattr(self, 'conn'):
+            self.conn.close()
+            del self.conn
 
     def test_temporary_topic(self):
         session = self.conn.createSession()
@@ -434,7 +456,7 @@ class test_openwire(_test_any_protocol, unittest.TestCase):
 
     def test_nolocal(self):
         # TODO this test might also apply to Stomp, but noLocal
-        # doesn't seem to work when using Stomp at present
+        # doesn't seem to work when using Stomp
         session = self.conn.createSession()
         textMessage = session.createTextMessage()
         topic = self.random_topic(session)
@@ -462,7 +484,7 @@ class _test_async:
         def onMessage(self, message):
             self.queue.put(message)
 
-    def test_multiple_sessions(self):
+    def test_sessions_with_message_listeners(self):
         nmessages = 100
         nconsumers = 3
 

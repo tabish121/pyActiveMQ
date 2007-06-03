@@ -40,7 +40,7 @@ void export_Connection()
         .add_property("clientID", &Connection::getClientID)
         .add_property("exceptionListener",
                       make_function(&Connection::getExceptionListener, py::return_internal_reference<>()),
-                      make_function(&Connection::setExceptionListener, py::with_custodian_and_ward<1,2>()))
+                      make_function(&Connection::setExceptionListener, py::with_custodian_and_ward<1, 2>()))
         .def("createSession",
              Connection_createSession0,
              py::return_value_policy<py::manage_new_object, py::with_custodian_and_ward_postcall<0, 1> >())
