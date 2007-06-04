@@ -213,8 +213,8 @@ class _test_any_protocol:
         self.assertEqual(3, sys.getrefcount(session))
         from pyactivemq import DeliveryMode
         self.assertEqual(DeliveryMode.PERSISTENT, producer.deliveryMode)
-        producer.deliveryMode = DeliveryMode.PERSISTENT
-        self.assertEqual(DeliveryMode.PERSISTENT, producer.deliveryMode)
+        producer.deliveryMode = DeliveryMode.NON_PERSISTENT
+        self.assertEqual(DeliveryMode.NON_PERSISTENT, producer.deliveryMode)
         self.assertEqual(False, producer.disableMessageID)
         producer.disableMessageID = True
         self.assertEqual(True, producer.disableMessageID)
