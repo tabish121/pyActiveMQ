@@ -14,6 +14,8 @@
   limitations under the License.
 */
 
+#include "pyactivemq.h"
+
 #include <boost/python/class.hpp>
 #include <boost/python/pure_virtual.hpp>
 
@@ -22,8 +24,6 @@
 #include <cms/BytesMessage.h>
 #include <cms/TextMessage.h>
 #include <cms/MapMessage.h>
-
-#include "pyactivemq.h"
 
 namespace py = boost::python;
 
