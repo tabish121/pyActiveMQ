@@ -230,14 +230,38 @@ class _test_any_protocol:
         self.assertEqual(2, sys.getrefcount(session))
 
     def xtest_durable_consumer(self):
-        # TODO test durable subscription
-        #session = self.conn.createSession()
-        #subscriptionName = "mysub"
-        #f = session.createDurableConsumer
-        #consumer3 = f(topic, subscriptionName, "selector", False)
-        #session.unsubscribe(subscriptionName)
-        # TODO test refcounts before and after creating consumer
-        pass
+        conn1 = self.conn
+        del self.conn
+        session1 = conn1.createSession()
+        sub = "mysubscription1"
+        # unsubscribing non-existant subscription should fail
+        self.assertRaises(UserWarning, session1.unsubscribe, sub)
+        topic = self.random_topic(session1)
+        consumer = session1.createDurableConsumer(topic, sub, '', False)
+        # unsubscribing with an active consumer should fail
+        self.assertRaises(UserWarning, session1.unsubscribe, sub)
+        del consumer
+        # TODO this shouldn't throw
+        #session1.unsubscribe(sub)
+        consumer = session1.createDurableConsumer(topic, sub, '', False)
+
+        from pyactivemq import ActiveMQConnectionFactory
+        f = ActiveMQConnectionFactory(self.url)
+        conn2 = f.createConnection()
+        session2 = conn2.createSession()
+        # Using a topic created in another session to create the
+        # producer. This shouldn't cause problems.
+        producer = session2.createProducer(topic)
+
+        conn1.start()
+        conn2.start()
+
+        # TODO send a few messages using the producer
+        # TODO receive messages in a transaction
+        # TODO rollback transaction
+        # TODO close connection
+        # TODO reconnect conn1 and setup subscription
+        # check that messages are still there
 
     def test_TextMessage(self):
         session = self.conn.createSession()
@@ -341,6 +365,15 @@ class _test_any_protocol:
 
         msg = consumer.receive(50)
         self.assert_(msg is None)
+
+    def xtest_MessageProducer_sends(self):
+        # test all send methods of MessageProducer
+        # make consumers on 2 topics so that we can check that the
+        # topic specified when calling send instead of topic specified
+        # when creating producer gets used
+
+        # test that sending to a closed connection fails or something
+        pass
 
     def test_BytesMessage_bodyBytes(self):
         session = self.conn.createSession()
@@ -522,6 +555,10 @@ class _test_async:
 
         def onMessage(self, message):
             self.queue.put(message)
+            # raise an exception here to make sure that GIL is
+            # released by the Session thread even in case of an error
+            # in the MessageListener
+            raise UserWarning
 
     def test_sessions_with_message_listeners(self):
         nmessages = 100
@@ -599,4 +636,12 @@ def test_ExceptionListener():
     del conn
 
 if __name__ == '__main__':
-    unittest.main(argv=sys.argv)
+    if True:
+        unittest.main(argv=sys.argv)
+    else:
+        testLoader = unittest.defaultTestLoader
+        module = __import__('__main__')
+        test = testLoader.loadTestsFromModule(module)
+        testRunner = unittest.TextTestRunner(verbosity=2)
+        while True:
+            result = testRunner.run(test)

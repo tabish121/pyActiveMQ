@@ -57,7 +57,13 @@ struct MessageListenerWrap : MessageListener, py::wrapper<MessageListener>
     {
         T* m = dynamic_cast<T*>(message->clone());
         PyObject* obj = py::to_python_indirect<T*, make_owning_holder>()(m);
-        py::call<void>(this->get_override("onMessage").ptr(), py::handle<>(obj));
+        try {
+            py::call<void>(this->get_override("onMessage").ptr(), py::handle<>(obj));
+        } catch (const py::error_already_set) {
+            // Catch and ignore exception that is thrown if Python
+            // onMessage raised an exception, since there is nothing
+            // we can do about it at this point.
+        }
     }
 };
 
