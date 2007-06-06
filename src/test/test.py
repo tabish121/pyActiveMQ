@@ -555,10 +555,6 @@ class _test_async:
 
         def onMessage(self, message):
             self.queue.put(message)
-            # raise an exception here to make sure that GIL is
-            # released by the Session thread even in case of an error
-            # in the MessageListener
-            raise UserWarning
 
     def test_sessions_with_message_listeners(self):
         nmessages = 100

@@ -61,8 +61,9 @@ struct MessageListenerWrap : MessageListener, py::wrapper<MessageListener>
             py::call<void>(this->get_override("onMessage").ptr(), py::handle<>(obj));
         } catch (const py::error_already_set) {
             // Catch and ignore exception that is thrown if Python
-            // onMessage raised an exception, since there is nothing
-            // we can do about it at this point.
+            // onMessage raised an exception. Print it to sys.stderr,
+            // since there is nothing we can do about it here.
+            PyErr_Print();
         }
     }
 };
