@@ -463,6 +463,39 @@ class test_stomp(_test_any_protocol, unittest.TestCase):
         # not implemented for stomp
         self.assertRaises(UserWarning, session.createMapMessage)
 
+    def test_nolocal(self):
+        session = self.conn.createSession()
+        textMessage = session.createTextMessage()
+        topic = self.random_topic(session)
+        # Consumer with empty selector and nolocal set.
+        consumer = session.createConsumer(topic, "", True)
+        producer = session.createProducer(topic)
+        self.conn.start()
+        producer.send(textMessage)
+        msg = consumer.receive(500)
+        # nolocal consumer shouldn't receive the message
+        self.assert_(msg is None)
+
+    def test_nolocal_multiple_consumers(self):
+        session = self.conn.createSession()
+        textMessage = session.createTextMessage()
+        topic = self.random_topic(session)
+        # consumer with empty selector
+        consumer1 = session.createConsumer(topic, "")
+        # Consumer with empty selector and nolocal set. Because this
+        # is the second consumer created on the connection, the
+        # nolocal flag has no effect.
+        consumer2 = session.createConsumer(topic, "", True)
+        producer = session.createProducer(topic)
+        self.conn.start()
+        producer.send(textMessage)
+        msg = consumer1.receive(2000)
+        self.assert_(msg is not None)
+        # Because nolocal is ignored except for the first connection,
+        # there should be a message available
+        msg = consumer2.receive(2000)
+        self.assert_(msg is not None)
+
 class test_openwire(_test_any_protocol, unittest.TestCase):
     def setUp(self):
         self.url = 'tcp://localhost:61616?wireFormat=openwire'
@@ -527,8 +560,6 @@ class test_openwire(_test_any_protocol, unittest.TestCase):
         pass
 
     def test_nolocal(self):
-        # TODO this test might also apply to Stomp, but noLocal
-        # doesn't seem to work when using Stomp
         session = self.conn.createSession()
         textMessage = session.createTextMessage()
         topic = self.random_topic(session)
