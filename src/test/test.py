@@ -88,10 +88,10 @@ class test_ActiveMQConnectionFactory(unittest.TestCase):
         f3 = ActiveMQConnectionFactory('url', 'user')
         self.assertEqual('url', f3.brokerURL)
         self.assertEqual('user', f3.username)
-        f4 = ActiveMQConnectionFactory('url', 'user', 'pass')
+        f4 = ActiveMQConnectionFactory('url', 'user', 'password')
         self.assertEqual('url', f4.brokerURL)
         self.assertEqual('user', f4.username)
-        self.assertEqual('pass', f4.password)
+        self.assertEqual('password', f4.password)
 
 class test_DestinationType(unittest.TestCase):
     def test_values(self):
@@ -579,15 +579,15 @@ class test_openwire(_test_any_protocol, unittest.TestCase):
 class _test_async:
     random_topic = random_topic
 
-    class MessageListener(pyactivemq.MessageListener):
-        def __init__(self, queue):
-            pyactivemq.MessageListener.__init__(self)
-            self.queue = queue
-
-        def onMessage(self, message):
-            self.queue.put(message)
-
     def test_sessions_with_message_listeners(self):
+        class MessageListener(pyactivemq.MessageListener):
+            def __init__(self, queue):
+                pyactivemq.MessageListener.__init__(self)
+                self.queue = queue
+
+            def onMessage(self, message):
+                self.queue.put(message)
+
         nmessages = 100
         nconsumers = 3
 
@@ -607,7 +607,7 @@ class _test_async:
         for i in xrange(nconsumers):
             session = self.conn.createSession()
             consumer = session.createConsumer(topic)
-            listener = self.MessageListener(queue)
+            listener = MessageListener(queue)
             consumer.messageListener = listener
             consumers.append(consumer)
 
@@ -647,6 +647,53 @@ class test_openwire_async(_test_async, unittest.TestCase):
     def tearDown(self):
         self.conn.close()
         del self.conn
+
+    def test_selectors(self):
+        import Queue
+
+        class MessageListener(pyactivemq.MessageListener):
+            def __init__(self):
+                pyactivemq.MessageListener.__init__(self)
+                self.queue = Queue.Queue(0)
+
+            def onMessage(self, message):
+                self.queue.put(message)
+
+        session = self.conn.createSession()
+        topic = self.random_topic(session)
+        producer = session.createProducer(topic)
+
+        nconsumers = 7
+        consumers = []
+        for i in xrange(1, nconsumers + 1):
+            session = self.conn.createSession()
+            selector = 'int1%%%d=0' % i
+            consumer = session.createConsumer(topic, selector)
+            consumer.messageListener = MessageListener()
+            consumers.append(consumer)
+
+        messagecounts = [0] * nconsumers
+        self.conn.start()
+        textMessage = session.createTextMessage()
+        nmessages = 200
+        for i in xrange(nmessages):
+            textMessage.setIntProperty('int1', i)
+            producer.send(textMessage)
+            for j in xrange(1, nconsumers + 1):
+                if i % j == 0:
+                    messagecounts[j - 1] += 1
+
+        listeners = map(lambda x: x.messageListener, consumers)
+        for i, (messagecount, listener) in enumerate(zip(messagecounts, listeners)):
+            try:
+                for j in xrange(messagecount):
+                    message = listener.queue.get(block=True, timeout=5)
+                    int1 = message.getIntProperty('int1')
+                    self.assertEqual(0, int1 % (i + 1))
+            except Queue.Empty:
+                msg = 'Expected %d messages for consumer %d, got %d'
+                self.assert_(False,  msg % (messagecount, i, j))
+            self.assert_(listener.queue.empty())
 
 def test_ExceptionListener():
     url = 'tcp://localhost:61613?wireFormat=stomp'
