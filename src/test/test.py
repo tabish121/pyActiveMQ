@@ -106,8 +106,14 @@ def random_topic(self, session):
     random_id = "%08x" % rand.randrange(0, 2**31)
     return session.createTopic("topic-%s" % random_id)
 
+def random_queue(self, session):
+    rand = random.Random()
+    random_id = "%08x" % rand.randrange(0, 2**31)
+    return session.createQueue("queue-%s" % random_id)
+
 class _test_any_protocol:
     random_topic = random_topic
+    random_queue = random_queue
 
     def test_Connection(self):
         self.assertEqual(2, sys.getrefcount(self.conn))
@@ -528,11 +534,7 @@ class test_openwire(_test_any_protocol, unittest.TestCase):
         self.assertEqual(DestinationType.TEMPORARY_QUEUE,
                          tempqueue.destinationType)
 
-    def test_MapMessage(self):
-        session = self.conn.createSession()
-        mapMessage = session.createMapMessage()
-        self.assert_(isinstance(mapMessage, pyactivemq.Message))
-        self.assert_(isinstance(mapMessage, pyactivemq.MapMessage))
+    def _populate_MapMessage(self, mapMessage):
         mapMessage.setBoolean('bool1', True)
         mapMessage.setByte('byte1', 123)
         mapMessage.setChar('char1', 'X')
@@ -542,6 +544,8 @@ class test_openwire(_test_any_protocol, unittest.TestCase):
         mapMessage.setLong('long1', 123456789)
         mapMessage.setShort('short1', 1234)
         mapMessage.setString('string1', 'hello123')
+
+    def _check_MapMessage(self, mapMessage):
         self.assertEqual(9, len(mapMessage.mapNames))
         for name in mapMessage.mapNames:
             self.assert_(mapMessage.itemExists(name))
@@ -555,9 +559,29 @@ class test_openwire(_test_any_protocol, unittest.TestCase):
         self.assertEqual(1234, mapMessage.getShort('short1'))
         self.assertEqual('hello123', mapMessage.getString('string1'))
 
-    def xtest_send_MapMessage(self):
-        # TODO implement testing of MapMessage send
-        pass
+    def test_MapMessage(self):
+        session = self.conn.createSession()
+        mapMessage = session.createMapMessage()
+        self.assert_(isinstance(mapMessage, pyactivemq.Message))
+        self.assert_(isinstance(mapMessage, pyactivemq.MapMessage))
+        self._populate_MapMessage(mapMessage)
+        self._check_MapMessage(mapMessage)
+
+    def test_send_MapMessage(self):
+        session = self.conn.createSession()
+        mapMessage = session.createMapMessage()
+        self._populate_MapMessage(mapMessage)
+        queue = self.random_queue(session)
+        consumer = session.createConsumer(queue)
+        producer = session.createProducer(queue)
+        self.conn.start()
+        producer.send(mapMessage)
+        msg = consumer.receive(1000)
+        self.assert_(msg is not None)
+        self._check_MapMessage(msg)
+        msg = consumer.receive(50)
+        self.assert_(msg is None)
+        self.conn.close()
 
     def test_nolocal(self):
         session = self.conn.createSession()
