@@ -18,10 +18,10 @@ import os.path
 import sys
 if sys.platform == 'win32':
     include_dirs = [
-        'C:\\Program Files\\boost\\boost_1_33_1',
+        'C:\\Program Files\\boost\\boost_1_34_0',
         '..\\activemq-cpp\\src\\main'
         ]
-    boost_lib = 'libboost_python-vc71-mt-1_33_1'
+    boost_lib = 'libboost_python-vc71-mt-1_34'
     libraries = [
         'activemq-cpp',
         'uuid',
@@ -29,7 +29,7 @@ if sys.platform == 'win32':
         'ws2_32',
         'rpcrt4'
         ]
-    boost_lib_dir = 'C:\\Program Files\\boost\\boost_1_33_1\\lib'
+    boost_lib_dir = 'C:\\Program Files\\boost\\boost_1_34_0\\lib'
     library_dirs = [
         'win_build\\release',
         boost_lib_dir
@@ -68,5 +68,4 @@ setup(name='pyactivemq',
                   extra_compile_args=extra_compile_args,
                   depends=[],
                   define_macros=define_macros),
-        ]
-      )
+        ])

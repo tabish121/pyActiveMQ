@@ -290,6 +290,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\activemq-cpp\src\main\activemq\util\Random.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\activemq-cpp\src\main\activemq\util\Random.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\activemq-cpp\src\main\activemq\util\Set.h"
 					>
 				</File>
@@ -462,6 +470,14 @@
 					</File>
 					<File
 						RelativePath="..\..\activemq-cpp\src\main\activemq\connector\stomp\StompCommandWriter.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\activemq-cpp\src\main\activemq\connector\stomp\StompConnectionNegotiator.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\activemq-cpp\src\main\activemq\connector\stomp\StompConnectionNegotiator.h"
 						>
 					</File>
 					<File
