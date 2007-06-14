@@ -16,6 +16,12 @@
 
 import unittest
 
+from test_openwire_async import *
+from test_openwire_sync import *
+from test_stomp_async import *
+from test_stomp_sync import *
+from test_types import *
+
 if __name__ == '__main__':
     testLoader = unittest.defaultTestLoader
     module = __import__('__main__')
