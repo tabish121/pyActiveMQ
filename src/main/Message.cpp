@@ -14,13 +14,25 @@
   limitations under the License.
 */
 
+#include "pyactivemq.h"
+
 #include <boost/python/class.hpp>
+#include <boost/python/object/pointer_holder.hpp>
 
 #include <cms/Message.h>
+#include <cms/Topic.h>
+#include <cms/Queue.h>
+#include <cms/TemporaryTopic.h>
+#include <cms/TemporaryQueue.h>
 
 namespace py = boost::python;
 
 using cms::Message;
+using cms::Destination;
+using cms::Topic;
+using cms::Queue;
+using cms::TemporaryTopic;
+using cms::TemporaryQueue;
 
 void export_Message()
 {
@@ -46,19 +58,21 @@ void export_Message()
         .def("setLongProperty", &Message::setLongProperty)
         .def("setShortProperty", &Message::setShortProperty)
         .def("setStringProperty", &Message::setStringProperty)
-        .add_property("correlationID", &Message::getCMSCorrelationID, &Message::setCMSCorrelationID)
-        .add_property("deliveryMode", &Message::getCMSDeliveryMode, &Message::setCMSDeliveryMode)
-        .add_property("destination",
-                      make_function(&Message::getCMSDestination, py::return_internal_reference<>()),
-                      make_function(&Message::setCMSDestination, py::with_custodian_and_ward<1, 2>()))
-        .add_property("expiration", &Message::getCMSExpiration, &Message::setCMSExpiration)
-        .add_property("messageID", &Message::getCMSMessageID, &Message::setCMSMessageID)
-        .add_property("priority", &Message::getCMSPriority, &Message::setCMSPriority)
-        .add_property("redelivered", &Message::getCMSRedelivered, &Message::setCMSRedelivered)
+        // read-only properties
+        .add_property("deliveryMode", &Message::getCMSDeliveryMode)
+        .add_property("expiration", &Message::getCMSExpiration)
+        .add_property("messageID", &Message::getCMSMessageID)
+        .add_property("priority", &Message::getCMSPriority)
+        .add_property("redelivered", &Message::getCMSRedelivered)
+        .add_property("timestamp", &Message::getCMSTimestamp)
+        // read-write properties
         .add_property("replyTo",
                       make_function(&Message::getCMSReplyTo, py::return_internal_reference<>()),
                       make_function(&Message::setCMSReplyTo, py::with_custodian_and_ward<1, 2>()))
-        .add_property("timestamp", &Message::getCMSTimestamp, &Message::setCMSTimestamp)
+        .add_property("destination",
+                      make_function(&Message::getCMSDestination, py::return_internal_reference<>()),
+                      make_function(&Message::setCMSDestination, py::with_custodian_and_ward<1, 2>()))
+        .add_property("correlationID", &Message::getCMSCorrelationID, &Message::setCMSCorrelationID)
         .add_property("type", &Message::getCMSType, &Message::setCMSType)
         ;
 }

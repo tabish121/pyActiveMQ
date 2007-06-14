@@ -23,6 +23,14 @@ class _test_sync:
     random_topic = random_topic
     random_queue = random_queue
 
+    def assertAttrReadOnly(self, obj, attrname):
+        self.assert_(hasattr(obj, attrname))
+        try:
+            setattr(obj, attrname, None)
+            self.assert_(False, '%s attribute must be read-only' % attrname)
+        except AttributeError:
+            pass
+
     def test_Connection(self):
         self.assertEqual(2, sys.getrefcount(self.conn))
         conn = self.conn
@@ -65,12 +73,7 @@ class _test_sync:
         AcknowledgeMode = pyactivemq.AcknowledgeMode
         ackmode = AcknowledgeMode.AUTO_ACKNOWLEDGE
         self.assertEqual(ackmode, session.acknowledgeMode)
-        try:
-            # check that attribute is read-only
-            session.acknowledgeMode = ackmode
-            self.assert_(False, 'Expected AttributeError to be raised')
-        except AttributeError:
-            pass
+        self.assertAttrReadOnly(session, 'acknowledgeMode')
         session.close()
 
     def test_Topic_and_Queue(self):
@@ -158,6 +161,20 @@ class _test_sync:
         self.assertEqual('int1', textMessage.propertyNames[0])
         self.assert_(textMessage.destination is None)
         self.assert_(textMessage.replyTo is None)
+
+        self.assertEqual('', textMessage.correlationID)
+        textMessage.correlationID = 'corrid'
+        self.assertEqual('corrid', textMessage.correlationID)
+        self.assertEqual('', textMessage.type)
+        textMessage.type = 'type'
+        self.assertEqual('type', textMessage.type)
+
+        self.assertAttrReadOnly(textMessage, 'deliveryMode')
+        self.assertAttrReadOnly(textMessage, 'expiration')
+        self.assertAttrReadOnly(textMessage, 'messageID')
+        self.assertAttrReadOnly(textMessage, 'priority')
+        self.assertAttrReadOnly(textMessage, 'redelivered')
+        self.assertAttrReadOnly(textMessage, 'timestamp')
 
         queue = session.createQueue("queue")
         self.assertEqual(2, sys.getrefcount(queue))
