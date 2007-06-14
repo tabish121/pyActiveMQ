@@ -9,7 +9,6 @@ src/main/Connection.cpp
 src/main/ConnectionFactory.cpp
 src/main/Destinations.cpp
 src/main/ExceptionListener.cpp
-src/main/frags.cpp
 src/main/MapMessage.cpp
 src/main/Message.cpp
 src/main/MessageConsumer.cpp
@@ -21,7 +20,6 @@ src/main/Session.cpp
 src/main/TextMessage.cpp
 src/test/alltest.py
 src/test/stresstest.py
-src/test/stresstest2.py
 src/test/test_async.py
 src/test/test_manual.py
 src/test/test_openwire_async.py
