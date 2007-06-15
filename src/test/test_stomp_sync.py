@@ -35,18 +35,32 @@ class test_stomp_sync(_test_sync, unittest.TestCase):
     def test_temporary_topic(self):
         session = self.conn.createSession()
         # not implemented for stomp
-        # XXX UserWarning says: caught unknown exception
         self.assertRaises(UserWarning, session.createTemporaryTopic)
+        try:
+            session.createTemporaryTopic()
+            self.assert_(False)
+        except UserWarning, e:
+            self.assert_(e.message.endswith('No Stomp Support'))
 
     def test_temporary_queue(self):
         session = self.conn.createSession()
         # not implemented for stomp
         self.assertRaises(UserWarning, session.createTemporaryQueue)
+        try:
+            session.createTemporaryQueue()
+            self.assert_(False)
+        except UserWarning, e:
+            self.assert_(e.message.endswith('No Stomp Support'))
 
     def test_MapMessage(self):
         session = self.conn.createSession()
         # not implemented for stomp
         self.assertRaises(UserWarning, session.createMapMessage)
+        try:
+            session.createMapMessage()
+            self.assert_(False)
+        except UserWarning, e:
+            self.assert_(e.message.endswith('No Stomp Support'))
 
     def test_nolocal(self):
         session = self.conn.createSession()
