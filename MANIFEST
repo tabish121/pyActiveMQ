@@ -18,10 +18,10 @@ src/main/pyactivemq.cpp
 src/main/pyactivemq.h
 src/main/Session.cpp
 src/main/TextMessage.cpp
-src/test/alltest.py
-src/test/stresstest.py
+src/test/alltests.py
+src/test/manualtests.py
+src/test/stresstests.py
 src/test/test_async.py
-src/test/test_manual.py
 src/test/test_openwire_async.py
 src/test/test_openwire_sync.py
 src/test/test_stomp_async.py
