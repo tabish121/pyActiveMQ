@@ -36,6 +36,9 @@ class test_openwire_async(_test_async, unittest.TestCase):
 
         class MessageListener(pyactivemq.MessageListener):
             def __init__(self):
+                # If the message listener class implements a
+                # constructor but doesn't call the super constructor,
+                # a Boost.Python.ArgumentError is raised.
                 pyactivemq.MessageListener.__init__(self)
                 self.queue = Queue.Queue(0)
 
