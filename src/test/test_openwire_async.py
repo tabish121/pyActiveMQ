@@ -19,6 +19,7 @@ restore_path()
 
 from test_async import _test_async
 import unittest
+import Queue
 
 class test_openwire_async(_test_async, unittest.TestCase):
     def setUp(self):
@@ -32,19 +33,6 @@ class test_openwire_async(_test_async, unittest.TestCase):
         del self.conn
 
     def test_selectors(self):
-        import Queue
-
-        class MessageListener(pyactivemq.MessageListener):
-            def __init__(self):
-                # If the message listener class implements a
-                # constructor but doesn't call the super constructor,
-                # a Boost.Python.ArgumentError is raised.
-                pyactivemq.MessageListener.__init__(self)
-                self.queue = Queue.Queue(0)
-
-            def onMessage(self, message):
-                self.queue.put(message)
-
         session = self.conn.createSession()
         topic = self.random_topic(session)
         producer = session.createProducer(topic)
@@ -55,7 +43,7 @@ class test_openwire_async(_test_async, unittest.TestCase):
             session = self.conn.createSession()
             selector = 'int1%%%d=0' % i
             consumer = session.createConsumer(topic, selector)
-            consumer.messageListener = MessageListener()
+            consumer.messageListener = self.QueueMessageListener()
             consumers.append(consumer)
 
         messagecounts = [0] * nconsumers

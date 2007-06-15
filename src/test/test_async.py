@@ -17,18 +17,26 @@ set_local_path()
 import pyactivemq
 restore_path()
 
+import Queue
+
 class _test_async:
     random_topic = random_topic
 
-    def test_sessions_with_message_listeners(self):
-        class MessageListener(pyactivemq.MessageListener):
-            def __init__(self, queue):
-                pyactivemq.MessageListener.__init__(self)
+    class QueueMessageListener(pyactivemq.MessageListener):
+        def __init__(self, queue=None):
+            # If the message listener class implements a
+            # constructor but doesn't call the super constructor,
+            # a Boost.Python.ArgumentError is raised.
+            pyactivemq.MessageListener.__init__(self)
+            if queue is not None:
                 self.queue = queue
+            else:
+                self.queue = Queue.Queue(0)
 
-            def onMessage(self, message):
-                self.queue.put(message)
+        def onMessage(self, message):
+            self.queue.put(message)
 
+    def test_sessions_with_message_listeners(self):
         nmessages = 100
         nconsumers = 3
 
@@ -38,7 +46,6 @@ class _test_async:
         producer = producer_session.createProducer(topic)
 
         # create infinite queue that is shared by consumers
-        import Queue
         queue = Queue.Queue(0)
 
         # create multiple consumers in separate sessions
@@ -48,7 +55,7 @@ class _test_async:
         for i in xrange(nconsumers):
             session = self.conn.createSession()
             consumer = session.createConsumer(topic)
-            listener = MessageListener(queue)
+            listener = self.QueueMessageListener(queue)
             consumer.messageListener = listener
             consumers.append(consumer)
 
