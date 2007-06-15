@@ -40,7 +40,7 @@ class test_stomp_sync(_test_sync, unittest.TestCase):
             session.createTemporaryTopic()
             self.assert_(False)
         except UserWarning, e:
-            self.assert_(e.message.endswith('No Stomp Support'))
+            self.assert_(e.message.find('No Stomp Support') >= 0)
 
     def test_temporary_queue(self):
         session = self.conn.createSession()
@@ -50,7 +50,7 @@ class test_stomp_sync(_test_sync, unittest.TestCase):
             session.createTemporaryQueue()
             self.assert_(False)
         except UserWarning, e:
-            self.assert_(e.message.endswith('No Stomp Support'))
+            self.assert_(e.message.find('No Stomp Support') >= 0)
 
     def test_MapMessage(self):
         session = self.conn.createSession()
@@ -60,7 +60,7 @@ class test_stomp_sync(_test_sync, unittest.TestCase):
             session.createMapMessage()
             self.assert_(False)
         except UserWarning, e:
-            self.assert_(e.message.endswith('No Stomp Support'))
+            self.assert_(e.message.find('No Stomp Support') >= 0)
 
     def test_nolocal(self):
         session = self.conn.createSession()

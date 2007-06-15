@@ -38,7 +38,8 @@ using cms::Closeable;
 void CMSException_translator(const CMSException& e)
 {
     std::stringstream ss;
-    ss << typeid(e).name() << ": " << e.getMessage();
+    ss << typeid(e).name() << ":" << std::endl;
+    ss << e.getStackTraceString();
     PyErr_SetString(PyExc_UserWarning, ss.str().c_str());
 }
 
