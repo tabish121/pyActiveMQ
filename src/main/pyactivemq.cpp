@@ -37,7 +37,9 @@ using cms::Closeable;
 
 void CMSException_translator(const CMSException& e)
 {
-    PyErr_SetString(PyExc_UserWarning, e.getMessage().c_str());
+    std::stringstream ss;
+    ss << typeid(e).name() << ": " << e.getMessage();
+    PyErr_SetString(PyExc_UserWarning, ss.str().c_str());
 }
 
 template<typename T>
@@ -120,8 +122,8 @@ BOOST_PYTHON_MODULE(pyactivemq)
     export_MessageListener();
     export_MessageConsumer();
 
-    // assigning DeliveryModes to ints first avoids issue with
-    // unresolved symbols at runtime
+    // Assign DeliveryModes to ints first to avoid issue with
+    // unresolved symbols at runtime when compiling with GCC.
     py::scope s = py::class_<cms::DeliveryMode, boost::noncopyable>("DeliveryMode", py::no_init);
     int persistent = cms::DeliveryMode::PERSISTENT;
     s.attr("PERSISTENT") = persistent;
