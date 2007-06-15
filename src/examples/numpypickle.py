@@ -15,20 +15,23 @@
 # limitations under the License.
 
 from pyactivemq import ActiveMQConnectionFactory
+from pyactivemq import AcknowledgeMode
+from pyactivemq import DeliveryMode
 from numpy.testing import assert_array_equal
 import numpy as N
 
-npickles = 50
+npickles = 1000
 
 # generate random array containing 100*100 doubles
 x = N.random.randn(100, 100)
 
 f = ActiveMQConnectionFactory('tcp://localhost:61613?wireFormat=stomp')
 conn = f.createConnection()
-session = conn.createSession()
+session = conn.createSession(AcknowledgeMode.DUPS_OK_ACKNOWLEDGE)
 queue = session.createQueue('arrays')
 consumer = session.createConsumer(queue)
 producer = session.createProducer(queue)
+producer.deliveryMode = DeliveryMode.NON_PERSISTENT
 conn.start()
 
 def test():
