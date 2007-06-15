@@ -45,6 +45,8 @@ struct MessageListenerWrap : MessageListener, py::wrapper<MessageListener>
             call_onMessage<TextMessage>(message);
         } else if (dynamic_cast<const MapMessage*>(message) != 0) {
             call_onMessage<MapMessage>(message);
+        } else if (dynamic_cast<const Message*>(message) != 0) {
+            call_onMessage<Message>(message);
         } else {
             Py_FatalError("Invalid Message type encountered in MessageListener");
         }
