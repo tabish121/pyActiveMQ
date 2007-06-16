@@ -40,7 +40,7 @@ std::string BytesMessage_readBytes(BytesMessage& This)
 {
     // TODO make this buffer size configurable
     std::vector<unsigned char> buffer(This.getBodyLength());
-    int length = This.readBytes(buffer);
+    std::size_t length = This.readBytes(buffer);
     return "";
 }
 
