@@ -20,7 +20,9 @@
 #include <boost/python/scope.hpp>
 #include <boost/python/tuple.hpp>
 #include <boost/python/list.hpp>
+#if 0
 #include <boost/python/docstring_options.hpp>
+#endif
 
 #include <cms/Startable.h>
 #include <cms/Stoppable.h>

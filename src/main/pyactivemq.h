@@ -19,6 +19,7 @@
 
 #include <boost/shared_ptr.hpp>
 #include <boost/python/object/pointer_holder.hpp>
+#include <boost/python/object/make_ptr_instance.hpp>
 
 struct make_owning_holder
 {
