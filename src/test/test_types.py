@@ -17,6 +17,7 @@ set_local_path()
 import pyactivemq
 restore_path()
 
+import sys
 import unittest
 
 class test_pyactivemq(unittest.TestCase):
@@ -69,6 +70,8 @@ class test_ActiveMQConnectionFactory(unittest.TestCase):
         from pyactivemq import ActiveMQConnectionFactory
         f1 = ActiveMQConnectionFactory()
         self.assertEqual('tcp://localhost:61616', f1.brokerURL)
+        self.assertEqual('', f1.username)
+        self.assertEqual('', f1.password)
         f2 = ActiveMQConnectionFactory('url')
         self.assertEqual('url', f2.brokerURL)
         f3 = ActiveMQConnectionFactory('url', 'user')
@@ -78,6 +81,23 @@ class test_ActiveMQConnectionFactory(unittest.TestCase):
         self.assertEqual('url', f4.brokerURL)
         self.assertEqual('user', f4.username)
         self.assertEqual('password', f4.password)
+        f4.brokerURL = 'url2'
+        f4.username = 'user2'
+        f4.password = 'password2'
+        self.assertEqual('url2', f4.brokerURL)
+        self.assertEqual('user2', f4.username)
+        self.assertEqual('password2', f4.password)
+
+    def test_error(self):
+        from pyactivemq import ActiveMQConnectionFactory
+        f = ActiveMQConnectionFactory()
+        # set broker URL with an invalid port
+        f.brokerURL = 'tcp://localhost:70000'
+        try:
+            conn = f.createConnection()
+        except Exception:
+            exctype, value = sys.exc_info()[:2]
+            self.assert_(exctype is pyactivemq.CMSException)
 
 class test_DestinationType(unittest.TestCase):
     def test_values(self):
@@ -88,5 +108,4 @@ class test_DestinationType(unittest.TestCase):
         self.assertEqual(3, DestinationType.TEMPORARY_QUEUE)
 
 if __name__ == '__main__':
-    import sys
     unittest.main(argv=sys.argv)

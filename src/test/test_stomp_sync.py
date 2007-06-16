@@ -15,6 +15,7 @@
 from util import *
 set_local_path()
 import pyactivemq
+from pyactivemq import CMSException
 restore_path()
 
 from test_sync import _test_sync
@@ -35,31 +36,31 @@ class test_stomp_sync(_test_sync, unittest.TestCase):
     def test_temporary_topic(self):
         session = self.conn.createSession()
         # not implemented for stomp
-        self.assertRaises(UserWarning, session.createTemporaryTopic)
+        self.assertRaises(CMSException, session.createTemporaryTopic)
         try:
             session.createTemporaryTopic()
             self.assert_(False)
-        except UserWarning, e:
+        except CMSException, e:
             self.assert_(e.message.find('No Stomp Support') >= 0)
 
     def test_temporary_queue(self):
         session = self.conn.createSession()
         # not implemented for stomp
-        self.assertRaises(UserWarning, session.createTemporaryQueue)
+        self.assertRaises(CMSException, session.createTemporaryQueue)
         try:
             session.createTemporaryQueue()
             self.assert_(False)
-        except UserWarning, e:
+        except CMSException, e:
             self.assert_(e.message.find('No Stomp Support') >= 0)
 
     def test_MapMessage(self):
         session = self.conn.createSession()
         # not implemented for stomp
-        self.assertRaises(UserWarning, session.createMapMessage)
+        self.assertRaises(CMSException, session.createMapMessage)
         try:
             session.createMapMessage()
             self.assert_(False)
-        except UserWarning, e:
+        except CMSException, e:
             self.assert_(e.message.find('No Stomp Support') >= 0)
 
     def test_nolocal(self):

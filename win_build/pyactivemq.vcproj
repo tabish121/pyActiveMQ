@@ -184,6 +184,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\main\CMSException.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\src\main\Connection.cpp"
 				>
 			</File>

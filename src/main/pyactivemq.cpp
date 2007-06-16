@@ -17,7 +17,6 @@
 #include <boost/python/module.hpp>
 #include <boost/python/class.hpp>
 #include <boost/python/to_python_converter.hpp>
-#include <boost/python/exception_translator.hpp>
 #include <boost/python/scope.hpp>
 #include <boost/python/tuple.hpp>
 #include <boost/python/list.hpp>
@@ -27,22 +26,12 @@
 #include <cms/Stoppable.h>
 #include <cms/Closeable.h>
 #include <cms/DeliveryMode.h>
-#include <cms/CMSException.h>
 
 namespace py = boost::python;
 
-using cms::CMSException;
 using cms::Startable;
 using cms::Stoppable;
 using cms::Closeable;
-
-void CMSException_translator(const CMSException& e)
-{
-    std::stringstream ss;
-    ss << typeid(e).name() << ":" << std::endl;
-    ss << e.getStackTraceString();
-    PyErr_SetString(PyExc_UserWarning, ss.str().c_str());
-}
 
 template<typename T>
 struct to_tuple
@@ -69,6 +58,7 @@ struct std_vector_to_tuple
     }
 };
 
+void export_CMSException();
 void export_ConnectionFactory();
 void export_ActiveMQConnectionFactory();
 void export_Connection();
@@ -106,15 +96,7 @@ BOOST_PYTHON_MODULE(pyactivemq)
         .def("close", &Closeable::close)
         ;
 
-    void (CMSException::*CMSException_printStackTrace0)() const =
-        &CMSException::printStackTrace;
-    py::class_<CMSException, boost::noncopyable>("CMSException", py::no_init)
-        .def("printStackTrace", CMSException_printStackTrace0)
-        .def("getStackTraceString", &CMSException::getStackTraceString)
-        .add_property("message", &CMSException::getMessage)
-        ;
-    py::register_exception_translator<CMSException>(CMSException_translator);
-
+    export_CMSException();
     export_ConnectionFactory();
     export_ActiveMQConnectionFactory();
     export_Connection();

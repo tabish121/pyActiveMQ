@@ -1,10 +1,12 @@
 LICENSE.txt
 MANIFEST
 setup.py
+src/examples/DurableSubscriberExample.py
 src/examples/asynclistener.py
 src/examples/numpypickle.py
 src/main/ActiveMQConnectionFactory.cpp
 src/main/BytesMessage.cpp
+src/main/CMSException.cpp
 src/main/Connection.cpp
 src/main/ConnectionFactory.cpp
 src/main/Destinations.cpp
