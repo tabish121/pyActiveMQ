@@ -81,6 +81,7 @@ class test_openwire_sync(_test_sync, unittest.TestCase):
         self.assert_(isinstance(mapMessage, pyactivemq.Message))
         self.assert_(isinstance(mapMessage, pyactivemq.MapMessage))
         self._populate_MapMessage(mapMessage)
+        self._check_Message_properties(mapMessage)
         self._check_MapMessage(mapMessage)
 
     def test_send_MapMessage(self):

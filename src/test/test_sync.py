@@ -146,35 +146,67 @@ class _test_sync:
         del producer
         self.assertEqual(2, sys.getrefcount(session))
 
+    def _check_Message_properties(self, msg):
+        self.assertEqual(0, len(msg.propertyNames))
+
+        properties = {
+            'bool1' : (True, msg.getBooleanProperty, msg.setBooleanProperty),
+            'byte1' : (123, msg.getByteProperty, msg.setByteProperty),
+            'double1' : (123.456, msg.getDoubleProperty, msg.setDoubleProperty),
+            'float1' : (123.456, msg.getDoubleProperty, msg.setDoubleProperty),
+            'int1' : (123456, msg.getIntProperty, msg.setIntProperty),
+            'long1' : (123456789, msg.getLongProperty, msg.setLongProperty),
+            'short1' : (1234, msg.getShortProperty, msg.setShortProperty),
+            'string1' : ('hello123', msg.getStringProperty, msg.setStringProperty)
+            }
+
+        for name, (value, getter, setter) in properties.iteritems():
+            self.assert_(not msg.propertyExists(name))
+            setter(name, value)
+            self.assert_(msg.propertyExists(name))
+            newvalue = getter(name)
+            if name in ['float1', 'double1']:
+                self.assertAlmostEqual(value, newvalue, 5)
+            else:
+                self.assertEqual(value, newvalue)
+
+        self.assertEqual(len(properties), len(msg.propertyNames))
+        msg.clearProperties()
+        self.assertEqual(0, len(msg.propertyNames))
+
+        self.assertEqual('', msg.correlationID)
+        msg.correlationID = 'corrid'
+        self.assertEqual('corrid', msg.correlationID)
+        self.assertEqual('', msg.type)
+        msg.type = 'type'
+        self.assertEqual('type', msg.type)
+
+        self.assertAttrReadOnly(msg, 'deliveryMode')
+        self.assertAttrReadOnly(msg, 'expiration')
+        self.assertAttrReadOnly(msg, 'messageID')
+        self.assertAttrReadOnly(msg, 'priority')
+        self.assertAttrReadOnly(msg, 'redelivered')
+        self.assertAttrReadOnly(msg, 'timestamp')
+
+    def test_Message(self):
+        session = self.conn.createSession()
+        message = session.createMessage()
+        self.assert_(isinstance(message, pyactivemq.Message))
+        self.assert_(message.destination is None)
+        self.assert_(message.replyTo is None)
+        self._check_Message_properties(message)
+
     def test_TextMessage(self):
         session = self.conn.createSession()
         textMessage = session.createTextMessage()
         self.assert_(isinstance(textMessage, pyactivemq.Message))
         self.assert_(isinstance(textMessage, pyactivemq.TextMessage))
+        self._check_Message_properties(textMessage)
+
         textMessage.text = "bye"
         self.assertEqual("bye", textMessage.text)
         textMessage = session.createTextMessage("hello")
         self.assertEqual("hello", textMessage.text)
-
-        textMessage.setIntProperty('int1', 123)
-        self.assertEqual(1, len(textMessage.propertyNames))
-        self.assertEqual('int1', textMessage.propertyNames[0])
-        self.assert_(textMessage.destination is None)
-        self.assert_(textMessage.replyTo is None)
-
-        self.assertEqual('', textMessage.correlationID)
-        textMessage.correlationID = 'corrid'
-        self.assertEqual('corrid', textMessage.correlationID)
-        self.assertEqual('', textMessage.type)
-        textMessage.type = 'type'
-        self.assertEqual('type', textMessage.type)
-
-        self.assertAttrReadOnly(textMessage, 'deliveryMode')
-        self.assertAttrReadOnly(textMessage, 'expiration')
-        self.assertAttrReadOnly(textMessage, 'messageID')
-        self.assertAttrReadOnly(textMessage, 'priority')
-        self.assertAttrReadOnly(textMessage, 'redelivered')
-        self.assertAttrReadOnly(textMessage, 'timestamp')
 
         queue = session.createQueue("queue")
         self.assertEqual(2, sys.getrefcount(queue))
@@ -192,6 +224,8 @@ class _test_sync:
         bytesMessage = session.createBytesMessage()
         self.assert_(isinstance(bytesMessage, pyactivemq.Message))
         self.assert_(isinstance(bytesMessage, pyactivemq.BytesMessage))
+        self._check_Message_properties(bytesMessage)
+
         self.assertEqual(0, bytesMessage.bodyLength)
         bytesMessage.bodyBytes = 'hello123'
         self.assertEqual('hello123', bytesMessage.bodyBytes)
@@ -199,6 +233,23 @@ class _test_sync:
         queue = session.createQueue("queue")
         bytesMessage.replyTo = queue
         self.assertEqual(queue, bytesMessage.replyTo)
+
+    def test_send_Message(self):
+        session = self.conn.createSession()
+        message = session.createMessage()
+        queue = self.random_queue(session)
+        consumer = session.createConsumer(queue)
+        self.assert_(consumer.messageListener is None)
+        producer = session.createProducer(queue)
+        self.conn.start()
+        producer.send(message)
+        msg = consumer.receive(timeout=5000)
+        self.assert_(msg is not None)
+        self.assert_(isinstance(msg, pyactivemq.Message))
+        self.assertEqual(str(msg.destination), str(queue))
+        self.assertEqual(queue, msg.destination)
+        msg = consumer.receive(50)
+        self.assert_(msg is None)
 
     def test_send_TextMessage(self):
         session = self.conn.createSession()
