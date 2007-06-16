@@ -21,6 +21,7 @@
 #include <boost/python/scope.hpp>
 #include <boost/python/tuple.hpp>
 #include <boost/python/list.hpp>
+#include <boost/python/docstring_options.hpp>
 
 #include <cms/Startable.h>
 #include <cms/Stoppable.h>
@@ -85,6 +86,11 @@ void export_MessageConsumer();
 BOOST_PYTHON_MODULE(pyactivemq)
 {
     PyEval_InitThreads();
+
+#if 0
+    py::docstring_options doc_options;
+    doc_options.disable_signatures();
+#endif
 
     std_vector_to_tuple<std::string>();
 

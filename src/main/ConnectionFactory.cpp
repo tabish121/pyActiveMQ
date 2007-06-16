@@ -28,6 +28,9 @@ void export_ConnectionFactory()
 {
     Connection* (ConnectionFactory::*ConnectionFactory_createConnection0)() =
         &ConnectionFactory::createConnection;
+    Connection* (ConnectionFactory::*ConnectionFactory_createConnection2)(
+        const std::string&, const std::string&) =
+        &ConnectionFactory::createConnection;
     Connection* (ConnectionFactory::*ConnectionFactory_createConnection3)(
         const std::string&, const std::string&, const std::string&) =
         &ConnectionFactory::createConnection;
@@ -37,7 +40,12 @@ void export_ConnectionFactory()
              ConnectionFactory_createConnection0,
              py::return_value_policy<py::manage_new_object>())
         .def("createConnection",
+             ConnectionFactory_createConnection2,
+             py::return_value_policy<py::manage_new_object>(),
+             (py::arg("username"), py::arg("password")))
+        .def("createConnection",
              ConnectionFactory_createConnection3,
-             py::return_value_policy<py::manage_new_object>())
+             py::return_value_policy<py::manage_new_object>(),
+             (py::arg("username"), py::arg("password"), py::arg("clientID")))
         ;
 }

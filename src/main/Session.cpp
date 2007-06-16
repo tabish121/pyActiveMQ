@@ -52,16 +52,42 @@ void export_Session()
     py::class_<Session, py::bases<Closeable>, boost::noncopyable>("Session", py::no_init)
         .def("commit", &Session::commit)
         .def("rollback", &Session::rollback)
-        .def("unsubscribe", &Session::unsubscribe)
-        .def("createConsumer", Session_createConsumer1, return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1> >())
-        .def("createConsumer", Session_createConsumer2, return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1> >())
-        .def("createConsumer", Session_createConsumer3, return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1> >())
-        .def("createDurableConsumer", &Session::createDurableConsumer, return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1> >())
-        .def("createProducer", &Session::createProducer, return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1> >())
-        .def("createTopic", &Session::createTopic, return_value_policy<manage_new_object>())
-        .def("createQueue", &Session::createQueue, return_value_policy<manage_new_object>())
-        .def("createTemporaryTopic", &Session::createTemporaryTopic, return_value_policy<manage_new_object>())
-        .def("createTemporaryQueue", &Session::createTemporaryQueue, return_value_policy<manage_new_object>())
+        .def("unsubscribe", &Session::unsubscribe, py::arg("name"))
+        .def("createConsumer",
+             Session_createConsumer1,
+             return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1> >(),
+             py::arg("destination"))
+        .def("createConsumer",
+             Session_createConsumer2,
+             return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1> >(),
+             (py::arg("destination"), py::arg("selector")))
+        .def("createConsumer",
+             Session_createConsumer3,
+             return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1> >(),
+             (py::arg("destination"), py::arg("selector"), py::arg("nolocal")))
+        .def("createDurableConsumer",
+             &Session::createDurableConsumer,
+             return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1> >(),
+             (py::arg("destination"), py::arg("name"), py::arg("selector"), py::arg("nolocal")))
+        .def("createProducer",
+             &Session::createProducer,
+             return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1> >(),
+             py::arg("destination"))
+        .def("createTopic",
+             &Session::createTopic,
+             return_value_policy<manage_new_object>(),
+             py::arg("name"))
+        .def("createQueue", &Session::createQueue,
+             return_value_policy<manage_new_object>(),
+             py::arg("name"))
+        .def("createTemporaryTopic",
+             &Session::createTemporaryTopic,
+             return_value_policy<manage_new_object>(),
+             py::arg("name"))
+        .def("createTemporaryQueue",
+             &Session::createTemporaryQueue,
+             return_value_policy<manage_new_object>(),
+             py::arg("name"))
         .def("createMessage", &Session::createMessage, return_value_policy<manage_new_object>())
         .def("createTextMessage", Session_createTextMessage0, return_value_policy<manage_new_object>())
         .def("createTextMessage", Session_createTextMessage1, return_value_policy<manage_new_object>())

@@ -39,10 +39,16 @@ void export_MessageProducer()
 
     py::class_<MessageProducer, py::bases<Closeable>, boost::noncopyable>(
         "MessageProducer", py::no_init)
-        .def("send", MessageProducer_send1)
-        .def("send", MessageProducer_send4)
-        .def("send", MessageProducer_send2)
-        .def("send", MessageProducer_send5)
+        .def("send", MessageProducer_send1, py::arg("message"))
+        .def("send", MessageProducer_send2,
+             (py::arg("destination"), py::arg("message")))
+        .def("send", MessageProducer_send4,
+             (py::arg("message"), py::arg("deliveryMode"),
+              py::arg("priority"), py::arg("timeToLive")))
+        .def("send", MessageProducer_send5,
+             (py::arg("destination"), py::arg("message"),
+              py::arg("deliveryMode"), py::arg("priority"),
+              py::arg("timeToLive")))
         .add_property("deliveryMode",
                       &MessageProducer::getDeliveryMode,
                       &MessageProducer::setDeliveryMode)

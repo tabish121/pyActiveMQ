@@ -68,6 +68,7 @@ class test_ActiveMQConnectionFactory(unittest.TestCase):
     def test_properties(self):
         from pyactivemq import ActiveMQConnectionFactory
         f1 = ActiveMQConnectionFactory()
+        self.assertEqual('tcp://localhost:61616', f1.brokerURL)
         f2 = ActiveMQConnectionFactory('url')
         self.assertEqual('url', f2.brokerURL)
         f3 = ActiveMQConnectionFactory('url', 'user')

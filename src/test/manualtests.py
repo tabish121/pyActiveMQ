@@ -25,13 +25,12 @@ def test_ExceptionListener():
     f = ActiveMQConnectionFactory(url)
     class ExceptionListener(pyactivemq.ExceptionListener):
         def onException(self, ex):
-            # TODO test what happens if we keep a reference to this
-            # exception object
-            print ex
+            self.ex = ex
     conn = f.createConnection()
     conn.exceptionListener = ExceptionListener()
     print 'Sleeping. Kill the broker now...'
     time.sleep(20)
+    print conn.exceptionListener.ex
     del conn
 
 if __name__ == '__main__':

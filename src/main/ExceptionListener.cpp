@@ -14,6 +14,8 @@
   limitations under the License.
 */
 
+#include "pyactivemq.h"
+
 #include <boost/python/class.hpp>
 #include <boost/python/pure_virtual.hpp>
 
@@ -29,9 +31,15 @@ struct ExceptionListenerWrap : ExceptionListener, py::wrapper<ExceptionListener>
     virtual void onException(const CMSException& ex)
     {
         PyGILState_STATE gstate = PyGILState_Ensure();
-        // TODO clone exception so that exception listener can keep a
-        // reference to it
-        py::call<void>(this->get_override("onException").ptr(), boost::ref(ex));
+        PyObject* obj = py::to_python_indirect<CMSException*, make_owning_holder>()(ex.clone());
+        try {
+            py::call<void>(this->get_override("onException").ptr(), py::handle<>(obj));
+        } catch (const py::error_already_set) {
+            // Catch and ignore exception that is thrown if Python
+            // onException raised an exception. Print it to sys.stderr,
+            // since there is nothing we can do about it here.
+            PyErr_Print();
+        }
         PyGILState_Release(gstate);
     }
 };

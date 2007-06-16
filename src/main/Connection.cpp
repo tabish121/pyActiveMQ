@@ -46,6 +46,7 @@ void export_Connection()
              py::return_value_policy<py::manage_new_object, py::with_custodian_and_ward_postcall<0, 1> >())
         .def("createSession",
              Connection_createSession1,
-             py::return_value_policy<py::manage_new_object, py::with_custodian_and_ward_postcall<0, 1> >())
+             py::return_value_policy<py::manage_new_object, py::with_custodian_and_ward_postcall<0, 1> >(),
+             py::arg("acknowledgeMode"))
         ;
 }
