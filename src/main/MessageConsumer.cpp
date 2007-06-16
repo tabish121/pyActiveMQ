@@ -35,9 +35,8 @@ struct to_python_Message
     template <class U>
     inline PyObject* operator()(U const* ref) const
     {
-        if (ref == 0)
-        {
-            return boost::python::detail::none();
+        if (ref == 0) {
+            return py::incref(boost::python::detail::none());
         }
         U* const p = const_cast<U*>(ref);
         if (dynamic_cast<cms::BytesMessage*>(p) != 0) {
@@ -49,7 +48,10 @@ struct to_python_Message
         else if (dynamic_cast<cms::MapMessage*>(p) != 0) {
             return make_owning_holder::execute(dynamic_cast<cms::MapMessage*>(p));
         }
-        Py_FatalError("Invalid Message type encountered in MessageConsumer");
+        else if (dynamic_cast<cms::Message*>(p) != 0) {
+            return make_owning_holder::execute(dynamic_cast<cms::Message*>(p));
+        }
+        Py_FatalError("Invalid Message type encountered in to_python_Message");
         return 0;
     }
 };
