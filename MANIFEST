@@ -16,10 +16,10 @@ src/main/Message.cpp
 src/main/MessageConsumer.cpp
 src/main/MessageListener.cpp
 src/main/MessageProducer.cpp
-src/main/pyactivemq.cpp
-src/main/pyactivemq.h
 src/main/Session.cpp
 src/main/TextMessage.cpp
+src/main/pyactivemq.cpp
+src/main/pyactivemq.h
 src/test/alltests.py
 src/test/manualtests.py
 src/test/stresstests.py

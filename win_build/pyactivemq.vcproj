@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\src\main;&quot;..\..\activemq-cpp\src\main&quot;;&quot;C:\Program Files\boost\boost_1_34_0&quot;;C:\Python25\include"
+				AdditionalIncludeDirectories="..\src\main;&quot;..\..\activemq-cpp\src\main&quot;;&quot;C:\Program Files\boost\boost_1_34_1&quot;;C:\Python25\include"
 				PreprocessorDefinitions="_DEBUG;_DLL;_WIN32;WIN32;_WINDOWS;_MBCS;_USE_MATH_DEFINES;NOMINMAX;VC_EXTRALEAN;WIN32_LEAN_AND_MEAN;BOOST_LIB_DIAGNOSTIC;BOOST_PYTHON_STATIC_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -62,9 +62,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libboost_python-vc80-mt-gd-1_34.lib ws2_32.lib rpcrt4.lib"
+				AdditionalDependencies="libboost_python-vc80-mt-gd-1_34_1.lib ws2_32.lib rpcrt4.lib"
 				OutputFile="$(OutDir)\$(ProjectName).pyd"
-				AdditionalLibraryDirectories="&quot;C:\Program Files\boost\boost_1_34_0\lib&quot;;C:\Python25\libs"
+				AdditionalLibraryDirectories="&quot;C:\Program Files\boost\boost_1_34_1\lib&quot;;C:\Python25\libs"
 				GenerateDebugInformation="true"
 			/>
 			<Tool
@@ -117,7 +117,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\src\main;&quot;..\..\activemq-cpp\src\main&quot;;&quot;C:\Program Files\boost\boost_1_34_0&quot;;C:\Python25\include"
+				AdditionalIncludeDirectories="..\src\main;&quot;..\..\activemq-cpp\src\main&quot;;&quot;C:\Program Files\boost\boost_1_34_1&quot;;C:\Python25\include"
 				PreprocessorDefinitions="NDEBUG;_DLL;_WIN32;WIN32;_WINDOWS;_MBCS;_USE_MATH_DEFINES;NOMINMAX;VC_EXTRALEAN;WIN32_LEAN_AND_MEAN;BOOST_LIB_DIAGNOSTIC;BOOST_PYTHON_STATIC_LIB"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -137,9 +137,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libboost_python-vc80-mt-1_34.lib ws2_32.lib rpcrt4.lib"
+				AdditionalDependencies="libboost_python-vc80-mt-1_34_1.lib ws2_32.lib rpcrt4.lib"
 				OutputFile="$(OutDir)\$(ProjectName).pyd"
-				AdditionalLibraryDirectories="&quot;C:\Program Files\boost\boost_1_34_0\lib&quot;;C:\Python25\libs"
+				AdditionalLibraryDirectories="&quot;C:\Program Files\boost\boost_1_34_1\lib&quot;;C:\Python25\libs"
 			/>
 			<Tool
 				Name="VCALinkTool"
