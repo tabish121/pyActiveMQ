@@ -40,8 +40,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\src\main;&quot;..\..\activemq-cpp\src\main&quot;;&quot;C:\Program Files\boost\boost_1_34_1&quot;;C:\Python25\include"
-				PreprocessorDefinitions="_DEBUG;_DLL;_WIN32;WIN32;_WINDOWS;_MBCS;_USE_MATH_DEFINES;NOMINMAX;VC_EXTRALEAN;WIN32_LEAN_AND_MEAN;BOOST_LIB_DIAGNOSTIC;BOOST_PYTHON_STATIC_LIB"
+				AdditionalIncludeDirectories="..\src\main;&quot;..\..\activemq-cpp\src\main&quot;;&quot;C:\Program Files\boost\boost_1_35_0&quot;;C:\Python25\include"
+				PreprocessorDefinitions="_DEBUG;_DLL;_WIN32;WIN32;_WINDOWS;_MBCS;_USE_MATH_DEFINES;NOMINMAX;VC_EXTRALEAN;WIN32_LEAN_AND_MEAN;BOOST_LIB_DIAGNOSTIC;BOOST_PYTHON_STATIC_LIB;BOOST_PYTHON_NO_PY_SIGNATURES"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -62,9 +62,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libboost_python-vc80-mt-gd-1_34_1.lib ws2_32.lib rpcrt4.lib"
+				AdditionalDependencies="libboost_python-vc80-mt-gd-1_35.lib ws2_32.lib rpcrt4.lib"
 				OutputFile="$(OutDir)\$(ProjectName).pyd"
-				AdditionalLibraryDirectories="&quot;C:\Program Files\boost\boost_1_34_1\lib&quot;;C:\Python25\libs"
+				AdditionalLibraryDirectories="&quot;C:\Program Files\boost\boost_1_35_0\lib&quot;;C:\Python25\libs"
 				GenerateDebugInformation="true"
 			/>
 			<Tool
@@ -117,8 +117,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\src\main;&quot;..\..\activemq-cpp\src\main&quot;;&quot;C:\Program Files\boost\boost_1_34_1&quot;;C:\Python25\include"
-				PreprocessorDefinitions="NDEBUG;_DLL;_WIN32;WIN32;_WINDOWS;_MBCS;_USE_MATH_DEFINES;NOMINMAX;VC_EXTRALEAN;WIN32_LEAN_AND_MEAN;BOOST_LIB_DIAGNOSTIC;BOOST_PYTHON_STATIC_LIB"
+				AdditionalIncludeDirectories="..\src\main;&quot;..\..\activemq-cpp\src\main&quot;;&quot;C:\Program Files\boost\boost_1_35_0&quot;;C:\Python25\include"
+				PreprocessorDefinitions="NDEBUG;_DLL;_WIN32;WIN32;_WINDOWS;_MBCS;_USE_MATH_DEFINES;NOMINMAX;VC_EXTRALEAN;WIN32_LEAN_AND_MEAN;BOOST_LIB_DIAGNOSTIC;BOOST_PYTHON_STATIC_LIB;BOOST_PYTHON_NO_PY_SIGNATURES"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -137,9 +137,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libboost_python-vc80-mt-1_34_1.lib ws2_32.lib rpcrt4.lib"
+				AdditionalDependencies="libboost_python-vc80-mt-1_35.lib ws2_32.lib rpcrt4.lib"
 				OutputFile="$(OutDir)\$(ProjectName).pyd"
-				AdditionalLibraryDirectories="&quot;C:\Program Files\boost\boost_1_34_1\lib&quot;;C:\Python25\libs"
+				AdditionalLibraryDirectories="&quot;C:\Program Files\boost\boost_1_35_0\lib&quot;;C:\Python25\libs"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -170,82 +170,70 @@
 	<References>
 	</References>
 	<Files>
-		<Filter
-			Name="Source Files"
-			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
+		<File
+			RelativePath="..\src\main\ActiveMQConnectionFactory.cpp"
 			>
-			<File
-				RelativePath="..\src\main\ActiveMQConnectionFactory.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\main\BytesMessage.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\main\CMSException.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\main\Connection.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\main\ConnectionFactory.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\main\Destinations.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\main\ExceptionListener.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\main\MapMessage.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\main\Message.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\main\MessageConsumer.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\main\MessageListener.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\main\MessageProducer.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\main\pyactivemq.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\main\Session.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\main\TextMessage.cpp"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
+		</File>
+		<File
+			RelativePath="..\src\main\BytesMessage.cpp"
 			>
-			<File
-				RelativePath="..\src\main\pyactivemq.h"
-				>
-			</File>
-		</Filter>
+		</File>
+		<File
+			RelativePath="..\src\main\CMSException.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\src\main\Connection.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\src\main\ConnectionFactory.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\src\main\Destinations.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\src\main\ExceptionListener.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\src\main\MapMessage.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\src\main\Message.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\src\main\MessageConsumer.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\src\main\MessageListener.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\src\main\MessageProducer.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\src\main\pyactivemq.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\src\main\pyactivemq.h"
+			>
+		</File>
+		<File
+			RelativePath="..\src\main\Session.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\src\main\TextMessage.cpp"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
