@@ -28,7 +28,7 @@ static PyObject* pyex = PyErr_NewException("pyactivemq.CMSException", PyExc_Exce
 
 void CMSException_translator(const CMSException& e)
 {
-    PyObject* message = PyString_FromString(e.what());
+    PyObject* message = PyString_FromString(e.getMessage().c_str());
     PyObject_SetAttrString(pyex, "message", message);
     PyErr_SetString(pyex, e.getStackTraceString().c_str());
 }
