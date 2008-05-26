@@ -52,5 +52,6 @@ delta = t.timeit(1)
 
 conn.close()
 
-print 'pickled %d arrays, each %d bytes, in %f seconds' % \
-    (npickles, x.nbytes, delta)
+mibps = npickles * x.nbytes / (1024.0 * 1024.0) / delta
+print 'pickled %d arrays, each %d bytes, in %f seconds (%.4f MiB/s)' % \
+    (npickles, x.nbytes, delta, mibps)
