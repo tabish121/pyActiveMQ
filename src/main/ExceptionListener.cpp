@@ -46,16 +46,6 @@ struct ExceptionListenerWrap : ExceptionListener, py::wrapper<ExceptionListener>
 
 void export_ExceptionListener()
 {
-    // TODO remove this wrapper once we figure out how to instantiate
-    // the Python CMSException class
-    void (CMSException::*CMSException_printStackTrace0)() const =
-        &CMSException::printStackTrace;
-    py::class_<CMSException, boost::noncopyable>("CMSException2", py::no_init)
-        .def("printStackTrace", CMSException_printStackTrace0)
-        .def("getStackTraceString", &CMSException::getStackTraceString)
-        .add_property("message", &CMSException::getMessage)
-        ;
-
     py::class_<ExceptionListenerWrap, boost::noncopyable>("ExceptionListener")
         .def("onException", py::pure_virtual(&ExceptionListener::onException))
         ;
