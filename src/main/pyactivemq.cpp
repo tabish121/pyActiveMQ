@@ -86,6 +86,8 @@ BOOST_PYTHON_MODULE(pyactivemq)
 
     std_vector_to_tuple<std::string>();
 
+    py::scope().attr("__version__") = "0.1.0";
+
     py::class_<Startable, boost::noncopyable>("Startable", py::no_init)
         .def("start", &Startable::start)
         ;

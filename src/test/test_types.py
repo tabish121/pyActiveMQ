@@ -51,6 +51,9 @@ class test_pyactivemq(unittest.TestCase):
         for name in names:
             self.assert_(name in dir(pyactivemq))
 
+    def test_version(self):
+        self.assertEqual('0.1.0', pyactivemq.__version__)
+
 class test_AcknowledgeMode(unittest.TestCase):
     def test_values(self):
         from pyactivemq import AcknowledgeMode
