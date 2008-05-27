@@ -65,11 +65,15 @@ struct manage_new_Message
     };
 };
 
+static const char* MessageConsumer_docstring = "Message consumer";
+static const char* MessageConsumer_messageListener_docstring = "The L{MessageListener} that this class will send notifications on.";
+static const char* MessageConsumer_messageSelector_docstring = "This message consumer's message selector expression.";
+
 void export_MessageConsumer()
 {
     Message* (MessageConsumer::*MessageConsumer_receive0)() = &MessageConsumer::receive;
     Message* (MessageConsumer::*MessageConsumer_receive1)(int) = &MessageConsumer::receive;
-    py::class_<MessageConsumer, py::bases<Closeable>, boost::noncopyable>("MessageConsumer", py::no_init)
+    py::class_<MessageConsumer, py::bases<Closeable>, boost::noncopyable>("MessageConsumer", MessageConsumer_docstring, py::no_init)
         .def("receive", MessageConsumer_receive0, py::return_value_policy<manage_new_Message>())
         .def("receive",
              MessageConsumer_receive1,
@@ -80,7 +84,10 @@ void export_MessageConsumer()
              py::return_value_policy<manage_new_Message>())
         .add_property("messageListener",
                       make_function(&MessageConsumer::getMessageListener, py::return_internal_reference<>()),
-                      make_function(&MessageConsumer::setMessageListener, py::with_custodian_and_ward<1,2>()))
-        .add_property("messageSelector", &MessageConsumer::getMessageSelector)
+                      make_function(&MessageConsumer::setMessageListener, py::with_custodian_and_ward<1,2>()),
+                      MessageConsumer_messageListener_docstring)
+        .add_property("messageSelector",
+                      &MessageConsumer::getMessageSelector,
+                      MessageConsumer_messageSelector_docstring)
         ;
 }

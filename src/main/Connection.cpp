@@ -29,6 +29,8 @@ using cms::Closeable;
 using cms::Session;
 using cms::ExceptionListener;
 
+static const char* Connection_docstring = "The client's connection to its provider.";
+
 void export_Connection()
 {
     Session* (Connection::*Connection_createSession0)() =
@@ -36,7 +38,7 @@ void export_Connection()
     Session* (Connection::*Connection_createSession1)(Session::AcknowledgeMode) =
         &Connection::createSession;
 
-    py::class_<Connection, py::bases<Startable, Stoppable, Closeable>, boost::noncopyable>("Connection", py::no_init)
+    py::class_<Connection, py::bases<Startable, Stoppable, Closeable>, boost::noncopyable>("Connection", Connection_docstring, py::no_init)
         .add_property("clientID", &Connection::getClientID)
         .add_property("exceptionListener",
                       make_function(&Connection::getExceptionListener, py::return_internal_reference<>()),
