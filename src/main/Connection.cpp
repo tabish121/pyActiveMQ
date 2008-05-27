@@ -30,6 +30,10 @@ using cms::Session;
 using cms::ExceptionListener;
 
 static const char* Connection_docstring = "The client's connection to its provider.";
+static const char* Connection_clientID_docstring = "Return the client id for this session.";
+static const char* Connection_exceptionListener_docstring = "Gets the registered exception listener for this connection.";
+static const char* Connection_createSession0_docstring = "Creates an C{AUTO_ACKNOWLEDGE} L{Session}.";
+static const char* Connection_createSession1_docstring = "Creates a new L{Session} to work for this C{Connection} using the specified acknowledgment mode.";
 
 void export_Connection()
 {
@@ -39,16 +43,19 @@ void export_Connection()
         &Connection::createSession;
 
     py::class_<Connection, py::bases<Startable, Stoppable, Closeable>, boost::noncopyable>("Connection", Connection_docstring, py::no_init)
-        .add_property("clientID", &Connection::getClientID)
+        .add_property("clientID", &Connection::getClientID, Connection_clientID_docstring)
         .add_property("exceptionListener",
                       make_function(&Connection::getExceptionListener, py::return_internal_reference<>()),
-                      make_function(&Connection::setExceptionListener, py::with_custodian_and_ward<1, 2>()))
+                      make_function(&Connection::setExceptionListener, py::with_custodian_and_ward<1, 2>()),
+					  Connection_exceptionListener_docstring)
         .def("createSession",
              Connection_createSession0,
-             py::return_value_policy<py::manage_new_object, py::with_custodian_and_ward_postcall<0, 1> >())
+             py::return_value_policy<py::manage_new_object, py::with_custodian_and_ward_postcall<0, 1> >(),
+			 Connection_createSession0_docstring)
         .def("createSession",
              Connection_createSession1,
              py::return_value_policy<py::manage_new_object, py::with_custodian_and_ward_postcall<0, 1> >(),
-             py::arg("acknowledgeMode"))
+             py::arg("acknowledgeMode"),
+			 Connection_createSession1_docstring)
         ;
 }

@@ -25,6 +25,17 @@ using cms::MessageProducer;
 using cms::Message;
 using cms::Destination;
 
+static const char* MessageProducer_docstring =  "Defines the C{MessageProducer} interface that is used by all "
+												"C{MessageProducer} derivations.\n\nThis class defines the JMS spec'd "
+												"interface for a C{MessageProducer}.";
+static const char* MessageProducer_deliveryMode_docstring = "The delivery mode for this producer.";
+static const char* MessageProducer_disableMessageID_docstring = "Returns if L{Message} ids are disabled for this producer.";
+static const char* MessageProducer_disableMessageTimeStamp_docstring = "Returns if L{Message} timestamps are disabled for this producer.";
+static const char* MessageProducer_priority_docstring = "Returns the priority that this producer sends messages at.";
+static const char* MessageProducer_timeToLive_docstring = "Returns the time to live that this producer sends messages "
+														  "with.\n\nThis value will be used if the time to live is not "
+														  "specified via the send method.";
+
 void export_MessageProducer()
 {
     void (MessageProducer::*MessageProducer_send1)(Message*) =
@@ -37,8 +48,7 @@ void export_MessageProducer()
         const Destination*, Message*, int, int, long long) =
         &MessageProducer::send;
 
-    py::class_<MessageProducer, py::bases<Closeable>, boost::noncopyable>(
-        "MessageProducer", py::no_init)
+    py::class_<MessageProducer, py::bases<Closeable>, boost::noncopyable>("MessageProducer", MessageProducer_docstring, py::no_init)
         .def("send", MessageProducer_send1, py::arg("message"))
         .def("send", MessageProducer_send2,
              (py::arg("destination"), py::arg("message")))
@@ -51,18 +61,23 @@ void export_MessageProducer()
               py::arg("timeToLive")))
         .add_property("deliveryMode",
                       &MessageProducer::getDeliveryMode,
-                      &MessageProducer::setDeliveryMode)
+                      &MessageProducer::setDeliveryMode,
+					  MessageProducer_deliveryMode_docstring)
         .add_property("disableMessageID",
                       &MessageProducer::getDisableMessageID,
-                      &MessageProducer::setDisableMessageID)
+                      &MessageProducer::setDisableMessageID,
+					  MessageProducer_disableMessageID_docstring)
         .add_property("disableMessageTimeStamp",
                       &MessageProducer::getDisableMessageTimeStamp,
-                      &MessageProducer::setDisableMessageTimeStamp)
+                      &MessageProducer::setDisableMessageTimeStamp,
+					  MessageProducer_disableMessageTimeStamp_docstring)
         .add_property("priority",
                       &MessageProducer::getPriority,
-                      &MessageProducer::setPriority)
+                      &MessageProducer::setPriority,
+					  MessageProducer_priority_docstring)
         .add_property("timeToLive",
                       &MessageProducer::getTimeToLive,
-                      &MessageProducer::setTimeToLive)
+                      &MessageProducer::setTimeToLive,
+					  MessageProducer_timeToLive_docstring)
         ;
 }

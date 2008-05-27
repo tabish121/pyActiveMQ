@@ -31,6 +31,22 @@ using cms::Queue;
 using cms::TemporaryTopic;
 using cms::TemporaryQueue;
 
+static const char* Destination_docstring = "A C{Destination} object encapsulates a provider-specific address.";
+static const char* Destination_destinationType_docstring = "Returns the C{Destination} type for this destination.";
+static const char* Destination_providerString_docstring = "Converts the C{Destination} to a C{String} value representing the C{Provider} "
+														  "specific name for this destination. This name uniquely identifies a particular "
+														  "destination. For example, a topic and a queue both named 'C{FOO}' must not have "
+														  "equivalent provider strings.";
+static const char* DestinationType_docstring = "Available L{Destination} types";
+static const char* Topic_docstring = "An interface encapsulating a provider-specific topic name.";
+static const char* Topic_name_docstring = "The topic name.";
+static const char* Queue_docstring = "An interface encapsulating a provider-specific queue name.";
+static const char* Queue_name_docstring = "The queue name.";
+static const char* TemporaryTopic_docstring = "An interface encapsulating a provider-specific topic name.";
+static const char* TemporaryTopic_name_docstring = "The topic name.";
+static const char* TemporaryQueue_docstring = "An interface encapsulating a provider-specific queue name.";
+static const char* TemporaryQueue_name_docstring = "The queue name.";
+
 bool Destination__eq__(const Destination& self, const Destination& other)
 {
     if (self.getDestinationType() != other.getDestinationType()) {
@@ -74,34 +90,34 @@ bool Destination__eq__(const Destination& self, const Destination& other)
 
 void export_Destinations()
 {
-    py::class_<Destination, boost::noncopyable>("Destination", py::no_init)
-        .add_property("destinationType", &Destination::getDestinationType)
+    py::class_<Destination, boost::noncopyable>("Destination", Destination_docstring, py::no_init)
+        .add_property("destinationType", &Destination::getDestinationType, Destination_destinationType_docstring)
         .def("__str__", &Destination::toProviderString)
         .def("__repr__", &Destination::toProviderString)
         .def("__eq__", Destination__eq__)
-        .add_property("providerString", &Destination::toProviderString)
+        .add_property("providerString", &Destination::toProviderString, Destination_providerString_docstring)
         ;
 
-    py::enum_<Destination::DestinationType>("DestinationType")
+    py::enum_<Destination::DestinationType>("DestinationType", DestinationType_docstring)
         .value("TOPIC", Destination::TOPIC)
         .value("QUEUE", Destination::QUEUE)
         .value("TEMPORARY_TOPIC", Destination::TEMPORARY_TOPIC)
         .value("TEMPORARY_QUEUE", Destination::TEMPORARY_QUEUE)
         ;
 
-    py::class_<Topic, py::bases<Destination>, boost::noncopyable>("Topic", py::no_init)
-        .add_property("name", &Topic::getTopicName)
+    py::class_<Topic, py::bases<Destination>, boost::noncopyable>("Topic", Topic_docstring, py::no_init)
+        .add_property("name", &Topic::getTopicName, Topic_name_docstring)
         ;
 
-    py::class_<Queue, py::bases<Destination>, boost::noncopyable>("Queue", py::no_init)
-        .add_property("name", &Queue::getQueueName)
+    py::class_<Queue, py::bases<Destination>, boost::noncopyable>("Queue", Queue_docstring, py::no_init)
+        .add_property("name", &Queue::getQueueName, Queue_name_docstring)
         ;
 
-    py::class_<TemporaryTopic, py::bases<Destination>, boost::noncopyable>("TemporaryTopic", py::no_init)
-        .add_property("name", &TemporaryTopic::getTopicName)
+    py::class_<TemporaryTopic, py::bases<Destination>, boost::noncopyable>("TemporaryTopic", TemporaryTopic_docstring, py::no_init)
+        .add_property("name", &TemporaryTopic::getTopicName, TemporaryTopic_name_docstring)
         ;
 
-    py::class_<TemporaryQueue, py::bases<Destination>, boost::noncopyable>("TemporaryQueue", py::no_init)
-        .add_property("name", &TemporaryQueue::getQueueName)
+    py::class_<TemporaryQueue, py::bases<Destination>, boost::noncopyable>("TemporaryQueue", TemporaryQueue_docstring, py::no_init)
+        .add_property("name", &TemporaryQueue::getQueueName, TemporaryQueue_name_docstring)
         ;
 }

@@ -20,9 +20,7 @@
 #include <boost/python/scope.hpp>
 #include <boost/python/tuple.hpp>
 #include <boost/python/list.hpp>
-#if 0
 #include <boost/python/docstring_options.hpp>
-#endif
 
 #include <cms/Startable.h>
 #include <cms/Stoppable.h>
@@ -75,29 +73,43 @@ void export_MessageProducer();
 void export_MessageListener();
 void export_MessageConsumer();
 
+static const char* Pyactivemq_docstring = "pyactivemq is a Python module for communicating with the "
+										  "U{ActiveMQ<http://www.activemq.org>} message broker which "
+										  "implements the Java Message Service specification.";
+static const char* Startable_docstring = "Interface for a class that implements the C{start} method.";
+static const char* Startable_start_docstring = "Starts the service.";
+static const char* Stoppable_docstring = "Interface for a class that implements the C{stop} method.";
+static const char* Stoppable_stop_docstring = "Stops this service.";
+static const char* Closeable_docstring = "Interface for a class that implements the C{close} method.";
+static const char* Closeable_close_docstring = "Closes this object and deallocates the appropriate resources.";
+static const char* DeliveryMode_docstring = "This is an abstract class whose purpose is to provide a container for "
+											"the delivery mode enumeration for CMS messages.";
+
 BOOST_PYTHON_MODULE(pyactivemq)
 {
     PyEval_InitThreads();
 
-#if 0
-    py::docstring_options doc_options;
-    doc_options.disable_signatures();
-#endif
+	bool show_user_defined = true;
+	bool show_py_signatures = false;
+	bool show_cpp_signatures = false;
+	py::docstring_options doc_options(show_user_defined, show_py_signatures, show_cpp_signatures);
 
     std_vector_to_tuple<std::string>();
 
     py::scope().attr("__version__") = "0.1.0";
 
-    py::class_<Startable, boost::noncopyable>("Startable", py::no_init)
-        .def("start", &Startable::start)
+	py::scope().attr("__doc__") = Pyactivemq_docstring;
+					
+    py::class_<Startable, boost::noncopyable>("Startable", Startable_docstring, py::no_init)
+        .def("start", &Startable::start, Startable_start_docstring)
         ;
 
-    py::class_<Stoppable, boost::noncopyable>("Stoppable", py::no_init)
-        .def("stop", &Stoppable::stop)
+    py::class_<Stoppable, boost::noncopyable>("Stoppable", Stoppable_docstring, py::no_init)
+        .def("stop", &Stoppable::stop, Stoppable_stop_docstring)
         ;
 
-    py::class_<Closeable, boost::noncopyable>("Closeable", py::no_init)
-        .def("close", &Closeable::close)
+    py::class_<Closeable, boost::noncopyable>("Closeable", Closeable_docstring, py::no_init)
+        .def("close", &Closeable::close, Closeable_close_docstring)
         ;
 
     export_CMSException();
@@ -117,7 +129,9 @@ BOOST_PYTHON_MODULE(pyactivemq)
 
     // Assign DeliveryModes to ints first to avoid issue with
     // unresolved symbols at runtime when compiling with GCC.
-    py::scope s = py::class_<cms::DeliveryMode, boost::noncopyable>("DeliveryMode", py::no_init);
+    py::scope s = py::class_<cms::DeliveryMode,
+		boost::noncopyable>("DeliveryMode", DeliveryMode_docstring, py::no_init);
+	// Enumeration values for Message Delivery Mode.
     int persistent = cms::DeliveryMode::PERSISTENT;
     s.attr("PERSISTENT") = persistent;
     int non_persistent = cms::DeliveryMode::NON_PERSISTENT;

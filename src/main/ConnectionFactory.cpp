@@ -24,6 +24,8 @@ namespace py = boost::python;
 using cms::ConnectionFactory;
 using cms::Connection;
 
+static const char* ConnectionFactory_docstring = "Defines the interface for a factory that creates connection objects.";
+
 void export_ConnectionFactory()
 {
     Connection* (ConnectionFactory::*ConnectionFactory_createConnection0)() =
@@ -35,7 +37,7 @@ void export_ConnectionFactory()
         const std::string&, const std::string&, const std::string&) =
         &ConnectionFactory::createConnection;
 
-    py::class_<ConnectionFactory, boost::noncopyable>("ConnectionFactory", py::no_init)
+    py::class_<ConnectionFactory, boost::noncopyable>("ConnectionFactory", ConnectionFactory_docstring, py::no_init)
         .def("createConnection",
              ConnectionFactory_createConnection0,
              py::return_value_policy<py::manage_new_object>())

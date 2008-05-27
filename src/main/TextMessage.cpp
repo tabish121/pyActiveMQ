@@ -23,10 +23,13 @@ namespace py = boost::python;
 using cms::TextMessage;
 using cms::Message;
 
+static const char* TextMessage_docstring = "Interface for text message.";
+static const char* TextMessage_text_docstring = "The message contents.";
+
 void export_TextMessage()
 {
     void (TextMessage::*TextMessage_setText)(const std::string&) = &TextMessage::setText;
-    py::class_<TextMessage, py::bases<Message>, boost::noncopyable>("TextMessage", py::no_init)
-        .add_property("text", &TextMessage::getText, TextMessage_setText)
+    py::class_<TextMessage, py::bases<Message>, boost::noncopyable>("TextMessage", TextMessage_docstring, py::no_init)
+        .add_property("text", &TextMessage::getText, TextMessage_setText, TextMessage_text_docstring)
         ;
 }

@@ -26,6 +26,11 @@ namespace py = boost::python;
 using cms::ExceptionListener;
 using cms::CMSException;
 
+static const char* ExceptionListener_docstring = "Listens for exceptions.";
+static const char* ExceptionListener_onException_docstring = "Called when an exception occurs.\n\nOnce notified of an "
+															 "exception the caller should no longer use the resource "
+															 "that generated the exception.";
+
 struct ExceptionListenerWrap : ExceptionListener, py::wrapper<ExceptionListener>
 {
     virtual void onException(const CMSException& ex)
@@ -46,7 +51,7 @@ struct ExceptionListenerWrap : ExceptionListener, py::wrapper<ExceptionListener>
 
 void export_ExceptionListener()
 {
-    py::class_<ExceptionListenerWrap, boost::noncopyable>("ExceptionListener")
-        .def("onException", py::pure_virtual(&ExceptionListener::onException))
+    py::class_<ExceptionListenerWrap, boost::noncopyable>("ExceptionListener", ExceptionListener_docstring)
+        .def("onException", py::pure_virtual(&ExceptionListener::onException), ExceptionListener_onException_docstring)
         ;
 }

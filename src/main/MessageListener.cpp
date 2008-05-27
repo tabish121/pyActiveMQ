@@ -33,6 +33,8 @@ using cms::BytesMessage;
 using cms::TextMessage;
 using cms::MapMessage;
 
+static const char* MessageListener_docstring = "Interface for a L{Message} listener.";
+
 struct MessageListenerWrap : MessageListener, py::wrapper<MessageListener>
 {
     virtual void onMessage(const Message* message)
@@ -72,7 +74,7 @@ struct MessageListenerWrap : MessageListener, py::wrapper<MessageListener>
 
 void export_MessageListener()
 {
-    py::class_<MessageListenerWrap, boost::noncopyable>("MessageListener")
+    py::class_<MessageListenerWrap, boost::noncopyable>("MessageListener", MessageListener_docstring)
         .def("onMessage", py::pure_virtual(&MessageListener::onMessage))
         ;
 }

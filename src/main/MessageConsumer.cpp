@@ -73,6 +73,7 @@ void export_MessageConsumer()
 {
     Message* (MessageConsumer::*MessageConsumer_receive0)() = &MessageConsumer::receive;
     Message* (MessageConsumer::*MessageConsumer_receive1)(int) = &MessageConsumer::receive;
+
     py::class_<MessageConsumer, py::bases<Closeable>, boost::noncopyable>("MessageConsumer", MessageConsumer_docstring, py::no_init)
         .def("receive", MessageConsumer_receive0, py::return_value_policy<manage_new_Message>())
         .def("receive",

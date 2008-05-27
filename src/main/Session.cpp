@@ -29,6 +29,14 @@ using cms::Destination;
 using cms::TextMessage;
 using cms::BytesMessage;
 
+static const char* Session_docstring = "Interface for a session.";
+static const char* Session_commit_docstring = "Commits all messages done in this transaction and releases any locks "
+											  "currently held.";
+static const char* Session_rollback_docstring = "Rolls back all messages done in this transaction and releases any locks "
+												"currently held.";
+static const char* Session_acknowledgeMode_docstring = "Returns the acknowledgement mode of the C{Session}.";
+static const char* Session_transacted_docstring = "Returns if the C{Session} is a transacted session.";
+
 void export_Session()
 {
     MessageConsumer* (Session::*Session_createConsumer1)(const Destination*) =
@@ -49,9 +57,9 @@ void export_Session()
     using py::return_value_policy;
     using py::manage_new_object;
     using py::with_custodian_and_ward_postcall;
-    py::class_<Session, py::bases<Closeable>, boost::noncopyable>("Session", py::no_init)
-        .def("commit", &Session::commit)
-        .def("rollback", &Session::rollback)
+    py::class_<Session, py::bases<Closeable>, boost::noncopyable>("Session", Session_docstring, py::no_init)
+        .def("commit", &Session::commit, Session_commit_docstring)
+        .def("rollback", &Session::rollback, Session_rollback_docstring)
         .def("unsubscribe", &Session::unsubscribe, py::arg("name"))
         .def("createConsumer",
              Session_createConsumer1,
@@ -93,8 +101,8 @@ void export_Session()
         .def("createTextMessage", Session_createTextMessage1, return_value_policy<manage_new_object>())
         .def("createBytesMessage", Session_createBytesMessage0, return_value_policy<manage_new_object>())
         .def("createMapMessage", &Session::createMapMessage, return_value_policy<manage_new_object>())
-        .add_property("acknowledgeMode", &Session::getAcknowledgeMode)
-        .add_property("transacted", &Session::isTransacted)
+        .add_property("acknowledgeMode", &Session::getAcknowledgeMode, Session_acknowledgeMode_docstring)
+        .add_property("transacted", &Session::isTransacted, Session_transacted_docstring)
         ;
 
     py::enum_<Session::AcknowledgeMode>("AcknowledgeMode")
