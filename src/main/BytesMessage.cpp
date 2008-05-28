@@ -26,7 +26,7 @@ namespace py = boost::python;
 using cms::BytesMessage;
 using cms::Message;
 
-static const char* BytesMessage_docstring = "Interface for a bytes message.";
+static const char* BytesMessage_docstring = "A message used for sending a stream of uninterpreted bytes.";
 static const char* BytesMessage_bodyBytes_docstring = "Return the bytes that are contained in this message. Users should copy this "
 													  "data into a user allocated buffer.\n\nCheck L{bodyLength} to determine the "
 													  "number of bytes to expect.";

@@ -26,7 +26,9 @@ namespace py = boost::python;
 using cms::ExceptionListener;
 using cms::CMSException;
 
-static const char* ExceptionListener_docstring = "Listens for exceptions.";
+static const char* ExceptionListener_docstring = "If a CMS provider detects a serious problem, it notifies the client "
+												 "application through an C{ExceptionListener} that is registered with "
+												 "the L{Connection}.";
 static const char* ExceptionListener_onException_docstring = "Called when an exception occurs.\n\nOnce notified of an "
 															 "exception the caller should no longer use the resource "
 															 "that generated the exception.";

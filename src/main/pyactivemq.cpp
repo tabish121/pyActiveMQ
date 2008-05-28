@@ -80,7 +80,8 @@ static const char* Startable_docstring = "Interface for a class that implements 
 static const char* Startable_start_docstring = "Starts the service.";
 static const char* Stoppable_docstring = "Interface for a class that implements the C{stop} method.";
 static const char* Stoppable_stop_docstring = "Stops this service.";
-static const char* Closeable_docstring = "Interface for a class that implements the C{close} method.";
+static const char* Closeable_docstring = "Interface for a class that implements the C{close} method.\n\n"
+										 "The object is generally no longer usable after calling C{close}.";
 static const char* Closeable_close_docstring = "Closes this object and deallocates the appropriate resources.";
 static const char* DeliveryMode_docstring = "This is an abstract class whose purpose is to provide a container for "
 											"the delivery mode enumeration for CMS messages.";
