@@ -93,7 +93,7 @@ BOOST_PYTHON_MODULE(pyactivemq)
 	bool show_user_defined = true;
 	bool show_py_signatures = false;
 	bool show_cpp_signatures = false;
-	py::docstring_options doc_options(show_user_defined, show_py_signatures, show_cpp_signatures);
+	py::docstring_options doc_options(show_user_defined, show_py_signatures);
 
     std_vector_to_tuple<std::string>();
 

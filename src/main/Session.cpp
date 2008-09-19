@@ -149,7 +149,7 @@ void export_Session()
         .add_property("transacted", &Session::isTransacted, Session_transacted_docstring)
         ;
 
-    py::enum_<Session::AcknowledgeMode>("AcknowledgeMode", AcknowledgeMode_docstring)
+    py::enum_<Session::AcknowledgeMode>("AcknowledgeMode")
         .value("AUTO_ACKNOWLEDGE", Session::AUTO_ACKNOWLEDGE)
         .value("DUPS_OK_ACKNOWLEDGE", Session::DUPS_OK_ACKNOWLEDGE)
         .value("CLIENT_ACKNOWLEDGE", Session::CLIENT_ACKNOWLEDGE)

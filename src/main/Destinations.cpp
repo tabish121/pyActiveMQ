@@ -98,7 +98,7 @@ void export_Destinations()
         .add_property("providerString", &Destination::toProviderString, Destination_providerString_docstring)
         ;
 
-    py::enum_<Destination::DestinationType>("DestinationType", DestinationType_docstring)
+    py::enum_<Destination::DestinationType>("DestinationType")
         .value("TOPIC", Destination::TOPIC)
         .value("QUEUE", Destination::QUEUE)
         .value("TEMPORARY_TOPIC", Destination::TEMPORARY_TOPIC)
