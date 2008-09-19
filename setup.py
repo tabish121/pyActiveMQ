@@ -35,13 +35,16 @@ if sys.platform == 'win32':
         boost_lib_dir
         ]
     extra_compile_args = ['/GR', '/wd4290']
+    extra_link_args = []
     define_macros = [
         ('BOOST_PYTHON_STATIC_LIB', 1),
-        ('BOOST_PYTHON_NO_PY_SIGNATURES', 1)
+        ('BOOST_PYTHON_NO_PY_SIGNATURES', 1),
+        ('PYACTIVEMQ_ENABLE_DOCSTRINGS', 0)
         ]
 else:
     include_dirs = [
-        '../activemq-cpp/src/main'
+        '../activemq-cpp/src/main',
+        '/opt/activemq-cpp-2.2.1/include/activemq-cpp-2.2.1'
         ]
     libraries = [
         'activemq-cpp',
@@ -49,11 +52,15 @@ else:
         'boost_python'
         ]
     library_dirs = [
-        #'/path/to/amqcpp/lib'
+        '/opt/activemq-cpp-2.2.1/lib'
         ]
     extra_compile_args = []
+    extra_link_args = [
+        '-Wl,-rpath,/opt/activemq-cpp-2.2.1/lib'
+        ]
     define_macros = [
-        ('BOOST_PYTHON_NO_PY_SIGNATURES', 1)
+        ('BOOST_PYTHON_NO_PY_SIGNATURES', 1),
+        ('PYACTIVEMQ_ENABLE_DOCSTRINGS', 0)
         ]
 
 import glob
@@ -71,6 +78,7 @@ setup(name='pyactivemq',
                   libraries=libraries,
                   include_dirs=include_dirs,
                   extra_compile_args=extra_compile_args,
+                  extra_link_args=extra_link_args,
                   depends=[],
                   define_macros=define_macros),
         ])
