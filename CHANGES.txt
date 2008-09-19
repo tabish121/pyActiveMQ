@@ -1,8 +1,8 @@
-PyActiveMQ Changelog
+pyactivemq Changelog
 ===================
 
-This file contains information about the changes between the different versions
-of PyActiveMQ.
+This file contains information about the changes between the different
+versions of pyactivemq.
 
 0.1.0 (unreleased)
 ------------------
@@ -16,9 +16,9 @@ of PyActiveMQ.
  - Converted tests to use the unittest module
  - Fixed a few ByteMessage issues
  - Added DeliveryMode constants
- _ Fixed bugs in TemporaryQueue and TemporaryTopic wrappers
- - All Destinations now have a name property that corresponds to getTopicName or
-   getQueueName.
+ - Fixed bugs in TemporaryQueue and TemporaryTopic wrappers
+ - All Destinations now have a name property that corresponds to
+   getTopicName or getQueueName.
  - Added examples
  - Now using Boost 1.34 and Python 2.5
  - Added stress test
@@ -29,7 +29,7 @@ of PyActiveMQ.
 0.0.2 (2007-05-24)
 ------------------
 
- - Updates for AMQ-CPP 2.0
+ - Updates for AMQCPP 2.0
  - Now linking statically against Boost.Python
 
 0.0.1 (2007-02-04)
