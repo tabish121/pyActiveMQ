@@ -23,14 +23,15 @@ namespace py = boost::python;
 using cms::MapMessage;
 using cms::Message;
 
-static const char* MapMessage_docstring = "A C{MapMessage} object is used to send a set of name-value pairs.\n\n"
-										  "The names are C{String} objects, and the values are primitive data types in the "
-										  "Java programming language. The names must have a value that is not null, and "
-										  "not an empty string. The entries can be accessed sequentially or randomly by "
-										  "name. The order of the entries is undefined. C{MapMessage} inherits from the "
-										  "L{Message} interface and adds a message body that contains a C{Map}.\n\n"
-										  "When a client receives a C{MapMessage}, it is in read-only mode. If a client "
-										  "attempts to write to the message at this point, a L{CMSException} is thrown.";
+static const char* MapMessage_docstring =
+    "A C{MapMessage} object is used to send a set of name-value pairs.\n\n"
+    "The names are C{String} objects, and the values are primitive data types in the "
+    "Java programming language. The names must have a value that is not null, and "
+    "not an empty string. The entries can be accessed sequentially or randomly by "
+    "name. The order of the entries is undefined. C{MapMessage} inherits from the "
+    "L{Message} interface and adds a message body that contains a C{Map}.\n\n"
+    "When a client receives a C{MapMessage}, it is in read-only mode. If a client "
+    "attempts to write to the message at this point, a L{CMSException} is thrown.";
 static const char* MapMessage_mapNames_docstring = "Returns an enumeration of all the names in the C{MapMessage} object.";
 static const char* MapMessage_itemExists_docstring = "Indicates whether an item exists in this C{MapMessage} object.";
 static const char* MapMessage_getBoolean_docstring = "Returns the C{Boolean} value of the specified name.";

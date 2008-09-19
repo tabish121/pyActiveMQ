@@ -52,7 +52,9 @@ else:
         #'/path/to/amqcpp/lib'
         ]
     extra_compile_args = []
-    define_macros = [('BOOST_PYTHON_NO_PY_SIGNATURES', 1)]
+    define_macros = [
+        ('BOOST_PYTHON_NO_PY_SIGNATURES', 1)
+        ]
 
 import glob
 files = glob.glob(os.path.join('src', 'main', '*.cpp'))

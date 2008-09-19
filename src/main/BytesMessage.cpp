@@ -26,29 +26,39 @@ namespace py = boost::python;
 using cms::BytesMessage;
 using cms::Message;
 
-static const char* BytesMessage_docstring = "A message used for sending a stream of uninterpreted bytes.";
-static const char* BytesMessage_bodyBytes_docstring = "Return the bytes that are contained in this message. Users should copy this "
-													  "data into a user allocated buffer.\n\nCheck L{bodyLength} to determine the "
-													  "number of bytes to expect.";
-static const char* BytesMessage_bodyLength_docstring = "Returns the number of bytes contained in the body of this message.";
-static const char* BytesMessage_reset_docstring = "Puts the message body in read-only mode and repositions the stream of bytes "
-												  "to the beginning.";
-static const char* BytesMessage_readBoolean_docstring = "Reads a boolean from the bytes message stream.";
-static const char* BytesMessage_writeBoolean_docstring = "Writes a boolean to the bytes message stream as a 1-byte value.\n\n"
-														 "The value true is written as the value (byte)1; the value false is "
-														 "written as the value (byte)0.";
-static const char* BytesMessage_readByte_docstring = "Reads a byte from the bytes message stream.";
-static const char* BytesMessage_writeByte_docstring = "Writes a byte to the bytes message stream as a 1-byte value.";
-static const char* BytesMessage_readBytes_docstring = "Reads a byte array from the bytes message stream.\n\nIf the length of the "
-													  "vector value is less than the number of bytes remaining to be read from "
-													  "the stream, the vector should be filled. A subsequent call reads the next "
-													  "increment, and so on.\n\nIf the number of bytes remaining in the stream "
-													  "is less than the length of vector value, the bytes should be read into the "
-													  "vector. The return value of the total number of bytes read will be less "
-													  "than the length of the vector, indicating that there are no more bytes "
-													  "left to be read from the stream. The next read of the stream returns -1.";
-static const char* BytesMessage_writeBytes_docstring = "Writes a byte array to the bytes message stream using the vector size as "
-													   "the number of bytes to write.";
+static const char* BytesMessage_docstring =
+    "A message used for sending a stream of uninterpreted bytes.";
+static const char* BytesMessage_bodyBytes_docstring =
+    "Return the bytes that are contained in this message. Users should copy this "
+    "data into a user allocated buffer.\n\nCheck L{bodyLength} to determine the "
+    "number of bytes to expect.";
+static const char* BytesMessage_bodyLength_docstring =
+    "Returns the number of bytes contained in the body of this message.";
+static const char* BytesMessage_reset_docstring =
+    "Puts the message body in read-only mode and repositions the stream of bytes "
+    "to the beginning.";
+static const char* BytesMessage_readBoolean_docstring =
+    "Reads a boolean from the bytes message stream.";
+static const char* BytesMessage_writeBoolean_docstring =
+    "Writes a boolean to the bytes message stream as a 1-byte value.\n\n"
+    "The value true is written as the value (byte)1; the value false is "
+    "written as the value (byte)0.";
+static const char* BytesMessage_readByte_docstring =
+    "Reads a byte from the bytes message stream.";
+static const char* BytesMessage_writeByte_docstring =
+    "Writes a byte to the bytes message stream as a 1-byte value.";
+static const char* BytesMessage_readBytes_docstring =
+    "Reads a byte array from the bytes message stream.\n\nIf the length of the "
+    "vector value is less than the number of bytes remaining to be read from "
+    "the stream, the vector should be filled. A subsequent call reads the next "
+    "increment, and so on.\n\nIf the number of bytes remaining in the stream "
+    "is less than the length of vector value, the bytes should be read into the "
+    "vector. The return value of the total number of bytes read will be less "
+    "than the length of the vector, indicating that there are no more bytes "
+    "left to be read from the stream. The next read of the stream returns -1.";
+static const char* BytesMessage_writeBytes_docstring =
+    "Writes a byte array to the bytes message stream using the vector size as "
+    "the number of bytes to write.";
 static const char* BytesMessage_readChar_docstring = "Reads a char from the bytes message stream.";
 static const char* BytesMessage_writeChar_docstring = "Writes a char to the bytes message stream as a 1-byte value.";
 static const char* BytesMessage_readFloat_docstring = "Reads a 32 bit float from the bytes message stream.";

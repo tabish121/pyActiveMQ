@@ -34,9 +34,9 @@ using cms::TemporaryQueue;
 static const char* Destination_docstring = "A C{Destination} object encapsulates a provider-specific address.";
 static const char* Destination_destinationType_docstring = "Returns the C{Destination} type for this destination.";
 static const char* Destination_providerString_docstring = "Converts the C{Destination} to a C{String} value representing the C{Provider} "
-														  "specific name for this destination. This name uniquely identifies a particular "
-														  "destination. For example, a topic and a queue both named 'C{FOO}' must not have "
-														  "equivalent provider strings.";
+                                                          "specific name for this destination. This name uniquely identifies a particular "
+                                                          "destination. For example, a topic and a queue both named 'C{FOO}' must not have "
+                                                          "equivalent provider strings.";
 static const char* DestinationType_docstring = "Available L{Destination} types";
 static const char* Topic_docstring = "An interface encapsulating a provider-specific topic name.";
 static const char* Topic_name_docstring = "The topic name.";

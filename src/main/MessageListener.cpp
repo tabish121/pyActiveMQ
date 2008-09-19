@@ -33,17 +33,19 @@ using cms::BytesMessage;
 using cms::TextMessage;
 using cms::MapMessage;
 
-static const char* MessageListener_docstring = "A C{MessageListener} object is used to "
-											   "receive asynchronously delivered messages.";
-static const char* MessageListener_onMessage_docstring = "Called asynchronously when a new message is received, "
-														 "the message reference can be to any other Message types.\n\n"
-														 "A dynamic cast is used to find out what type of message this is. "
-														 "The lifetime of this object is only guaranteed to be for life of "
-														 "the C{onMessage} function after this returns the message may no "
-														 "longer exists. User should copy the data or clone the message if "
-														 "they wish to keep something around about this message.\n\nIt is "
-														 "considered a programming error for this method to throw an exception.";
-														 
+static const char* MessageListener_docstring =
+    "A C{MessageListener} object is used to "
+    "receive asynchronously delivered messages.";
+static const char* MessageListener_onMessage_docstring =
+    "Called asynchronously when a new message is received, "
+    "the message reference can be to any other Message types.\n\n"
+    "A dynamic cast is used to find out what type of message this is. "
+    "The lifetime of this object is only guaranteed to be for life of "
+    "the C{onMessage} function after this returns the message may no "
+    "longer exists. User should copy the data or clone the message if "
+    "they wish to keep something around about this message.\n\nIt is "
+    "considered a programming error for this method to throw an exception.";
+
 struct MessageListenerWrap : MessageListener, py::wrapper<MessageListener>
 {
     virtual void onMessage(const Message* message)

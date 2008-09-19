@@ -65,21 +65,27 @@ struct manage_new_Message
     };
 };
 
-static const char* MessageConsumer_docstring = "A client uses a C{MessageConsumer} to receive messages from a destination.\n\n"
-											   "A client may either synchronously receive a message consumer's messages or have "
-											   "the consumer asynchronously deliver them as they arrive.\n\nFor synchronous receipt, "
-											   "a client can request the next message from a message consumer using one of its receive "
-											   "methods. There are several variations of receive that allow a client to poll or wait "
-											   "for the next message.\n\nFor asynchronous delivery, a client can register a "
-											   "L{MessageListener} object with a message consumer. As messages arrive at the message "
-											   "consumer, it delivers them by calling the L{MessageListener}'s C{onMessage} method.";
-static const char* MessageConsumer_receive0_docstring = "Synchronously receive a L{Message}.";
-static const char* MessageConsumer_receive1_docstring = "Synchronously receive a L{Message}, time out after defined interval.\n\n"
-														"Returns null if nothing read.";
-static const char* MessageConsumer_receiveNoWait_docstring = "Receive a L{Message}, does not wait if there isn't a new message to "
-															 "read, returns C{NULL} if nothing read.";
-static const char* MessageConsumer_messageListener_docstring = "The L{MessageListener} that this class will send notifications on.";
-static const char* MessageConsumer_messageSelector_docstring = "This message consumer's message selector expression.";
+static const char* MessageConsumer_docstring =
+    "A client uses a C{MessageConsumer} to receive messages from a destination.\n\n"
+    "A client may either synchronously receive a message consumer's messages or have "
+    "the consumer asynchronously deliver them as they arrive.\n\nFor synchronous receipt, "
+    "a client can request the next message from a message consumer using one of its receive "
+    "methods. There are several variations of receive that allow a client to poll or wait "
+    "for the next message.\n\nFor asynchronous delivery, a client can register a "
+    "L{MessageListener} object with a message consumer. As messages arrive at the message "
+    "consumer, it delivers them by calling the L{MessageListener}'s C{onMessage} method.";
+static const char* MessageConsumer_receive0_docstring =
+    "Synchronously receive a L{Message}.";
+static const char* MessageConsumer_receive1_docstring =
+    "Synchronously receive a L{Message}, time out after defined interval.\n\n"
+    "Returns null if nothing read.";
+static const char* MessageConsumer_receiveNoWait_docstring =
+    "Receive a L{Message}, does not wait if there isn't a new message to "
+    "read, returns C{NULL} if nothing read.";
+static const char* MessageConsumer_messageListener_docstring =
+    "The L{MessageListener} that this class will send notifications on.";
+static const char* MessageConsumer_messageSelector_docstring =
+    "This message consumer's message selector expression.";
 
 void export_MessageConsumer()
 {
@@ -92,11 +98,11 @@ void export_MessageConsumer()
              MessageConsumer_receive1,
              py::return_value_policy<manage_new_Message>(),
              py::arg("timeout"),
-			 MessageConsumer_receive1_docstring)
-        .def("receiveNoWait", 
+             MessageConsumer_receive1_docstring)
+        .def("receiveNoWait",
              &MessageConsumer::receiveNoWait,
              py::return_value_policy<manage_new_Message>(),
-			 MessageConsumer_receiveNoWait_docstring)
+             MessageConsumer_receiveNoWait_docstring)
         .add_property("messageListener",
                       make_function(&MessageConsumer::getMessageListener, py::return_internal_reference<>()),
                       make_function(&MessageConsumer::setMessageListener, py::with_custodian_and_ward<1,2>()),

@@ -29,45 +29,63 @@ using cms::Destination;
 using cms::TextMessage;
 using cms::BytesMessage;
 
-static const char* Session_docstring = "A C{Session} object is a single-threaded context for producing and consuming "
-									   "messages. \n\nA session serves several purposes:\n\n"
-									   " - It is a factory for its message producers and consumers.\n\n"
-									   " - It supplies provider-optimized message factories.\n\n"
-									   " - It is a factory for TemporaryTopics and TemporaryQueues.\n\n"
-									   " - It provides a way to create L{Queue} or L{Topic} objects for those clients "
-									   "that need to dynamically manipulate provider-specific destination names.\n\n"
-									   " - It supports a single series of transactions that combine work spanning its "
-									   "producers and consumers into atomic units.\n\n - It defines a serial order for "
-									   "the messages it consumes and the messages it produces.\n\n - It retains "
-									   "messages it consumes until they have been acknowledged.\n\n - It serializes "
-									   "execution of message listeners registered with its message consumers.";
-static const char* Session_commit_docstring = "Commits all messages done in this transaction and releases any locks "
-											  "currently held.";
-static const char* Session_rollback_docstring = "Rolls back all messages done in this transaction and releases any locks "
-												"currently held.";
-static const char* Session_unsubscribe_docstring = "Unsubscribes a durable subscription that has been created by a client.\n\n"
-													"This method deletes the state being maintained on behalf of the subscriber "
-													"by its provider. It is erroneous for a client to delete a durable "
-													"subscription while there is an active L{MessageConsumer} or subscriber "
-													"for the subscription, or while a consumed message is part of a pending "
-													"transaction or has not been acknowledged in the session.";
-static const char* Session_createConsumer1_docstring = "Creates a L{MessageConsumer} for the specified destination.";
-static const char* Session_createConsumer2_docstring = "Creates a L{MessageConsumer} for the specified destination, using a "
-													  "message selector.";
-static const char* Session_createConsumer3_docstring = "Creates a L{MessageConsumer} for the specified destination, using a "
-													   "message selector.";
-static const char* Session_createDurableConsumer_docstring = "Creates a durable subscriber to the specified topic, using a "
-															 "message selector.";
-static const char* Session_createProducer_docstring = "Creates a L{MessageProducer} to send messages to the specified destination.";
-static const char* Session_createTopic_docstring = "Creates a topic identity given a L{Topic} name.";
-static const char* Session_createQueue_docstring = "Creates a queue identity given a L{Queue} name.";
-static const char* Session_createTemporaryQueue_docstring = "Creates a L{TemporaryQueue} object.";
-static const char* Session_createTemporaryTopic_docstring = "Creates a L{TemporaryTopic} object.";
-static const char* Session_createMessage_docstring = "Creates a new L{Message}.";
-static const char* Session_createTextMessage0_docstring = "Creates a new L{TextMessage}.";
-static const char* Session_createTextMessage1_docstring = "Creates a new L{TextMessage} and set the text to the given value.";
-static const char* Session_createBytesMessage_docstring = "Creates a new L{BytesMessage}.";
-static const char* Session_createMapMessage_docstring = "Creates a new L{MapMessage}.";
+static const char* Session_docstring =
+    "A C{Session} object is a single-threaded context for producing and consuming "
+    "messages. \n\nA session serves several purposes:\n\n"
+    " - It is a factory for its message producers and consumers.\n\n"
+    " - It supplies provider-optimized message factories.\n\n"
+    " - It is a factory for TemporaryTopics and TemporaryQueues.\n\n"
+    " - It provides a way to create L{Queue} or L{Topic} objects for those clients "
+    "that need to dynamically manipulate provider-specific destination names.\n\n"
+    " - It supports a single series of transactions that combine work spanning its "
+    "producers and consumers into atomic units.\n\n - It defines a serial order for "
+    "the messages it consumes and the messages it produces.\n\n - It retains "
+    "messages it consumes until they have been acknowledged.\n\n - It serializes "
+    "execution of message listeners registered with its message consumers.";
+static const char* Session_commit_docstring =
+    "Commits all messages done in this transaction and releases any locks "
+    "currently held.";
+static const char* Session_rollback_docstring =
+    "Rolls back all messages done in this transaction and releases any locks "
+    "currently held.";
+static const char* Session_unsubscribe_docstring =
+    "Unsubscribes a durable subscription that has been created by a client.\n\n"
+    "This method deletes the state being maintained on behalf of the subscriber "
+    "by its provider. It is erroneous for a client to delete a durable "
+    "subscription while there is an active L{MessageConsumer} or subscriber "
+    "for the subscription, or while a consumed message is part of a pending "
+    "transaction or has not been acknowledged in the session.";
+static const char* Session_createConsumer1_docstring =
+    "Creates a L{MessageConsumer} for the specified destination.";
+static const char* Session_createConsumer2_docstring =
+    "Creates a L{MessageConsumer} for the specified destination, using a "
+    "message selector.";
+static const char* Session_createConsumer3_docstring = 
+    "Creates a L{MessageConsumer} for the specified destination, using a "
+    "message selector.";
+static const char* Session_createDurableConsumer_docstring =
+    "Creates a durable subscriber to the specified topic, using a "
+    "message selector.";
+static const char* Session_createProducer_docstring =
+    "Creates a L{MessageProducer} to send messages to the specified destination.";
+static const char* Session_createTopic_docstring =
+    "Creates a topic identity given a L{Topic} name.";
+static const char* Session_createQueue_docstring =
+    "Creates a queue identity given a L{Queue} name.";
+static const char* Session_createTemporaryQueue_docstring =
+    "Creates a L{TemporaryQueue} object.";
+static const char* Session_createTemporaryTopic_docstring =
+    "Creates a L{TemporaryTopic} object.";
+static const char* Session_createMessage_docstring =
+    "Creates a new L{Message}.";
+static const char* Session_createTextMessage0_docstring =
+    "Creates a new L{TextMessage}.";
+static const char* Session_createTextMessage1_docstring =
+    "Creates a new L{TextMessage} and set the text to the given value.";
+static const char* Session_createBytesMessage_docstring =
+    "Creates a new L{BytesMessage}.";
+static const char* Session_createMapMessage_docstring =
+    "Creates a new L{MapMessage}.";
 static const char* Session_transacted_docstring = "Returns if the C{Session} is a transacted session.";
 static const char* Session_acknowledgeMode_docstring = "Returns the acknowledgement mode of the C{Session}.";
 static const char* AcknowledgeMode_docstring = "Returns the acknowledgement mode of the session.";
@@ -100,47 +118,50 @@ void export_Session()
              Session_createConsumer1,
              return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1> >(),
              py::arg("destination"),
-			 Session_createConsumer1_docstring)
+             Session_createConsumer1_docstring)
         .def("createConsumer",
              Session_createConsumer2,
              return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1> >(),
              (py::arg("destination"), py::arg("selector")),
-			 Session_createConsumer2_docstring)
+             Session_createConsumer2_docstring)
         .def("createConsumer",
              Session_createConsumer3,
              return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1> >(),
              (py::arg("destination"), py::arg("selector"), py::arg("nolocal")),
-			 Session_createConsumer3_docstring)
+             Session_createConsumer3_docstring)
         .def("createDurableConsumer",
              &Session::createDurableConsumer,
              return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1> >(),
              (py::arg("destination"), py::arg("name"), py::arg("selector"), py::arg("nolocal")),
-			 Session_createDurableConsumer_docstring)
+             Session_createDurableConsumer_docstring)
         .def("createProducer",
              &Session::createProducer,
              return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1> >(),
              py::arg("destination"),
-			 Session_createProducer_docstring)
+             Session_createProducer_docstring)
         .def("createTopic",
              &Session::createTopic,
              return_value_policy<manage_new_object>(),
              py::arg("name"),
-			 Session_createTopic_docstring)
+             Session_createTopic_docstring)
         .def("createQueue", &Session::createQueue,
              return_value_policy<manage_new_object>(),
              py::arg("name"),
-			 Session_createQueue_docstring)
+             Session_createQueue_docstring)
         .def("createTemporaryTopic",
              &Session::createTemporaryTopic,
              return_value_policy<manage_new_object>(),
              py::arg("name"),
-			 Session_createTemporaryTopic_docstring)
+             Session_createTemporaryTopic_docstring)
         .def("createTemporaryQueue",
              &Session::createTemporaryQueue,
              return_value_policy<manage_new_object>(),
              py::arg("name"),
-			 Session_createTemporaryQueue_docstring)
-        .def("createMessage", &Session::createMessage, return_value_policy<manage_new_object>(), Session_createMessage_docstring)
+             Session_createTemporaryQueue_docstring)
+        .def("createMessage",
+             &Session::createMessage,
+             return_value_policy<manage_new_object>(),
+             Session_createMessage_docstring)
         .def("createTextMessage", Session_createTextMessage0, return_value_policy<manage_new_object>(), Session_createTextMessage0_docstring)
         .def("createTextMessage", Session_createTextMessage1, return_value_policy<manage_new_object>(), Session_createTextMessage1_docstring)
         .def("createBytesMessage", Session_createBytesMessage0, return_value_policy<manage_new_object>(), Session_createBytesMessage_docstring)

@@ -23,8 +23,10 @@ namespace py = boost::python;
 using cms::TextMessage;
 using cms::Message;
 
-static const char* TextMessage_docstring = "Interface for a text message.";
-static const char* TextMessage_text_docstring = "The message contents.";
+static const char* TextMessage_docstring =
+    "Interface for a text message.";
+static const char* TextMessage_text_docstring =
+    "The message contents.";
 
 void export_TextMessage()
 {
