@@ -1,5 +1,7 @@
+CHANGES.txt
 LICENSE.txt
 MANIFEST
+setup.cfg
 setup.py
 src/examples/DurableSubscriberExample.py
 src/examples/asynclistener.py
@@ -31,7 +33,6 @@ src/test/test_stomp_sync.py
 src/test/test_sync.py
 src/test/test_types.py
 src/test/util.py
+win_build/activemq-cpp.vcproj
 win_build/pyactivemq.sln
 win_build/pyactivemq.vcproj
-win_build/vs2003-activemq-cpp.sln
-win_build/vs2003-activemq.vcproj
