@@ -14,13 +14,22 @@
 
 from distutils.core import setup
 from distutils.extension import Extension
+from distutils.util import get_platform
 import os.path
 import sys
-if sys.platform == 'win32':
+
+if get_platform().startswith('win'):
     include_dirs = [
-        'C:\\Program Files\\boost\\boost_1_36_0',
         '..\\activemq-cpp\\src\\main'
         ]
+    if get_platform() == 'win-amd64':
+        include_dirs += [
+            'C:\\Program Files\\boost\\boost_1_36_0',
+            ]
+    else:
+        include_dirs += [
+            'C:\\Program Files (x86)\\boost\\boost_1_36_0',
+            ]
     libraries = [
         'libactivemq-cpp',
         'apr-1',
@@ -33,13 +42,22 @@ if sys.platform == 'win32':
         'advapi32',
         'shell32'
         ]
-    library_dirs = [
-        'win_build\\Release.x64',
-        '..\\apr\\x64\\LibR',
-        '..\\apr-util\\x64\\LibR',
-        '..\\apr-iconv\\x64\\LibR',
-        'C:\\Program Files\\boost\\boost_1_36_0\\lib'
-        ]
+    if get_platform() == 'win-amd64':
+        library_dirs = [
+            'win_build\\Release.x64',
+            '..\\apr\\x64\\LibR',
+            '..\\apr-util\\x64\\LibR',
+            '..\\apr-iconv\\x64\\LibR',
+            'C:\\Program Files\\boost\\boost_1_36_0\\lib'
+            ]
+    else:
+        library_dirs = [
+            'win_build\\Release.Win32',
+            '..\\apr\\LibR',
+            '..\\apr-util\\LibR',
+            '..\\apr-iconv\\LibR',
+            'C:\\Program Files (x86)\\boost\\boost_1_36_0\\lib'
+            ]
     extra_compile_args = ['/EHsc', '/GR', '/wd4290']
     extra_link_args = ['/LTCG']
     define_macros = [
@@ -70,20 +88,18 @@ else:
 
 import glob
 files = glob.glob(os.path.join('src', 'main', '*.cpp'))
-
+ext = Extension('pyactivemq',
+                files,
+                library_dirs=library_dirs,
+                libraries=libraries,
+                include_dirs=include_dirs,
+                extra_compile_args=extra_compile_args,
+                extra_link_args=extra_link_args,
+                depends=[],
+                define_macros=define_macros)
 setup(name='pyactivemq',
       version='0.1.0',
       author='Albert Strasheim',
       author_email='fullung@gmail.com',
       url='http://code.google.com/p/pyactivemq/',
-      ext_modules=[
-        Extension('pyactivemq',
-                  files,
-                  library_dirs=library_dirs,
-                  libraries=libraries,
-                  include_dirs=include_dirs,
-                  extra_compile_args=extra_compile_args,
-                  extra_link_args=extra_link_args,
-                  depends=[],
-                  define_macros=define_macros),
-        ])
+      ext_modules=[ext])

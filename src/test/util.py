@@ -27,8 +27,12 @@ def set_local_path():
     topdir = os.path.join(os.path.dirname(__file__), '..', '..')
     topdir = os.path.abspath(topdir)
     from distutils.util import get_platform
-    if get_platform() == 'win32':
-        sys.path.insert(0, os.path.join(topdir, 'win_build', 'debug'))
+    if False and get_platform().startswith('win'):
+        if get_platform() == 'win-amd64':
+            builddir = 'Release.x64'
+        else:
+            builddir = 'Release.Win32'
+        sys.path.insert(0, os.path.join(topdir, 'win_build', builddir))
     else:
         plat_specifier = ".%s-%s" % (get_platform(), sys.version[0:3])
         build_base = os.path.join(topdir, 'build')
