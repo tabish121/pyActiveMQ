@@ -18,24 +18,30 @@ import os.path
 import sys
 if sys.platform == 'win32':
     include_dirs = [
-        'C:\\Program Files\\boost\\boost_1_35_0',
+        'C:\\Program Files\\boost\\boost_1_36_0',
         '..\\activemq-cpp\\src\\main'
         ]
-    boost_lib = 'libboost_python-vc71-mt-1_35'
     libraries = [
-        'activemq-cpp',
+        'libactivemq-cpp',
+        'apr-1',
+        'aprutil-1',
+        'apriconv-1',
         'uuid',
-        boost_lib,
         'ws2_32',
-        'rpcrt4'
+        'rpcrt4',
+        'mswsock',
+        'advapi32',
+        'shell32'
         ]
-    boost_lib_dir = 'C:\\Program Files\\boost\\boost_1_35_0\\lib'
     library_dirs = [
-        'win_build\\release',
-        boost_lib_dir
+        'win_build\\Release.x64',
+        '..\\apr\\x64\\LibR',
+        '..\\apr-util\\x64\\LibR',
+        '..\\apr-iconv\\x64\\LibR',
+        'C:\\Program Files\\boost\\boost_1_36_0\\lib'
         ]
-    extra_compile_args = ['/GR', '/wd4290']
-    extra_link_args = []
+    extra_compile_args = ['/EHsc', '/GR', '/wd4290']
+    extra_link_args = ['/LTCG']
     define_macros = [
         ('BOOST_PYTHON_STATIC_LIB', 1),
         ('BOOST_PYTHON_NO_PY_SIGNATURES', 1),
@@ -43,7 +49,6 @@ if sys.platform == 'win32':
         ]
 else:
     include_dirs = [
-        '../activemq-cpp/src/main',
         '/opt/activemq-cpp-2.2.1/include/activemq-cpp-2.2.1'
         ]
     libraries = [

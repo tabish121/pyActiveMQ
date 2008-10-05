@@ -21,8 +21,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(SolutionDir)$(ProjectName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName).$(PlatformName)"
+			IntermediateDirectory="$(ConfigurationName).$(PlatformName)\$(ProjectName)"
 			ConfigurationType="2"
 			CharacterSet="1"
 			>
@@ -44,7 +44,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\src\main;&quot;..\..\activemq-cpp\src\main&quot;;&quot;C:\Program Files (x86)\boost\boost_1_35_0&quot;;C:\Python26.x86\include"
+				AdditionalIncludeDirectories="..\src\main;&quot;..\..\activemq-cpp\src\main&quot;;&quot;C:\Program Files (x86)\boost\boost_1_36_0&quot;;C:\Python26.x86\include"
 				PreprocessorDefinitions="_DEBUG;_DLL;_WIN32;WIN32;_WINDOWS;_MBCS;_USE_MATH_DEFINES;NOMINMAX;VC_EXTRALEAN;WIN32_LEAN_AND_MEAN;BOOST_LIB_DIAGNOSTIC;BOOST_PYTHON_STATIC_LIB;BOOST_PYTHON_NO_PY_SIGNATURES"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -68,7 +68,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib rpcrt4.lib mswsock.lib"
 				OutputFile="$(OutDir)\$(ProjectName).pyd"
-				AdditionalLibraryDirectories="&quot;C:\Program Files (x86)\boost\boost_1_35_0\lib&quot;;C:\Python26.x86\libs"
+				AdditionalLibraryDirectories="&quot;C:\Program Files (x86)\boost\boost_1_36_0\lib&quot;;C:\Python26.x86\libs"
 				GenerateDebugInformation="true"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -121,14 +121,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\src\main;&quot;..\..\activemq-cpp\src\main&quot;;&quot;C:\Program Files\boost\boost_1_35_0&quot;;C:\Python26\include"
+				AdditionalIncludeDirectories="..\src\main;&quot;..\..\activemq-cpp\src\main&quot;;&quot;C:\Program Files\boost\boost_1_36_0&quot;;C:\Python26\include"
 				PreprocessorDefinitions="_DEBUG;_DLL;_WIN32;WIN32;_WINDOWS;_MBCS;_USE_MATH_DEFINES;NOMINMAX;VC_EXTRALEAN;WIN32_LEAN_AND_MEAN;BOOST_LIB_DIAGNOSTIC;BOOST_PYTHON_STATIC_LIB;BOOST_PYTHON_NO_PY_SIGNATURES"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
 				DisableSpecificWarnings="4290"
 			/>
@@ -143,9 +142,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libboost_python-vc80-mt-gd-1_35.lib ws2_32.lib rpcrt4.lib mswsock.lib"
+				AdditionalDependencies="ws2_32.lib rpcrt4.lib mswsock.lib"
 				OutputFile="$(OutDir)\$(ProjectName).pyd"
-				AdditionalLibraryDirectories="&quot;C:\Program Files\boost\boost_1_35_0\lib&quot;;C:\Python26\libs"
+				AdditionalLibraryDirectories="&quot;C:\Program Files\boost\boost_1_36_0\lib&quot;;C:\Python26\libs"
 				GenerateDebugInformation="true"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -175,8 +174,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(SolutionDir)$(ProjectName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName).$(PlatformName)"
+			IntermediateDirectory="$(ConfigurationName).$(PlatformName)\$(ProjectName)"
 			ConfigurationType="2"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
@@ -198,7 +197,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\src\main;&quot;..\..\activemq-cpp\src\main&quot;;&quot;C:\Program Files (x86)\boost\boost_1_35_0&quot;;C:\Python26.x86\include"
+				AdditionalIncludeDirectories="..\src\main;&quot;..\..\activemq-cpp\src\main&quot;;&quot;C:\Program Files (x86)\boost\boost_1_36_0&quot;;C:\Python26.x86\include"
 				PreprocessorDefinitions="NDEBUG;_DLL;_WIN32;WIN32;_WINDOWS;_MBCS;_USE_MATH_DEFINES;NOMINMAX;VC_EXTRALEAN;WIN32_LEAN_AND_MEAN;BOOST_LIB_DIAGNOSTIC;BOOST_PYTHON_STATIC_LIB;BOOST_PYTHON_NO_PY_SIGNATURES"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -220,7 +219,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib rpcrt4.lib mswsock.lib"
 				OutputFile="$(OutDir)\$(ProjectName).pyd"
-				AdditionalLibraryDirectories="&quot;C:\Program Files (x86)\boost\boost_1_35_0\lib&quot;;C:\Python26.x86\libs"
+				AdditionalLibraryDirectories="&quot;C:\Program Files (x86)\boost\boost_1_36_0\lib&quot;;C:\Python26.x86\libs"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 			/>
@@ -272,12 +271,11 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\src\main;&quot;..\..\activemq-cpp\src\main&quot;;&quot;C:\Program Files\boost\boost_1_35_0&quot;;C:\Python26\include"
+				AdditionalIncludeDirectories="..\src\main;&quot;..\..\activemq-cpp\src\main&quot;;&quot;C:\Program Files\boost\boost_1_36_0&quot;;C:\Python26\include"
 				PreprocessorDefinitions="NDEBUG;_DLL;_WIN32;WIN32;_WINDOWS;_MBCS;_USE_MATH_DEFINES;NOMINMAX;VC_EXTRALEAN;WIN32_LEAN_AND_MEAN;BOOST_LIB_DIAGNOSTIC;BOOST_PYTHON_STATIC_LIB;BOOST_PYTHON_NO_PY_SIGNATURES"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
 				DisableSpecificWarnings="4290"
 			/>
@@ -292,9 +290,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libboost_python-vc80-mt-1_35.lib ws2_32.lib rpcrt4.lib mswsock.lib"
+				AdditionalDependencies="ws2_32.lib rpcrt4.lib mswsock.lib"
 				OutputFile="$(OutDir)\$(ProjectName).pyd"
-				AdditionalLibraryDirectories="&quot;C:\Program Files\boost\boost_1_35_0\lib&quot;;C:\Python26\libs"
+				AdditionalLibraryDirectories="&quot;C:\Program Files\boost\boost_1_36_0\lib&quot;;C:\Python26\libs"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 				TargetMachine="17"
