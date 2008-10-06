@@ -90,9 +90,11 @@ void BytesMessage_setBodyBytes(BytesMessage& This, const std::string& buffer)
 
 std::string BytesMessage_readBytes(BytesMessage& This)
 {
+#if 0
     // TODO make this buffer size configurable
     std::vector<unsigned char> buffer(This.getBodyLength());
     std::size_t length = This.readBytes(buffer);
+#endif
     return "";
 }
 
