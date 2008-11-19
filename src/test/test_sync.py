@@ -267,7 +267,7 @@ class _test_sync:
         self.conn.start()
         del self.conn
         producer.send(textMessage)
-        msg = consumer.receive(1000)
+        msg = consumer.receive(5000)
 
         self.assert_(msg is not None)
         self.assert_(isinstance(msg, pyactivemq.Message))
@@ -291,7 +291,7 @@ class _test_sync:
 
         self.conn.start()
         producer.send(bytesMessage)
-        msg = consumer.receive(1000)
+        msg = consumer.receive(5000)
 
         self.assert_(msg is not None)
         self.assert_(isinstance(msg, pyactivemq.Message))
@@ -305,7 +305,7 @@ class _test_sync:
         bytesMessage = session.createBytesMessage()
         bytesMessage.writeBytes('hello123')
         producer.send(bytesMessage)
-        msg = consumer.receive(1000)
+        msg = consumer.receive(5000)
         self.assert_(msg is not None)
         # XXX this doesn't return anything yet
         #self.assertEqual('hello123', msg.readBytes())
@@ -326,7 +326,7 @@ class _test_sync:
 
         self.conn.start()
         producer.send(bytesMessage)
-        msg = consumer.receive(1000)
+        msg = consumer.receive(5000)
 
         self.assert_(msg is not None)
         self.assert_(isinstance(msg, pyactivemq.Message))
@@ -339,7 +339,7 @@ class _test_sync:
         self.assertEqual(3, bytesMessage.bodyLength)
         producer.send(bytesMessage)
         del producer
-        msg = consumer.receive(1000)
+        msg = consumer.receive(5000)
         self.assert_(msg is not None)
         self.assert_(isinstance(msg, pyactivemq.Message))
         self.assert_(isinstance(msg, pyactivemq.BytesMessage))
@@ -360,7 +360,7 @@ class _test_sync:
         session.rollback()
         producer.send(textMessage)
         session.commit()
-        msg = consumer.receive(1000)
+        msg = consumer.receive(5000)
         self.assert_(msg is not None)
         self.assertEqual('hello123', msg.text)
         # two sends were rolled back, so expect only one message

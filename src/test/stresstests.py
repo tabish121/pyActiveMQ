@@ -27,5 +27,5 @@ if __name__ == '__main__':
     module = __import__('__main__')
     test = testLoader.loadTestsFromModule(module)
     testRunner = unittest.TextTestRunner(verbosity=2)
-    for i in xrange(100):
+    for i in xrange(1000):
         result = testRunner.run(test)

@@ -93,10 +93,10 @@ class test_openwire_sync(_test_sync, unittest.TestCase):
         producer = session.createProducer(queue)
         self.conn.start()
         producer.send(mapMessage)
-        msg = consumer.receive(1000)
+        msg = consumer.receive(5000)
         self.assert_(msg is not None)
         self._check_MapMessage(msg)
-        msg = consumer.receive(50)
+        msg = consumer.receive(5000)
         self.assert_(msg is None)
         self.conn.close()
 
@@ -111,7 +111,7 @@ class test_openwire_sync(_test_sync, unittest.TestCase):
         producer = session.createProducer(topic)
         self.conn.start()
         producer.send(textMessage)
-        msg = consumer1.receive(2000)
+        msg = consumer1.receive(5000)
         self.assert_(msg is not None)
         # nolocal consumer shouldn't receive the message
         msg = consumer2.receive(500)
