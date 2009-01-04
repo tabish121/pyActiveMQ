@@ -837,6 +837,14 @@
 							>
 						</File>
 						<File
+							RelativePath="..\..\activemq-cpp\src\main\activemq\connector\openwire\utils\MessagePropertyInterceptor.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\activemq-cpp\src\main\activemq\connector\openwire\utils\MessagePropertyInterceptor.h"
+							>
+						</File>
+						<File
 							RelativePath="..\..\activemq-cpp\src\main\activemq\connector\openwire\utils\OpenwireStringSupport.cpp"
 							>
 						</File>
@@ -8859,22 +8867,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\activemq-cpp\src\main\activemq\transport\MockTransport.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\activemq-cpp\src\main\activemq\transport\MockTransport.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\activemq-cpp\src\main\activemq\transport\MockTransportFactory.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\activemq-cpp\src\main\activemq\transport\MockTransportFactory.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\activemq-cpp\src\main\activemq\transport\Response.h"
 					>
 				</File>
@@ -8987,6 +8979,26 @@
 					</File>
 					<File
 						RelativePath="..\..\activemq-cpp\src\main\activemq\transport\filters\TcpTransportFactory.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="mock"
+					>
+					<File
+						RelativePath="..\..\activemq-cpp\src\main\activemq\transport\mock\MockTransport.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\activemq-cpp\src\main\activemq\transport\mock\MockTransport.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\activemq-cpp\src\main\activemq\transport\mock\MockTransportFactory.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\activemq-cpp\src\main\activemq\transport\mock\MockTransportFactory.h"
 						>
 					</File>
 				</Filter>
@@ -9103,11 +9115,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\activemq-cpp\src\main\decaf\internal\AprRuntime.cpp"
+					RelativePath="..\..\activemq-cpp\src\main\decaf\internal\DecafRuntime.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\activemq-cpp\src\main\decaf\internal\AprRuntime.h"
+					RelativePath="..\..\activemq-cpp\src\main\decaf\internal\DecafRuntime.h"
 					>
 				</File>
 				<Filter
