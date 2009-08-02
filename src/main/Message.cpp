@@ -18,6 +18,7 @@
 
 #include <boost/python/class.hpp>
 #include <boost/python/object/pointer_holder.hpp>
+#include <boost/python/manage_new_object.hpp>
 
 #include <cms/Message.h>
 #include <cms/Topic.h>
@@ -192,6 +193,7 @@ void export_Message()
         .def("acknowledge", &Message::acknowledge, Message_acknowledge_docstring)
         .def("clearBody", &Message::clearBody, Message_clearBody_docstring)
         .def("clearProperties", &Message::clearProperties, Message_clearProperties_docstring)
+        .def("clone", &Message::clone, py::return_value_policy<py::manage_new_object>())
         .add_property("propertyNames", &Message::getPropertyNames, Message_propertyNames_docstring)
         .def("propertyExists", &Message::propertyExists, Message_propertyExists_docstring)
         .def("getBooleanProperty", &Message::getBooleanProperty, Message_getBooleanProperty_docstring)
