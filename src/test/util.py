@@ -27,7 +27,7 @@ def set_local_path():
     topdir = os.path.join(os.path.dirname(__file__), '..', '..')
     topdir = os.path.abspath(topdir)
     from distutils.util import get_platform
-    if False and get_platform().startswith('win'):
+    if True and get_platform().startswith('win'):
         if get_platform() == 'win-amd64':
             builddir = 'Release.x64'
         else:

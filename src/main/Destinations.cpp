@@ -33,10 +33,6 @@ using cms::TemporaryQueue;
 
 static const char* Destination_docstring = "A C{Destination} object encapsulates a provider-specific address.";
 static const char* Destination_destinationType_docstring = "Returns the C{Destination} type for this destination.";
-static const char* Destination_providerString_docstring = "Converts the C{Destination} to a C{String} value representing the C{Provider} "
-                                                          "specific name for this destination. This name uniquely identifies a particular "
-                                                          "destination. For example, a topic and a queue both named 'C{FOO}' must not have "
-                                                          "equivalent provider strings.";
 static const char* DestinationType_docstring = "Available L{Destination} types";
 static const char* Topic_docstring = "An interface encapsulating a provider-specific topic name.";
 static const char* Topic_name_docstring = "The topic name.";
@@ -92,10 +88,7 @@ void export_Destinations()
 {
     py::class_<Destination, boost::noncopyable>("Destination", Destination_docstring, py::no_init)
         .add_property("destinationType", &Destination::getDestinationType, Destination_destinationType_docstring)
-        .def("__str__", &Destination::toProviderString)
-        .def("__repr__", &Destination::toProviderString)
         .def("__eq__", Destination__eq__)
-        .add_property("providerString", &Destination::toProviderString, Destination_providerString_docstring)
         ;
 
     py::enum_<Destination::DestinationType>("DestinationType")

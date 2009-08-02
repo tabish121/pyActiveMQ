@@ -175,5 +175,6 @@ void export_Session()
         .value("DUPS_OK_ACKNOWLEDGE", Session::DUPS_OK_ACKNOWLEDGE)
         .value("CLIENT_ACKNOWLEDGE", Session::CLIENT_ACKNOWLEDGE)
         .value("SESSION_TRANSACTED", Session::SESSION_TRANSACTED)
+		.value("INDIVIDUAL_ACKNOWLEDGE", Session::INDIVIDUAL_ACKNOWLEDGE)
         ;
 }

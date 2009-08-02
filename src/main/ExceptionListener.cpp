@@ -40,7 +40,11 @@ struct ExceptionListenerWrap : ExceptionListener, py::wrapper<ExceptionListener>
     virtual void onException(const CMSException& ex)
     {
         PyGILState_STATE gstate = PyGILState_Ensure();
+#if 0
         PyObject* obj = py::to_python_indirect<CMSException*, make_owning_holder>()(ex.clone());
+#else
+        PyObject* obj = NULL;
+#endif
         try {
             py::call<void>(this->get_override("onException").ptr(), py::handle<>(obj));
         } catch (const py::error_already_set) {

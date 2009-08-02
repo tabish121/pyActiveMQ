@@ -28,6 +28,7 @@
 #include <cms/Stoppable.h>
 #include <cms/Closeable.h>
 #include <cms/DeliveryMode.h>
+#include <activemq/library/ActiveMQCPP.h>
 
 namespace py = boost::python;
 
@@ -61,6 +62,8 @@ struct std_vector_to_tuple
 };
 
 void export_CMSException();
+void export_CMSSecurityException();
+void export_CMSProperties();
 void export_ConnectionFactory();
 void export_ActiveMQConnectionFactory();
 void export_Connection();
@@ -96,8 +99,29 @@ static const char* DeliveryMode_docstring =
     "This is an abstract class whose purpose is to provide a container for "
     "the delivery mode enumeration for CMS messages.";
 
+struct ThreadAllower
+{
+    PyThreadState *_save;
+    ThreadAllower()
+    {
+        _save = PyEval_SaveThread();
+    }
+
+    ~ThreadAllower()
+    {
+        PyEval_RestoreThread(_save);
+    }
+};
+
+void Stoppable_stop(Stoppable& This)
+{
+    ThreadAllower threadAllower;
+    This.stop();
+}
+
 BOOST_PYTHON_MODULE(pyactivemq)
 {
+	activemq::library::ActiveMQCPP::initializeLibrary();
     PyEval_InitThreads();
 
 #if PYACTIVEMQ_ENABLE_DOCSTRINGS
@@ -117,7 +141,11 @@ BOOST_PYTHON_MODULE(pyactivemq)
         ;
 
     py::class_<Stoppable, boost::noncopyable>("Stoppable", Stoppable_docstring, py::no_init)
+#if 1
         .def("stop", &Stoppable::stop, Stoppable_stop_docstring)
+#else
+        .def("stop", Stoppable_stop, Stoppable_stop_docstring)
+#endif
         ;
 
     py::class_<Closeable, boost::noncopyable>("Closeable", Closeable_docstring, py::no_init)
@@ -125,6 +153,8 @@ BOOST_PYTHON_MODULE(pyactivemq)
         ;
 
     export_CMSException();
+	export_CMSSecurityException();
+	export_CMSProperties();
     export_ConnectionFactory();
     export_ActiveMQConnectionFactory();
     export_Connection();

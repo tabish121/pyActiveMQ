@@ -61,6 +61,7 @@ class test_AcknowledgeMode(unittest.TestCase):
         self.assertEqual(1, int(AcknowledgeMode.DUPS_OK_ACKNOWLEDGE))
         self.assertEqual(2, int(AcknowledgeMode.CLIENT_ACKNOWLEDGE))
         self.assertEqual(3, int(AcknowledgeMode.SESSION_TRANSACTED))
+        self.assertEqual(4, int(AcknowledgeMode.INDIVIDUAL_ACKNOWLEDGE))
 
 class test_DeliveryMode(unittest.TestCase):
     def test_values(self):
