@@ -16,13 +16,14 @@
 
 #include <boost/python/class.hpp>
 
-#include <cms/CMSProperties.h>
+#include <cms/StreamMessage.h>
 
 namespace py = boost::python;
 
-using cms::CMSProperties;
+using cms::StreamMessage;
+using cms::Message;
 
-void export_CMSProperties()
+void export_StreamMessage()
 {
-    py::class_<CMSProperties, boost::noncopyable>("CMSProperties", py::no_init);
+    py::class_<StreamMessage, py::bases<Message>, boost::noncopyable>("StreamMessage", py::no_init);
 }

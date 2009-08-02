@@ -20,15 +20,15 @@ import sys
 
 if get_platform().startswith('win'):
     include_dirs = [
-        '..\\activemq-cpp\\src\\main'
+        '..\\activemq-cpp-library-3.0.1\\src\\main'
         ]
     if get_platform() == 'win-amd64':
         include_dirs += [
-            'C:\\Program Files\\boost\\boost_1_36_0',
+            'C:\\Program Files\\boost\\boost_1_39_0',
             ]
     else:
         include_dirs += [
-            'C:\\Program Files (x86)\\boost\\boost_1_36_0',
+            'C:\\Program Files (x86)\\boost\\boost_1_39_0',
             ]
     libraries = [
         'libactivemq-cpp',
@@ -48,7 +48,7 @@ if get_platform().startswith('win'):
             '..\\apr\\x64\\LibR',
             '..\\apr-util\\x64\\LibR',
             '..\\apr-iconv\\x64\\LibR',
-            'C:\\Program Files\\boost\\boost_1_36_0\\lib'
+            'C:\\Program Files\\boost\\boost_1_39_0\\lib'
             ]
     else:
         library_dirs = [
@@ -56,7 +56,7 @@ if get_platform().startswith('win'):
             '..\\apr\\LibR',
             '..\\apr-util\\LibR',
             '..\\apr-iconv\\LibR',
-            'C:\\Program Files (x86)\\boost\\boost_1_36_0\\lib'
+            'C:\\Program Files (x86)\\boost\\boost_1_39_0\\lib'
             ]
     extra_compile_args = ['/EHsc', '/GR', '/wd4290']
     extra_link_args = ['/LTCG']
@@ -67,7 +67,7 @@ if get_platform().startswith('win'):
         ]
 else:
     include_dirs = [
-        '/opt/activemq-cpp-2.2.1/include/activemq-cpp-2.2.1'
+        '/opt/activemq-cpp-3.0.1/include/activemq-cpp-3.0.1'
         ]
     libraries = [
         'activemq-cpp',
@@ -75,11 +75,11 @@ else:
         'boost_python'
         ]
     library_dirs = [
-        '/opt/activemq-cpp-2.2.1/lib'
+        '/opt/activemq-cpp-3.0.1/lib'
         ]
     extra_compile_args = []
     extra_link_args = [
-        '-Wl,-rpath,/opt/activemq-cpp-2.2.1/lib'
+        '-Wl,-rpath,/opt/activemq-cpp-3.0.1/lib'
         ]
     define_macros = [
         ('BOOST_PYTHON_NO_PY_SIGNATURES', 1),
@@ -98,7 +98,7 @@ ext = Extension('pyactivemq',
                 depends=[],
                 define_macros=define_macros)
 setup(name='pyactivemq',
-      version='0.1.1',
+      version='0.2.0',
       author='Albert Strasheim',
       author_email='fullung@gmail.com',
       url='http://code.google.com/p/pyactivemq/',

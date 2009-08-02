@@ -16,13 +16,14 @@
 
 #include <boost/python/class.hpp>
 
-#include <cms/CMSProperties.h>
+#include <cms/QueueBrowser.h>
 
 namespace py = boost::python;
 
-using cms::CMSProperties;
+using cms::Closeable;
+using cms::QueueBrowser;
 
-void export_CMSProperties()
+void export_QueueBrowser()
 {
-    py::class_<CMSProperties, boost::noncopyable>("CMSProperties", py::no_init);
+    py::class_<QueueBrowser, py::bases<Closeable>, boost::noncopyable>("QueueBrowser", py::no_init);
 }

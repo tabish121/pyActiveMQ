@@ -73,10 +73,13 @@ void export_Message();
 void export_TextMessage();
 void export_BytesMessage();
 void export_MapMessage();
+void export_ObjectMessage();
+void export_StreamMessage();
 void export_ExceptionListener();
 void export_MessageProducer();
 void export_MessageListener();
 void export_MessageConsumer();
+void export_QueueBrowser();
 
 static const char* pyactivemq_docstring =
     "pyactivemq is a Python module for communicating with the "
@@ -134,7 +137,7 @@ BOOST_PYTHON_MODULE(pyactivemq)
 
     std_vector_to_tuple<std::string>();
 
-    py::scope().attr("__version__") = "0.1.0";
+    py::scope().attr("__version__") = "0.2.0";
 
     py::class_<Startable, boost::noncopyable>("Startable", Startable_docstring, py::no_init)
         .def("start", &Startable::start, Startable_start_docstring)
@@ -164,10 +167,13 @@ BOOST_PYTHON_MODULE(pyactivemq)
     export_TextMessage();
     export_BytesMessage();
     export_MapMessage();
+    export_ObjectMessage();
+    export_StreamMessage();
     export_ExceptionListener();
     export_MessageProducer();
     export_MessageListener();
     export_MessageConsumer();
+    export_QueueBrowser();
 
     // Assign DeliveryModes to ints first to avoid issue with
     // unresolved symbols at runtime when compiling with GCC.

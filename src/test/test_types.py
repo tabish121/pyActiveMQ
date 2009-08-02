@@ -27,6 +27,8 @@ class test_pyactivemq(unittest.TestCase):
             'ActiveMQConnectionFactory',
             'BytesMessage',
             'CMSException',
+            'CMSProperties',
+            'CMSSecurityException',
             'Closeable',
             'Connection',
             'ConnectionFactory',
@@ -39,20 +41,23 @@ class test_pyactivemq(unittest.TestCase):
             'MessageConsumer',
             'MessageListener',
             'MessageProducer',
+            'ObjectMessage',
             'Queue',
+            'QueueBrowser',
             'Session',
             'Startable',
             'Stoppable',
+            'StreamMessage',
             'TemporaryQueue',
             'TemporaryTopic',
             'TextMessage',
             'Topic'
             ]
         for name in names:
-            self.assert_(name in dir(pyactivemq))
+            self.assert_(name in dir(pyactivemq), '%s not in dir' % name)
 
     def test_version(self):
-        self.assertEqual('0.1.0', pyactivemq.__version__)
+        self.assertEqual('0.2.0', pyactivemq.__version__)
 
 class test_AcknowledgeMode(unittest.TestCase):
     def test_values(self):
@@ -73,7 +78,8 @@ class test_ActiveMQConnectionFactory(unittest.TestCase):
     def test_properties(self):
         from pyactivemq import ActiveMQConnectionFactory
         f1 = ActiveMQConnectionFactory()
-        self.assertEqual('tcp://localhost:61616', f1.brokerURL)
+        # default broker URL enables failover
+        self.assertEqual('failover:(tcp://localhost:61616)', f1.brokerURL)
         self.assertEqual('', f1.username)
         self.assertEqual('', f1.password)
         f2 = ActiveMQConnectionFactory('url')

@@ -4,7 +4,11 @@ pyactivemq Changelog
 This file contains information about the changes between the different
 versions of pyactivemq.
 
-0.1.0 (unreleased)
+0.2.0 (unreleased)
+------------------
+ - Major update for ActiveMQ-CPP 3.0
+
+0.1.0 (2008-10-05)
 ------------------
 
  - Added docstrings (Issue 15)

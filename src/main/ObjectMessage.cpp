@@ -16,13 +16,14 @@
 
 #include <boost/python/class.hpp>
 
-#include <cms/CMSProperties.h>
+#include <cms/ObjectMessage.h>
 
 namespace py = boost::python;
 
-using cms::CMSProperties;
+using cms::ObjectMessage;
+using cms::Message;
 
-void export_CMSProperties()
+void export_ObjectMessage()
 {
-    py::class_<CMSProperties, boost::noncopyable>("CMSProperties", py::no_init);
+    py::class_<ObjectMessage, py::bases<Message>, boost::noncopyable>("ObjectMessage", py::no_init);
 }

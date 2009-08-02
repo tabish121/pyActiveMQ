@@ -380,6 +380,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\src\main\ObjectMessage.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\src\main\pyactivemq.cpp"
 			>
 		</File>
@@ -388,7 +392,15 @@
 			>
 		</File>
 		<File
+			RelativePath="..\src\main\QueueBrowser.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\src\main\Session.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\src\main\StreamMessage.cpp"
 			>
 		</File>
 		<File
