@@ -373,3 +373,21 @@ class _test_sync:
         self.assert_(msg is not None)
         msg = consumer.receive(500)
         self.assert_(msg is None)
+
+    def test_temporary_topic(self):
+        session = self.conn.createSession()
+        temptopic = session.createTemporaryTopic()
+        self.assert_(len(temptopic.name) > 0)
+        self.assert_(isinstance(temptopic, pyactivemq.Destination))
+        self.assert_(isinstance(temptopic, pyactivemq.TemporaryTopic))
+        self.assertEqual(pyactivemq.DestinationType.TEMPORARY_TOPIC,
+                         temptopic.destinationType)
+
+    def test_temporary_queue(self):
+        session = self.conn.createSession()
+        tempqueue = session.createTemporaryQueue()
+        self.assert_(len(tempqueue.name) > 0)
+        self.assert_(isinstance(tempqueue, pyactivemq.Destination))
+        self.assert_(isinstance(tempqueue, pyactivemq.TemporaryQueue))
+        self.assertEqual(pyactivemq.DestinationType.TEMPORARY_QUEUE,
+                         tempqueue.destinationType)

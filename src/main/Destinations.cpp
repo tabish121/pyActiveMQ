@@ -89,6 +89,7 @@ void export_Destinations()
     py::class_<Destination, boost::noncopyable>("Destination", Destination_docstring, py::no_init)
         .add_property("destinationType", &Destination::getDestinationType, Destination_destinationType_docstring)
         .def("__eq__", Destination__eq__)
+        .add_property("CMSProperties", make_function(&Destination::getCMSProperties, py::return_internal_reference<>()))
         ;
 
     py::enum_<Destination::DestinationType>("DestinationType")

@@ -33,26 +33,6 @@ class test_stomp_sync(_test_sync, unittest.TestCase):
             self.conn.close()
             del self.conn
 
-    def test_temporary_topic(self):
-        session = self.conn.createSession()
-        # not implemented for stomp
-        self.assertRaises(CMSException, session.createTemporaryTopic)
-        try:
-            session.createTemporaryTopic()
-            self.assert_(False)
-        except CMSException, e:
-            self.assert_(e.message.find('No Stomp Support') >= 0)
-
-    def test_temporary_queue(self):
-        session = self.conn.createSession()
-        # not implemented for stomp
-        self.assertRaises(CMSException, session.createTemporaryQueue)
-        try:
-            session.createTemporaryQueue()
-            self.assert_(False)
-        except CMSException, e:
-            self.assert_(e.message.find('No Stomp Support') >= 0)
-
     def test_MapMessage(self):
         session = self.conn.createSession()
         # not implemented for stomp

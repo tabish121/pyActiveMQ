@@ -124,7 +124,7 @@ void Stoppable_stop(Stoppable& This)
 
 BOOST_PYTHON_MODULE(pyactivemq)
 {
-	activemq::library::ActiveMQCPP::initializeLibrary();
+    activemq::library::ActiveMQCPP::initializeLibrary();
     PyEval_InitThreads();
 
 #if PYACTIVEMQ_ENABLE_DOCSTRINGS
@@ -156,8 +156,8 @@ BOOST_PYTHON_MODULE(pyactivemq)
         ;
 
     export_CMSException();
-	export_CMSSecurityException();
-	export_CMSProperties();
+    export_CMSSecurityException();
+    export_CMSProperties();
     export_ConnectionFactory();
     export_ActiveMQConnectionFactory();
     export_Connection();

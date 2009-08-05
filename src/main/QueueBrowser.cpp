@@ -25,5 +25,13 @@ using cms::QueueBrowser;
 
 void export_QueueBrowser()
 {
-    py::class_<QueueBrowser, py::bases<Closeable>, boost::noncopyable>("QueueBrowser", py::no_init);
+    py::class_<QueueBrowser, py::bases<Closeable>, boost::noncopyable>("QueueBrowser", py::no_init)
+        // TODO check if this is an internal reference or a new object
+        .add_property("queue", make_function(&QueueBrowser::getQueue, py::return_internal_reference<>()))
+        .add_property("messageSelector", &QueueBrowser::getMessageSelector)
+#if 0
+        // TODO apply std_vector_to_tuple and to_python_Message to return value
+        .add_property("enumeration", &QueueBrowser::getEnumeration)
+#endif
+        ;
 }

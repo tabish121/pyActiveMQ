@@ -32,24 +32,6 @@ class test_openwire_sync(_test_sync, unittest.TestCase):
             self.conn.close()
             del self.conn
 
-    def test_temporary_topic(self):
-        session = self.conn.createSession()
-        temptopic = session.createTemporaryTopic()
-        self.assert_(len(temptopic.name) > 0)
-        self.assert_(isinstance(temptopic, pyactivemq.Destination))
-        self.assert_(not isinstance(temptopic, pyactivemq.Topic))
-        self.assertEqual(pyactivemq.DestinationType.TEMPORARY_TOPIC,
-                         temptopic.destinationType)
-
-    def test_temporary_queue(self):
-        session = self.conn.createSession()
-        tempqueue = session.createTemporaryQueue()
-        self.assert_(len(tempqueue.name) > 0)
-        self.assert_(isinstance(tempqueue, pyactivemq.Destination))
-        self.assert_(not isinstance(tempqueue, pyactivemq.Queue))
-        self.assertEqual(pyactivemq.DestinationType.TEMPORARY_QUEUE,
-                         tempqueue.destinationType)
-
     def _populate_MapMessage(self, mapMessage):
         mapMessage.setBoolean('bool1', True)
         mapMessage.setByte('byte1', 123)

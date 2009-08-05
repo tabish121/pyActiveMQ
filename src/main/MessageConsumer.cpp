@@ -22,6 +22,8 @@
 #include <cms/TextMessage.h>
 #include <cms/BytesMessage.h>
 #include <cms/MapMessage.h>
+#include <cms/StreamMessage.h>
+#include <cms/ObjectMessage.h>
 
 namespace py = boost::python;
 
@@ -47,6 +49,12 @@ struct to_python_Message
         }
         else if (dynamic_cast<cms::MapMessage*>(p) != 0) {
             return make_owning_holder::execute(dynamic_cast<cms::MapMessage*>(p));
+        }
+        else if (dynamic_cast<cms::StreamMessage*>(p) != 0) {
+            return make_owning_holder::execute(dynamic_cast<cms::StreamMessage*>(p));
+        }
+        else if (dynamic_cast<cms::ObjectMessage*>(p) != 0) {
+            return make_owning_holder::execute(dynamic_cast<cms::ObjectMessage*>(p));
         }
         else if (dynamic_cast<cms::Message*>(p) != 0) {
             return make_owning_holder::execute(dynamic_cast<cms::Message*>(p));
