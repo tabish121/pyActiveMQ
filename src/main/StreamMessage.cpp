@@ -25,5 +25,30 @@ using cms::Message;
 
 void export_StreamMessage()
 {
-    py::class_<StreamMessage, py::bases<Message>, boost::noncopyable>("StreamMessage", py::no_init);
+    py::class_<StreamMessage, py::bases<Message>, boost::noncopyable>("StreamMessage", py::no_init)
+        .def("readBoolean", &StreamMessage::readBoolean)
+        .def("writeBoolean", &StreamMessage::writeBoolean)
+        .def("readByte", &StreamMessage::readByte)
+        .def("writeByte", &StreamMessage::writeByte)
+#if 0
+        .def("readBytes", &StreamMessage::readBytes)
+        .def("writeBytes", &StreamMessage::writeBytes)
+#endif
+        .def("readChar", &StreamMessage::readChar)
+        .def("writeChar", &StreamMessage::writeChar)
+        .def("readFloat", &StreamMessage::readFloat)
+        .def("writeFloat", &StreamMessage::writeFloat)
+        .def("readDouble", &StreamMessage::readDouble)
+        .def("writeDouble", &StreamMessage::writeDouble)
+        .def("readShort", &StreamMessage::readShort)
+        .def("writeShort", &StreamMessage::writeShort)
+        .def("readUnsignedShort", &StreamMessage::readUnsignedShort)
+        .def("writeUnsignedShort", &StreamMessage::writeUnsignedShort)
+        .def("readInt", &StreamMessage::readInt)
+        .def("writeInt", &StreamMessage::writeInt)
+        .def("readLong", &StreamMessage::readLong)
+        .def("writeLong", &StreamMessage::writeLong)
+        .def("readString", &StreamMessage::readString)
+        .def("writeString", &StreamMessage::writeString)
+        ;
 }
