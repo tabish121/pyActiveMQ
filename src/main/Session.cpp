@@ -28,6 +28,8 @@ using cms::MessageConsumer;
 using cms::Destination;
 using cms::TextMessage;
 using cms::BytesMessage;
+using cms::QueueBrowser;
+using cms::Queue;
 
 static const char* Session_docstring =
     "A C{Session} object is a single-threaded context for producing and consuming "
@@ -60,7 +62,7 @@ static const char* Session_createConsumer1_docstring =
 static const char* Session_createConsumer2_docstring =
     "Creates a L{MessageConsumer} for the specified destination, using a "
     "message selector.";
-static const char* Session_createConsumer3_docstring = 
+static const char* Session_createConsumer3_docstring =
     "Creates a L{MessageConsumer} for the specified destination, using a "
     "message selector.";
 static const char* Session_createDurableConsumer_docstring =
@@ -100,6 +102,10 @@ void export_Session()
     MessageConsumer* (Session::*Session_createConsumer3)(
         const Destination*, const std::string&, bool) =
         &Session::createConsumer;
+
+    QueueBrowser* (Session::*Session_createBrowser1)(const Queue*) = &Session::createBrowser;
+    QueueBrowser* (Session::*Session_createBrowser2)(const Queue*, const std::string&) = &Session::createBrowser;
+
     TextMessage* (Session::*Session_createTextMessage0)() =
         &Session::createTextMessage;
     TextMessage* (Session::*Session_createTextMessage1)(const std::string&) =
@@ -113,6 +119,7 @@ void export_Session()
     py::class_<Session, py::bases<Closeable>, boost::noncopyable>("Session", Session_docstring, py::no_init)
         .def("commit", &Session::commit, Session_commit_docstring)
         .def("rollback", &Session::rollback, Session_rollback_docstring)
+        .def("recover", &Session::recover)
         .def("unsubscribe", &Session::unsubscribe, py::arg("name"), Session_unsubscribe_docstring)
         .def("createConsumer",
              Session_createConsumer1,
@@ -139,6 +146,14 @@ void export_Session()
              return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1> >(),
              py::arg("destination"),
              Session_createProducer_docstring)
+        .def("createBrowser",
+             Session_createBrowser1,
+             return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1> >(),
+             py::arg("queue"))
+        .def("createBrowser",
+             Session_createBrowser2,
+             return_value_policy<manage_new_object, with_custodian_and_ward_postcall<0, 1> >(),
+             (py::arg("queue"), py::arg("selector")))
         .def("createTopic",
              &Session::createTopic,
              return_value_policy<manage_new_object>(),
@@ -165,6 +180,7 @@ void export_Session()
         .def("createTextMessage", Session_createTextMessage0, return_value_policy<manage_new_object>(), Session_createTextMessage0_docstring)
         .def("createTextMessage", Session_createTextMessage1, return_value_policy<manage_new_object>(), Session_createTextMessage1_docstring)
         .def("createBytesMessage", Session_createBytesMessage0, return_value_policy<manage_new_object>(), Session_createBytesMessage_docstring)
+        .def("createStreamMessage", &Session::createStreamMessage, return_value_policy<manage_new_object>())
         .def("createMapMessage", &Session::createMapMessage, return_value_policy<manage_new_object>(), Session_createMapMessage_docstring)
         .add_property("acknowledgeMode", &Session::getAcknowledgeMode, Session_acknowledgeMode_docstring)
         .add_property("transacted", &Session::isTransacted, Session_transacted_docstring)
@@ -175,6 +191,6 @@ void export_Session()
         .value("DUPS_OK_ACKNOWLEDGE", Session::DUPS_OK_ACKNOWLEDGE)
         .value("CLIENT_ACKNOWLEDGE", Session::CLIENT_ACKNOWLEDGE)
         .value("SESSION_TRANSACTED", Session::SESSION_TRANSACTED)
-		.value("INDIVIDUAL_ACKNOWLEDGE", Session::INDIVIDUAL_ACKNOWLEDGE)
+        .value("INDIVIDUAL_ACKNOWLEDGE", Session::INDIVIDUAL_ACKNOWLEDGE)
         ;
 }
