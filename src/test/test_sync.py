@@ -253,23 +253,6 @@ class _test_sync:
         bytesMessage.replyTo = queue
         self.assertEqual(queue, bytesMessage.replyTo)
 
-    def test_send_Message(self):
-        session = self.conn.createSession()
-        message = session.createMessage()
-        queue = self.random_queue(session)
-        consumer = session.createConsumer(queue)
-        self.assert_(consumer.messageListener is None)
-        producer = session.createProducer(queue)
-        self.conn.start()
-        producer.send(message)
-        msg = consumer.receive(timeout=5000)
-        self.assert_(msg is not None)
-        self.assert_(isinstance(msg, pyactivemq.Message))
-        #self.assertEqual(str(msg.destination), str(queue))
-        self.assertEqual(queue, msg.destination)
-        msg = consumer.receive(50)
-        self.assert_(msg is None)
-
     def test_send_TextMessage(self):
         session = self.conn.createSession()
 
