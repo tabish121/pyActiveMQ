@@ -16,6 +16,10 @@
 
 #include <boost/python/class.hpp>
 #include <boost/python/str.hpp>
+#include <boost/python/manage_new_object.hpp>
+#include <boost/python/dict.hpp>
+
+namespace py = boost::python;
 
 #include <cms/BytesMessage.h>
 
@@ -78,17 +82,17 @@ static const char* BytesMessage_writeString_docstring = "Writes an ASCII string 
 static const char* BytesMessage_readUTF_docstring = "Reads an UTF string from the bytes message stream.";
 static const char* BytesMessage_writeUTF_docstring = "Writes an UTF string to the bytes message stream.";
 
-PyObject* BytesMessage_getBodyBytes(BytesMessage const& self)
+static PyObject* BytesMessage_getBodyBytes(BytesMessage const& self)
 {
     return py::incref(py::str(reinterpret_cast<const char*>(self.getBodyBytes()), self.getBodyLength()).ptr());
 }
 
-void BytesMessage_setBodyBytes(BytesMessage& This, const std::string& buffer)
+static void BytesMessage_setBodyBytes(BytesMessage& This, const std::string& buffer)
 {
     This.setBodyBytes(reinterpret_cast<const unsigned char*>(buffer.c_str()), buffer.length());
 }
 
-std::string BytesMessage_readBytes(BytesMessage& This)
+static std::string BytesMessage_readBytes(BytesMessage& This)
 {
 #if 0
     // TODO make this buffer size configurable
@@ -98,13 +102,18 @@ std::string BytesMessage_readBytes(BytesMessage& This)
     return "";
 }
 
-void BytesMessage_writeBytes(BytesMessage& This, const std::string& buffer)
+static void BytesMessage_writeBytes(BytesMessage& This, const std::string& buffer)
 {
     std::vector<unsigned char> buffer2(buffer.size());
     for (std::size_t i = 0; i < buffer.size(); i++) {
         buffer2.push_back(buffer[i]);
     }
     This.writeBytes(buffer2);
+}
+
+static BytesMessage* BytesMessage_deepcopy(BytesMessage* This, py::dict memo)
+{
+    return This->clone();
 }
 
 void export_BytesMessage()
@@ -137,5 +146,5 @@ void export_BytesMessage()
         .def("writeString", &BytesMessage::writeString, BytesMessage_writeString_docstring)
         .def("readUTF", &BytesMessage::readUTF, BytesMessage_readUTF_docstring)
         .def("writeUTF", &BytesMessage::writeUTF, BytesMessage_writeUTF_docstring)
-        ;
+        .def("__deepcopy__", BytesMessage_deepcopy, py::return_value_policy<py::manage_new_object>());
 }

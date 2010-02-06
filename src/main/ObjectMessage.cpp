@@ -15,6 +15,8 @@
 */
 
 #include <boost/python/class.hpp>
+#include <boost/python/manage_new_object.hpp>
+#include <boost/python/dict.hpp>
 
 #include <cms/ObjectMessage.h>
 
@@ -23,7 +25,13 @@ namespace py = boost::python;
 using cms::ObjectMessage;
 using cms::Message;
 
+static ObjectMessage* ObjectMessage_deepcopy(ObjectMessage* This, py::dict memo)
+{
+    return dynamic_cast<ObjectMessage*>(This->clone());
+}
+
 void export_ObjectMessage()
 {
-    py::class_<ObjectMessage, py::bases<Message>, boost::noncopyable>("ObjectMessage", py::no_init);
+    py::class_<ObjectMessage, py::bases<Message>, boost::noncopyable>("ObjectMessage", py::no_init)
+        .def("__deepcopy__", ObjectMessage_deepcopy, py::return_value_policy<py::manage_new_object>());
 }

@@ -15,6 +15,8 @@
 */
 
 #include <boost/python/class.hpp>
+#include <boost/python/manage_new_object.hpp>
+#include <boost/python/dict.hpp>
 
 #include <cms/MapMessage.h>
 
@@ -55,13 +57,18 @@ static const char* MapMessage_setShort_docstring = "Sets a short value with the 
 static const char* MapMessage_getString_docstring = "Returns the string value of the specified name.";
 static const char* MapMessage_setString_docstring = "Sets a String value with the specified name into the C{Map}.";
 
-const char* MapMessage_getBytes(MapMessage& This, const std::string& name)
+static const char* MapMessage_getBytes(MapMessage& This, const std::string& name)
 {
 #if 0
     return reinterpret_cast<const char*>(This.getBytes(name));
 #else
     return 0;
 #endif
+}
+
+static MapMessage* MapMessage_deepcopy(MapMessage* This, py::dict memo)
+{
+    return dynamic_cast<MapMessage*>(This->clone());
 }
 
 void export_MapMessage()
@@ -89,5 +96,5 @@ void export_MapMessage()
         .def("setShort", &MapMessage::setShort, MapMessage_setShort_docstring)
         .def("getString", &MapMessage::getString, MapMessage_getString_docstring)
         .def("setString", &MapMessage::setString, MapMessage_setString_docstring)
-        ;
+        .def("__deepcopy__", MapMessage_deepcopy, py::return_value_policy<py::manage_new_object>());
 }

@@ -17,6 +17,7 @@ set_local_path()
 import pyactivemq
 restore_path()
 
+import copy
 import sys
 
 class _test_sync:
@@ -195,6 +196,7 @@ class _test_sync:
         self.assert_(message.destination is None)
         self.assert_(message.replyTo is None)
         self._check_Message_properties(message)
+        message2 = copy.deepcopy(message)
 
     def test_TextMessage(self):
         session = self.conn.createSession()
@@ -219,6 +221,8 @@ class _test_sync:
         # replyTo and destination properties
         #self.assert_(isinstance(textMessage.replyTo, pyactivemq.Queue))
 
+        textMessage2 = copy.deepcopy(textMessage)
+
     def test_send_StreamMessage(self):
         session = self.conn.createSession()
         streamMessage = session.createStreamMessage()
@@ -238,6 +242,8 @@ class _test_sync:
         streamMessage.writeString('hello')
         # TODO actually send the StreamMessage
 
+        streamMessage2 = copy.deepcopy(streamMessage)
+
     def test_BytesMessage(self):
         session = self.conn.createSession()
         bytesMessage = session.createBytesMessage()
@@ -252,6 +258,8 @@ class _test_sync:
         queue = session.createQueue("queue")
         bytesMessage.replyTo = queue
         self.assertEqual(queue, bytesMessage.replyTo)
+
+        bytesMessage2 = copy.deepcopy(bytesMessage)
 
     def test_send_TextMessage(self):
         session = self.conn.createSession()

@@ -15,6 +15,8 @@
 */
 
 #include <boost/python/class.hpp>
+#include <boost/python/manage_new_object.hpp>
+#include <boost/python/dict.hpp>
 
 #include <cms/TextMessage.h>
 
@@ -28,10 +30,15 @@ static const char* TextMessage_docstring =
 static const char* TextMessage_text_docstring =
     "The message contents.";
 
+static TextMessage* TextMessage_deepcopy(TextMessage* This, py::dict memo)
+{
+    return dynamic_cast<TextMessage*>(This->clone());
+}
+
 void export_TextMessage()
 {
     void (TextMessage::*TextMessage_setText)(const std::string&) = &TextMessage::setText;
     py::class_<TextMessage, py::bases<Message>, boost::noncopyable>("TextMessage", TextMessage_docstring, py::no_init)
         .add_property("text", &TextMessage::getText, TextMessage_setText, TextMessage_text_docstring)
-        ;
+        .def("__deepcopy__", TextMessage_deepcopy, py::return_value_policy<py::manage_new_object>());
 }

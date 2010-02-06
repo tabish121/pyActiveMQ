@@ -19,6 +19,7 @@
 #include <boost/python/class.hpp>
 #include <boost/python/object/pointer_holder.hpp>
 #include <boost/python/manage_new_object.hpp>
+#include <boost/python/dict.hpp>
 
 #include <cms/Message.h>
 #include <cms/Topic.h>
@@ -187,6 +188,11 @@ static const char* Message_type_docstring =
     "repository. If string literals are used, they may not be valid type names "
     "for some CMS providers.";
 
+static Message* Message_deepcopy(Message* This, py::dict memo)
+{
+    return This->clone();
+}
+
 void export_Message()
 {
     py::class_<Message, boost::noncopyable>("Message", Message_docstring, py::no_init)
@@ -231,5 +237,6 @@ void export_Message()
         .add_property("correlationID", &Message::getCMSCorrelationID, &Message::setCMSCorrelationID,
                       Message_correlationID_docstring)
         .add_property("type", &Message::getCMSType, &Message::setCMSType, Message_type_docstring)
+        .def("__deepcopy__", Message_deepcopy, py::return_value_policy<py::manage_new_object>());
         ;
 }

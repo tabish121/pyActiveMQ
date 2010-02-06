@@ -21,8 +21,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName).$(PlatformName)"
-			IntermediateDirectory="$(ConfigurationName).$(PlatformName)\$(ProjectName)"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
 			CharacterSet="1"
 			>
@@ -44,7 +44,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\src\main;&quot;..\..\activemq-cpp-library-3.0.1\src\main&quot;;&quot;C:\Program Files (x86)\boost\boost_1_39&quot;;C:\Python26.x86\include"
+				AdditionalIncludeDirectories="..\src\main;&quot;..\..\activemq-cpp-library-3.1.0\src\main&quot;;&quot;C:\Program Files\boost\boost_1_42&quot;;C:\Python26\include"
 				PreprocessorDefinitions="_DEBUG;_DLL;_WIN32;WIN32;_WINDOWS;_MBCS;_USE_MATH_DEFINES;NOMINMAX;VC_EXTRALEAN;WIN32_LEAN_AND_MEAN;BOOST_LIB_DIAGNOSTIC;BOOST_PYTHON_STATIC_LIB;BOOST_PYTHON_NO_PY_SIGNATURES"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -68,8 +68,81 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib rpcrt4.lib mswsock.lib"
 				OutputFile="$(OutDir)\$(ProjectName).pyd"
-				AdditionalLibraryDirectories="&quot;C:\Program Files (x86)\boost\boost_1_39\lib&quot;;C:\Python26.x86\libs"
+				AdditionalLibraryDirectories="&quot;C:\Program Files\boost\boost_1_42\lib&quot;;C:\Python26\libs"
 				GenerateDebugInformation="true"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="2"
+			CharacterSet="1"
+			WholeProgramOptimization="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="..\src\main;&quot;..\..\activemq-cpp-library-3.1.0\src\main&quot;;&quot;C:\Program Files\boost\boost_1_42&quot;;C:\Python26\include"
+				PreprocessorDefinitions="NDEBUG;_DLL;_WIN32;WIN32;_WINDOWS;_MBCS;_USE_MATH_DEFINES;NOMINMAX;VC_EXTRALEAN;WIN32_LEAN_AND_MEAN;BOOST_LIB_DIAGNOSTIC;BOOST_PYTHON_STATIC_LIB;BOOST_PYTHON_NO_PY_SIGNATURES"
+				RuntimeLibrary="2"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="false"
+				DebugInformationFormat="0"
+				DisableSpecificWarnings="4290"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="ws2_32.lib rpcrt4.lib mswsock.lib"
+				OutputFile="$(OutDir)\$(ProjectName).pyd"
+				AdditionalLibraryDirectories="&quot;C:\Program Files\boost\boost_1_42\lib&quot;;C:\Python26\libs"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 			/>
@@ -173,79 +246,6 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName).$(PlatformName)"
-			IntermediateDirectory="$(ConfigurationName).$(PlatformName)\$(ProjectName)"
-			ConfigurationType="2"
-			CharacterSet="1"
-			WholeProgramOptimization="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\src\main;&quot;..\..\activemq-cpp-library-3.0.1\src\main&quot;;&quot;C:\Program Files (x86)\boost\boost_1_39&quot;;C:\Python26.x86\include"
-				PreprocessorDefinitions="NDEBUG;_DLL;_WIN32;WIN32;_WINDOWS;_MBCS;_USE_MATH_DEFINES;NOMINMAX;VC_EXTRALEAN;WIN32_LEAN_AND_MEAN;BOOST_LIB_DIAGNOSTIC;BOOST_PYTHON_STATIC_LIB;BOOST_PYTHON_NO_PY_SIGNATURES"
-				RuntimeLibrary="2"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="3"
-				DisableSpecificWarnings="4290"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib rpcrt4.lib mswsock.lib"
-				OutputFile="$(OutDir)\$(ProjectName).pyd"
-				AdditionalLibraryDirectories="&quot;C:\Program Files (x86)\boost\boost_1_39\lib&quot;;C:\Python26.x86\libs"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
 			Name="Release|x64"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName).$(PlatformName)"
 			IntermediateDirectory="$(ConfigurationName).$(PlatformName)\$(ProjectName)"
@@ -323,12 +323,36 @@
 	<References>
 	</References>
 	<Files>
+		<Filter
+			Name="messages"
+			>
+			<File
+				RelativePath="..\src\main\BytesMessage.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\main\MapMessage.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\main\Message.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\main\ObjectMessage.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\main\StreamMessage.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\main\TextMessage.cpp"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath="..\src\main\ActiveMQConnectionFactory.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\src\main\BytesMessage.cpp"
 			>
 		</File>
 		<File
@@ -360,14 +384,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\src\main\MapMessage.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\src\main\Message.cpp"
-			>
-		</File>
-		<File
 			RelativePath="..\src\main\MessageConsumer.cpp"
 			>
 		</File>
@@ -377,10 +393,6 @@
 		</File>
 		<File
 			RelativePath="..\src\main\MessageProducer.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\src\main\ObjectMessage.cpp"
 			>
 		</File>
 		<File
@@ -397,14 +409,6 @@
 		</File>
 		<File
 			RelativePath="..\src\main\Session.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\src\main\StreamMessage.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\src\main\TextMessage.cpp"
 			>
 		</File>
 	</Files>

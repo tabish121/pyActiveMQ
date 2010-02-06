@@ -79,7 +79,7 @@ bool Destination__eq__(const Destination& self, const Destination& other)
         return selfQueue.getQueueName() == otherQueue.getQueueName();
     }
     default:
-        Py_FatalError("Invalid Destination type encountered in Destinations");
+        Py_FatalError("Failed to compare destinations");
         return false;
     }
 }

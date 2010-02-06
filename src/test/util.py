@@ -31,7 +31,8 @@ def set_local_path():
         if get_platform() == 'win-amd64':
             builddir = 'Release.x64'
         else:
-            builddir = 'Release.Win32'
+            #builddir = 'Release.Win32'
+            builddir = 'Debug'
         sys.path.insert(0, os.path.join(topdir, 'win_build', builddir))
     else:
         plat_specifier = ".%s-%s" % (get_platform(), sys.version[0:3])

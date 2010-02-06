@@ -15,6 +15,8 @@
 */
 
 #include <boost/python/class.hpp>
+#include <boost/python/manage_new_object.hpp>
+#include <boost/python/dict.hpp>
 
 #include <cms/StreamMessage.h>
 
@@ -22,6 +24,11 @@ namespace py = boost::python;
 
 using cms::StreamMessage;
 using cms::Message;
+
+static StreamMessage* StreamMessage_deepcopy(StreamMessage* This, py::dict memo)
+{
+    return dynamic_cast<StreamMessage*>(This->clone());
+}
 
 void export_StreamMessage()
 {
@@ -50,5 +57,5 @@ void export_StreamMessage()
         .def("writeLong", &StreamMessage::writeLong)
         .def("readString", &StreamMessage::readString)
         .def("writeString", &StreamMessage::writeString)
-        ;
+        .def("__deepcopy__", StreamMessage_deepcopy, py::return_value_policy<py::manage_new_object>());
 }
