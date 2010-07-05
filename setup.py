@@ -20,7 +20,7 @@ import sys
 
 if get_platform().startswith('win'):
     include_dirs = [
-        '..\\activemq-cpp-library-3.0.1\\src\\main'
+        '..\\activemq-cpp-library-3.2.0\\src\\main'
         ]
     if get_platform() == 'win-amd64':
         include_dirs += [
@@ -67,7 +67,7 @@ if get_platform().startswith('win'):
         ]
 else:
     include_dirs = [
-        '/opt/activemq-cpp-3.0.1/include/activemq-cpp-3.0.1'
+        '/opt/activemq-cpp-3.2.0/include/activemq-cpp-3.2.0'
         ]
     libraries = [
         'activemq-cpp',
@@ -75,11 +75,11 @@ else:
         'boost_python'
         ]
     library_dirs = [
-        '/opt/activemq-cpp-3.0.1/lib'
+        '/opt/activemq-cpp-3.2.0/lib'
         ]
     extra_compile_args = []
     extra_link_args = [
-        '-Wl,-rpath,/opt/activemq-cpp-3.0.1/lib'
+        '-Wl,-rpath,/opt/activemq-cpp-3.2.0/lib'
         ]
     define_macros = [
         ('BOOST_PYTHON_NO_PY_SIGNATURES', 1),
@@ -98,7 +98,7 @@ ext = Extension('pyactivemq',
                 depends=[],
                 define_macros=define_macros)
 setup(name='pyactivemq',
-      version='0.2.0',
+      version='0.3.0',
       author='Albert Strasheim',
       author_email='fullung@gmail.com',
       url='http://code.google.com/p/pyactivemq/',
