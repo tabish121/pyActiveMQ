@@ -32,7 +32,7 @@ class test_stomp_sync(_test_sync, unittest.TestCase):
         if hasattr(self, 'conn'):
             self.conn.close()
             del self.conn
-    
+
     # with AMQCPP-3, it seems you only get the exception when trying
     # to send the unsupported message type
     def xtest_MapMessage(self):
@@ -64,19 +64,14 @@ class test_stomp_sync(_test_sync, unittest.TestCase):
         topic = self.random_topic(session)
         # consumer with empty selector
         consumer1 = session.createConsumer(topic, "")
-        # Consumer with empty selector and nolocal set. Because this
-        # is the second consumer created on the connection, the
-        # nolocal flag has no effect.
         consumer2 = session.createConsumer(topic, "", True)
         producer = session.createProducer(topic)
         self.conn.start()
         producer.send(textMessage)
         msg = consumer1.receive(5000)
         self.assert_(msg is not None)
-        # Because nolocal is ignored except for the first connection,
-        # there should be a message available
         msg = consumer2.receive(5000)
-        self.assert_(msg is not None)
+        self.assert_(msg is None)
 
 if __name__ == '__main__':
     import sys

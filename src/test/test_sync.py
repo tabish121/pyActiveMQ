@@ -251,9 +251,17 @@ class _test_sync:
         self.assert_(isinstance(bytesMessage, pyactivemq.BytesMessage))
         self._check_Message_properties(bytesMessage)
 
-        self.assertEqual(0, bytesMessage.bodyLength)
-        bytesMessage.bodyBytes = 'hello123'
-        self.assertEqual('hello123', bytesMessage.bodyBytes)
+        try:
+            bytesMessage.bodyLength
+        except Exception:
+            exctype, value = sys.exc_info()[:2]
+            self.assert_(exctype is pyactivemq.CMSException)
+
+        bytesMessage.writeString('hello123')
+
+        bytesMessage.reset()
+
+        self.assertEqual('hello123', bytesMessage.readString())
         self.assert_(bytesMessage.replyTo is None)
         queue = session.createQueue("queue")
         bytesMessage.replyTo = queue
@@ -332,7 +340,6 @@ class _test_sync:
         del topic
         bytesMessage = session.createBytesMessage()
         bytesMessage.bodyBytes = '\x00\x00\x00'
-        self.assertEqual(3, bytesMessage.bodyLength)
 
         self.conn.start()
         producer.send(bytesMessage)
@@ -346,7 +353,6 @@ class _test_sync:
 
         bytesMessage = session.createBytesMessage()
         bytesMessage.bodyBytes = '\x01\x02\x03'
-        self.assertEqual(3, bytesMessage.bodyLength)
         producer.send(bytesMessage)
         del producer
         msg = consumer.receive(5000)
@@ -363,6 +369,7 @@ class _test_sync:
         topic = self.random_topic(session)
         consumer = session.createConsumer(topic)
         producer = session.createProducer(topic)
+        self.conn.start()
         textMessage = session.createTextMessage()
         textMessage.text = 'hello123'
         producer.send(textMessage)
@@ -370,7 +377,7 @@ class _test_sync:
         session.rollback()
         producer.send(textMessage)
         session.commit()
-        msg = consumer.receive(5000)
+        msg = consumer.receive(10000)
         self.assert_(msg is not None)
         self.assertEqual('hello123', msg.text)
         # two sends were rolled back, so expect only one message
@@ -383,6 +390,7 @@ class _test_sync:
         self.assert_(msg is not None)
         msg = consumer.receive(500)
         self.assert_(msg is None)
+        session.commit()
 
     def test_temporary_topic(self):
         session = self.conn.createSession()
