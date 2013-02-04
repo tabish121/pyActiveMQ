@@ -17,6 +17,7 @@
 #include <boost/python/class.hpp>
 #include <boost/python/manage_new_object.hpp>
 
+#include <cms/Connection.h>
 #include <cms/ConnectionFactory.h>
 
 namespace py = boost::python;
