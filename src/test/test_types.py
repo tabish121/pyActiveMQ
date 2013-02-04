@@ -79,22 +79,22 @@ class test_ActiveMQConnectionFactory(unittest.TestCase):
         from pyactivemq import ActiveMQConnectionFactory
         f1 = ActiveMQConnectionFactory()
         # default broker URL enables failover
-        self.assertEqual('failover:(tcp://localhost:61616)', f1.brokerURL)
+        self.assertEqual('failover:(tcp://localhost:61616)', f1.brokerURI)
         self.assertEqual('', f1.username)
         self.assertEqual('', f1.password)
         f2 = ActiveMQConnectionFactory('url')
-        self.assertEqual('url', f2.brokerURL)
+        self.assertEqual('url', f2.brokerURI)
         f3 = ActiveMQConnectionFactory('url', 'user')
-        self.assertEqual('url', f3.brokerURL)
+        self.assertEqual('url', f3.brokerURI)
         self.assertEqual('user', f3.username)
         f4 = ActiveMQConnectionFactory('url', 'user', 'password')
-        self.assertEqual('url', f4.brokerURL)
+        self.assertEqual('url', f4.brokerURI)
         self.assertEqual('user', f4.username)
         self.assertEqual('password', f4.password)
-        f4.brokerURL = 'url2'
+        f4.brokerURI = 'url2'
         f4.username = 'user2'
         f4.password = 'password2'
-        self.assertEqual('url2', f4.brokerURL)
+        self.assertEqual('url2', f4.brokerURI)
         self.assertEqual('user2', f4.username)
         self.assertEqual('password2', f4.password)
 
@@ -102,7 +102,7 @@ class test_ActiveMQConnectionFactory(unittest.TestCase):
         from pyactivemq import ActiveMQConnectionFactory
         f = ActiveMQConnectionFactory()
         # set broker URL with an invalid port
-        f.brokerURL = 'tcp://localhost:70000'
+        f.brokerURI = 'tcp://localhost:70000'
         try:
             conn = f.createConnection()
         except Exception:
