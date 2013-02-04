@@ -30,8 +30,13 @@ static const char* AMQConnectionFactory_username_docstring =
     "Username to authenticate with.";
 static const char* AMQConnectionFactory_password_docstring =
     "Password to authenticate with.";
-static const char* AMQConnectionFactory_brokerURL_docstring =
-    "The URL of the broker we are connecting to.";
+static const char* AMQConnectionFactory_brokerURI_docstring =
+    "The URI of the broker we are connecting to.";
+
+std::string getBrokerURI(ActiveMQConnectionFactory const &self)
+{
+    return self.getBrokerURI().toString();
+}
 
 void export_ActiveMQConnectionFactory()
 {
@@ -47,10 +52,10 @@ void export_ActiveMQConnectionFactory()
                                     py::return_value_policy<py::return_by_value>()),
                       &ActiveMQConnectionFactory::setPassword,
                       AMQConnectionFactory_password_docstring)
-        .add_property("brokerURL",
-                      make_function(&ActiveMQConnectionFactory::getBrokerURL,
+        .add_property("brokerURI",
+                      make_function(&getBrokerURI,
                                     py::return_value_policy<py::return_by_value>()),
-                      &ActiveMQConnectionFactory::setBrokerURL,
-                      AMQConnectionFactory_brokerURL_docstring)
+                      static_cast< void (ActiveMQConnectionFactory::*)(const std::string &) >(&ActiveMQConnectionFactory::setBrokerURI),
+                      AMQConnectionFactory_brokerURI_docstring)
         ;
 }
